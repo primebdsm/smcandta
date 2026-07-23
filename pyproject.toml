@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "smc-ta"
+version = "0.1.0"
+description = "Forex-focused Smart Money Concept and technical-analysis toolkit for Python bots."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+  { name = "SMC TA Repository" }
+]
+dependencies = [
+  "numpy>=1.24",
+  "pandas>=2.0"
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=7.4",
+  "pytest-cov>=4.1"
+]
+
+[tool.setuptools.packages.find]
+include = ["smc_ta*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
