@@ -16,6 +16,7 @@ This repository now contains the main components needed before connecting a real
 - Broker reconciliation: `smc_ta.reconciliation.BrokerReconciler`
 - Expected-position ledgers: `MemoryPositionLedger`, `SQLitePositionLedger`
 - Emergency stop / kill switch: `smc_ta.safety.EmergencyStopController`
+- Trade lifecycle state machine and stores: `TradeLifecycleStateMachine`, `SQLiteTradeLifecycleStore`
 - Demo forward bot: `smc_ta.live.DemoTradingBot`
 - CSV and SQLite journals: `smc_ta.journal.TradeJournal`, `smc_ta.journal.SQLiteTradeJournal`
 - Monitoring metrics: `smc_ta.monitoring.performance_summary`
@@ -50,8 +51,9 @@ Keep broker-specific authentication, order IDs, retry logic, and reconciliation 
 6. Reconcile positions and balances after every cycle.
 7. Add portfolio/correlation limits for multi-pair trading.
 8. Enable `EmergencyStopController` with manual stop, equity, drawdown, position, runtime-error, and reconciliation-failure limits.
-9. Add a real economic calendar source such as `TradingEconomicsCalendarSource` and verify event times against your broker/server timezone.
-10. Only then consider small live size.
+9. Enable `SQLiteTradeLifecycleStore` so every signal, block, submission, fill, failure, and close is auditable.
+10. Add a real economic calendar source such as `TradingEconomicsCalendarSource` and verify event times against your broker/server timezone.
+11. Only then consider small live size.
 
 ## Emergency Stop
 
@@ -79,6 +81,12 @@ Credentials are read from `TRADING_ECONOMICS_API_KEY` through `TradingEconomicsC
 `write_analysis_chart` renders a standalone HTML/SVG chart from `analyze_forex` output. It shows candles, volume, EMA/VWAP overlays, FVGs, order blocks, liquidity pools, liquidity sweeps, BOS/CHoCH, signal arrows, and latest entry/stop/target reference lines.
 
 Use charts for review, alerts, journal snapshots, and debugging. The chart renderer does not make execution decisions.
+
+## Trade Lifecycle
+
+`TradeLifecycleStateMachine` tracks each trade attempt through `signal`, `approved`, `blocked`, `submitted`, `open`, `partially_closed`, `closed`, `cancelled`, and `failed` states. `SQLiteTradeLifecycleStore` persists the latest state plus event history for audit and replay.
+
+`DemoTradingBot` can write lifecycle records automatically through `trade_lifecycle_store`. This does not replace broker reconciliation or emergency stop controls; it makes their decisions visible and durable.
 
 ## Still Broker-Specific
 

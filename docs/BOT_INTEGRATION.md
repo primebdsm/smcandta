@@ -11,6 +11,7 @@ flowchart LR
   D --> F["Backtester or Research Notebook"]
   E --> G["Risk Manager"]
   G --> H["Broker Adapter"]
+  G --> J["Trade Lifecycle Store"]
   C --> I["Chart / Journal Snapshot"]
 ```
 
@@ -50,6 +51,7 @@ def on_new_closed_candle(candles):
 - Backtesting engine with realistic transaction costs
 - Demo forward testing
 - Risk limits: max daily loss, max open trades, max correlated exposure
+- Trade lifecycle store for signal/block/order/fill/close audit trail
 - Optional chart snapshots for review and monitoring
 
 ## Current Live-Readiness Modules
@@ -61,6 +63,7 @@ def on_new_closed_candle(candles):
 - `SQLiteTradeJournal` for persistent local journals
 - `BrokerReconciler` for blocking when broker positions differ from bot ledger state
 - `EmergencyStopController` for hard stop, manual stop file, drawdown, equity, runtime-error, and optional close-all controls
+- `TradeLifecycleStateMachine` and `SQLiteTradeLifecycleStore` for deterministic trade state tracking
 - `PortfolioRiskManager` for currency exposure, symbol concentration, same-currency, and correlation limits
 - `run_walk_forward` for train/test validation before demo/live use
 - `validate_candle_quality` for missing candles, duplicate timestamps, invalid OHLC, spread spikes, weekend candles, and range spikes

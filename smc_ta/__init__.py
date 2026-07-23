@@ -11,6 +11,13 @@ from smc_ta.engine.multitimeframe import MultiTimeframeConfig, MultiTimeframeRes
 from smc_ta.backtest import BacktestConfig, BacktestResult, run_backtest
 from smc_ta.broker import PaperBroker
 from smc_ta.data import DataQualityConfig, DataQualityReport, validate_candle_quality
+from smc_ta.lifecycle import (
+    MemoryTradeLifecycleStore,
+    SQLiteTradeLifecycleStore,
+    TradeLifecycleError,
+    TradeLifecycleRecord,
+    TradeLifecycleStateMachine,
+)
 from smc_ta.live import DemoTradingBot
 from smc_ta.news import TradingEconomicsApiError, TradingEconomicsCalendarSource, TradingEconomicsConfig
 from smc_ta.reconciliation import (
@@ -45,6 +52,7 @@ __all__ = [
     "EmergencyStopController",
     "EmergencyStopResult",
     "MemoryPositionLedger",
+    "MemoryTradeLifecycleStore",
     "MultiTimeframeConfig",
     "MultiTimeframeResult",
     "PaperBroker",
@@ -57,10 +65,14 @@ __all__ = [
     "RiskDecision",
     "RiskManager",
     "SQLitePositionLedger",
+    "SQLiteTradeLifecycleStore",
     "StrategyProfile",
     "TradingEconomicsApiError",
     "TradingEconomicsCalendarSource",
     "TradingEconomicsConfig",
+    "TradeLifecycleError",
+    "TradeLifecycleRecord",
+    "TradeLifecycleStateMachine",
     "WalkForwardCandidate",
     "WalkForwardConfig",
     "WalkForwardResult",

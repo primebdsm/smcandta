@@ -51,6 +51,23 @@ write_analysis_chart("analysis_chart.html", result, symbol="EURUSD")
 
 The chart is a review artifact for Codex, journals, alerts, or dashboard snapshots. It renders the existing analysis output and should not be used as a separate source of trading decisions.
 
+## Trade Lifecycle
+
+```python
+from smc_ta import DemoTradingBot
+from smc_ta.lifecycle import SQLiteTradeLifecycleStore
+
+store = SQLiteTradeLifecycleStore("trade_lifecycle.sqlite")
+bot = DemoTradingBot(
+    symbol="EURUSD",
+    broker=broker,
+    risk_manager=risk_manager,
+    trade_lifecycle_store=store,
+)
+```
+
+Use lifecycle records to inspect whether a signal was blocked, approved, submitted, opened, closed, failed, or cancelled. See `docs/TRADE_LIFECYCLE.md`.
+
 ## No-Lookahead Notes
 
 Swing highs/lows require right-side candles for confirmation. The SMC structure module exposes both pivot candle fields and confirmation-time fields. Use confirmation-time columns when backtesting or trading live.

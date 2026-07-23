@@ -25,6 +25,7 @@
 - Portfolio/correlation risk manager for symbol concentration, gross/net currency exposure, same-currency direction counts, opposite same-symbol exposure, and return-correlation limits
 - Broker reconciliation service with in-memory and SQLite expected-position ledgers
 - Emergency stop / kill-switch controller with manual, file, equity, drawdown, position, runtime-error, reconciliation-failure, and optional close-all controls
+- Trade lifecycle state machine with explicit transitions, memory store, SQLite store, and optional `DemoTradingBot` integration
 - Walk-forward optimizer with rolling train/test windows, candidate ranking, out-of-sample reports, combined equity, and combined trade output
 - Demo forward-testing bot
 - CSV and SQLite journals
@@ -40,7 +41,7 @@
 .venv/bin/python -m pytest
 ```
 
-Result: 53 passed.
+Result: 57 passed.
 
 ## What Is Real
 
@@ -52,12 +53,13 @@ The implemented instruments are real in the sense that each one maps to explicit
 - The signal engine produces reproducible scores and reasons from candle data.
 - The Trading Economics connector is real provider plumbing: it calls the provider calendar API, maps response fields to this package's `EconomicEvent`, and feeds the existing `NewsFilter`.
 - The chart renderer is a real reporting instrument: it converts the package's `AnalysisResult` tables into portable HTML/SVG review charts without changing strategy decisions.
+- The lifecycle state machine is a real audit instrument: it enforces valid trade states and persists signal, block, submit, fill, close, fail, and cancel history.
 
 ## What Still Needs To Be Added Before Live Trading
 
 - cTrader, FIX, Interactive Brokers, or other venue-specific adapters
 - Broker-specific production reconciliation
-- Persistent database layer beyond CSV
+- Broker-synchronized recovery of in-flight lifecycle records after process restarts
 - Production alerting and incident response
 - Interactive live chart streaming and broker-synchronized screenshot automation
 - Broker-specific disaster recovery runbook

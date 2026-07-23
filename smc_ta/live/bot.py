@@ -8,9 +8,10 @@ import pandas as pd
 
 from smc_ta.alerts.channels import AlertChannel, format_signal_alert
 from smc_ta.broker.base import BrokerAdapter
-from smc_ta.broker.models import OrderFill
+from smc_ta.broker.models import OrderFill, OrderRequest
 from smc_ta.engine.confluence import ConfluenceConfig, analyze_forex
 from smc_ta.journal.store import TradeJournal
+from smc_ta.lifecycle import TradeLifecycleRecord, TradeLifecycleStateMachine, TradeLifecycleStore
 from smc_ta.news.calendar import NewsFilter
 from smc_ta.reconciliation import BrokerReconciler, ReconciliationResult
 from smc_ta.risk import PortfolioRiskDecision, PortfolioRiskManager
@@ -35,6 +36,7 @@ class CycleResult:
     reconciliation_result: ReconciliationResult | None = None
     emergency_stop_result: EmergencyStopResult | None = None
     emergency_close_fills: tuple[OrderFill, ...] = ()
+    trade_lifecycle: TradeLifecycleRecord | None = None
 
 
 class DemoTradingBot:
@@ -58,6 +60,8 @@ class DemoTradingBot:
         alert_channel: AlertChannel | None = None,
         reconciler: BrokerReconciler | None = None,
         emergency_stop: EmergencyStopController | None = None,
+        trade_lifecycle: TradeLifecycleStateMachine | None = None,
+        trade_lifecycle_store: TradeLifecycleStore | None = None,
     ) -> None:
         self.symbol = symbol.upper()
         self.broker = broker
@@ -69,6 +73,10 @@ class DemoTradingBot:
         self.alert_channel = alert_channel
         self.reconciler = reconciler
         self.emergency_stop = emergency_stop
+        self.trade_lifecycle_store = trade_lifecycle_store
+        self.trade_lifecycle = trade_lifecycle or (
+            TradeLifecycleStateMachine() if trade_lifecycle_store is not None else None
+        )
 
     def run_cycle(self, candles: pd.DataFrame) -> CycleResult:
         """Analyze the latest closed candle and place a demo/paper order if approved."""
@@ -85,8 +93,10 @@ class DemoTradingBot:
         setup_name = str(setups.iloc[-1]["setup_name"])
         if self.journal:
             self.journal.append_signal(self.symbol, timestamp, signal)
+        lifecycle_record = self._create_lifecycle_record(timestamp, signal, setup_name)
 
         if self.news_filter and not self.news_filter.allow_trading(self.symbol, timestamp):
+            lifecycle_record = self._block_lifecycle_record(lifecycle_record, "news_filter_blocked", source="news")
             return CycleResult(
                 timestamp=timestamp,
                 side=str(signal["side"]),
@@ -95,6 +105,7 @@ class DemoTradingBot:
                 fill=None,
                 reasons="news_filter_blocked",
                 setup_name=setup_name,
+                trade_lifecycle=lifecycle_record,
             )
 
         reconciliation_result = None
@@ -110,6 +121,11 @@ class DemoTradingBot:
             reconciliation_result=reconciliation_result,
         )
         if emergency_stop_result is not None and emergency_stop_result.active:
+            lifecycle_record = self._block_lifecycle_record(
+                lifecycle_record,
+                emergency_stop_result.summary(),
+                source="emergency_stop",
+            )
             close_fills = self._handle_emergency_stop(emergency_stop_result, market_price)
             return CycleResult(
                 timestamp=timestamp,
@@ -123,9 +139,15 @@ class DemoTradingBot:
                 reconciliation_result=reconciliation_result,
                 emergency_stop_result=emergency_stop_result,
                 emergency_close_fills=tuple(close_fills),
+                trade_lifecycle=lifecycle_record,
             )
 
         if reconciliation_blocked and reconciliation_result is not None:
+            lifecycle_record = self._block_lifecycle_record(
+                lifecycle_record,
+                reconciliation_result.summary(),
+                source="reconciliation",
+            )
             return CycleResult(
                 timestamp=timestamp,
                 side=str(signal["side"]),
@@ -137,6 +159,7 @@ class DemoTradingBot:
                 portfolio_risk_decision=None,
                 reconciliation_result=reconciliation_result,
                 emergency_stop_result=emergency_stop_result,
+                trade_lifecycle=lifecycle_record,
             )
 
         decision = self.risk_manager.evaluate_signal(
@@ -147,6 +170,11 @@ class DemoTradingBot:
             timestamp=timestamp,
         )
         if not decision.approved or decision.order is None:
+            lifecycle_record = self._block_lifecycle_record(
+                lifecycle_record,
+                ";".join(decision.reasons),
+                source="risk",
+            )
             return CycleResult(
                 timestamp=timestamp,
                 side=str(signal["side"]),
@@ -158,7 +186,9 @@ class DemoTradingBot:
                 portfolio_risk_decision=None,
                 reconciliation_result=reconciliation_result,
                 emergency_stop_result=emergency_stop_result,
+                trade_lifecycle=lifecycle_record,
             )
+        lifecycle_record = self._approve_lifecycle_record(lifecycle_record, decision)
 
         portfolio_decision = None
         if self.portfolio_risk_manager is not None:
@@ -168,6 +198,11 @@ class DemoTradingBot:
                 market_price=market_price,
             )
             if not portfolio_decision.approved:
+                lifecycle_record = self._block_lifecycle_record(
+                    lifecycle_record,
+                    ";".join(portfolio_decision.reasons),
+                    source="portfolio_risk",
+                )
                 return CycleResult(
                     timestamp=timestamp,
                     side=str(signal["side"]),
@@ -179,11 +214,22 @@ class DemoTradingBot:
                     portfolio_risk_decision=portfolio_decision,
                     reconciliation_result=reconciliation_result,
                     emergency_stop_result=emergency_stop_result,
+                    trade_lifecycle=lifecycle_record,
                 )
 
         if self.alert_channel and signal["side"] in {"long", "short"}:
             self.alert_channel.send(format_signal_alert(self.symbol, signal, setup_name=setup_name))
-        fill = self.broker.place_order(decision.order, market_price=market_price)
+        lifecycle_record = self._submit_lifecycle_record(lifecycle_record, decision.order)
+        try:
+            fill = self.broker.place_order(decision.order, market_price=market_price)
+        except Exception as exc:
+            lifecycle_record = self._fail_lifecycle_record(
+                lifecycle_record,
+                str(exc),
+                metadata={"exception_type": type(exc).__name__},
+            )
+            raise
+        lifecycle_record = self._fill_lifecycle_record(lifecycle_record, fill)
         if self.reconciler is not None:
             self._record_latest_broker_position(fill)
         if self.journal and hasattr(self.journal, "append_fill"):
@@ -199,7 +245,88 @@ class DemoTradingBot:
             portfolio_risk_decision=portfolio_decision,
             reconciliation_result=reconciliation_result,
             emergency_stop_result=emergency_stop_result,
+            trade_lifecycle=lifecycle_record,
         )
+
+    def _create_lifecycle_record(
+        self,
+        timestamp: pd.Timestamp,
+        signal: pd.Series,
+        setup_name: str,
+    ) -> TradeLifecycleRecord | None:
+        if self.trade_lifecycle is None:
+            return None
+        record = self.trade_lifecycle.create_from_signal(
+            symbol=self.symbol,
+            timestamp=timestamp,
+            signal=signal,
+            setup_name=setup_name,
+        )
+        self._save_lifecycle_record(record)
+        return record
+
+    def _approve_lifecycle_record(
+        self,
+        record: TradeLifecycleRecord | None,
+        decision: RiskDecision,
+    ) -> TradeLifecycleRecord | None:
+        if record is None or self.trade_lifecycle is None:
+            return record
+        updated = self.trade_lifecycle.approve(record, decision)
+        self._save_lifecycle_record(updated)
+        return updated
+
+    def _submit_lifecycle_record(
+        self,
+        record: TradeLifecycleRecord | None,
+        order: OrderRequest,
+    ) -> TradeLifecycleRecord | None:
+        if record is None or self.trade_lifecycle is None:
+            return record
+        updated = self.trade_lifecycle.submit(record, order)
+        self._save_lifecycle_record(updated)
+        return updated
+
+    def _fill_lifecycle_record(
+        self,
+        record: TradeLifecycleRecord | None,
+        fill: OrderFill,
+    ) -> TradeLifecycleRecord | None:
+        if record is None or self.trade_lifecycle is None:
+            return record
+        updated = self.trade_lifecycle.record_fill(record, fill)
+        self._save_lifecycle_record(updated)
+        return updated
+
+    def _block_lifecycle_record(
+        self,
+        record: TradeLifecycleRecord | None,
+        reason: str,
+        *,
+        source: str,
+    ) -> TradeLifecycleRecord | None:
+        if record is None or self.trade_lifecycle is None:
+            return record
+        updated = self.trade_lifecycle.block(record, reason, source=source)
+        self._save_lifecycle_record(updated)
+        return updated
+
+    def _fail_lifecycle_record(
+        self,
+        record: TradeLifecycleRecord | None,
+        reason: str,
+        *,
+        metadata: dict[str, object] | None = None,
+    ) -> TradeLifecycleRecord | None:
+        if record is None or self.trade_lifecycle is None:
+            return record
+        updated = self.trade_lifecycle.fail(record, reason, metadata=metadata)
+        self._save_lifecycle_record(updated)
+        return updated
+
+    def _save_lifecycle_record(self, record: TradeLifecycleRecord) -> None:
+        if self.trade_lifecycle_store is not None:
+            self.trade_lifecycle_store.save(record)
 
     def _record_latest_broker_position(self, fill: OrderFill) -> None:
         if self.reconciler is None:

@@ -60,6 +60,7 @@ Live-readiness components:
 - Portfolio/correlation risk manager for currency exposure and correlated-position limits
 - Broker reconciliation layer with in-memory and SQLite expected-position ledgers
 - Emergency stop / kill-switch controller with optional close-all behavior
+- Trade lifecycle state machine with memory and SQLite stores
 - Walk-forward optimization for train/test strategy validation
 - CSV journal and monitoring metrics
 - SQLite journal, Telegram/Discord/email alerts, static dashboard
@@ -163,6 +164,21 @@ write_analysis_chart(
 )
 ```
 
+## Trade Lifecycle
+
+```python
+from smc_ta import DemoTradingBot
+from smc_ta.lifecycle import SQLiteTradeLifecycleStore
+
+store = SQLiteTradeLifecycleStore("trade_lifecycle.sqlite")
+bot = DemoTradingBot(
+    symbol="EURUSD",
+    broker=broker,
+    risk_manager=risk_manager,
+    trade_lifecycle_store=store,
+)
+```
+
 ## Demo Forward Test
 
 ```python
@@ -239,6 +255,7 @@ smc_ta/
   risk/portfolio.py Portfolio/correlation risk controls
   reconciliation/ Broker-vs-ledger state safety checks
   safety/         Emergency stop / kill-switch controls
+  lifecycle/      Trade lifecycle state machine and stores
   walkforward/    Rolling train/test optimization
   live/           Demo-forward bot orchestration
   journal/        CSV trade journal
