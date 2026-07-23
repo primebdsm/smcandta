@@ -10,12 +10,19 @@
 - Forex helpers for pip sizes, spread conversion, risk sizing, and sessions
 - Confluence engine combining SMC and TA into analysis signals
 - Broker adapter protocol and paper broker
+- OANDA REST broker adapter and OANDA candle downloader
+- Optional MetaTrader 5 terminal adapter and candle downloader
 - CSV historical data source
-- Backtester with spread/slippage and commission settings
-- Economic news filter
+- Multi-timeframe analysis engine
+- Named SMC setup classifier
+- Backtester with candle spread, slippage, commission, sessions, trailing stops, partial closes, daily trade limits, and pair reports
+- Economic news filter and generic JSON economic calendar source
+- Strategy profiles
 - Risk manager for position sizing, daily loss, open-position, and confidence/RR checks
 - Demo forward-testing bot
-- CSV journal and monitoring metrics
+- CSV and SQLite journals
+- Telegram, Discord, and email alerts
+- Static HTML dashboard and monitoring metrics
 - Example script for reading CSV candles and printing latest analysis
 - Pytest suite covering core indicators, SMC events, Forex helpers, and confluence output
 
@@ -25,7 +32,7 @@
 .venv/bin/python -m pytest
 ```
 
-Result: 15 passed.
+Result: 19 passed.
 
 ## What Is Real
 
@@ -38,9 +45,9 @@ The implemented instruments are real in the sense that each one maps to explicit
 
 ## What Still Needs To Be Added Before Live Trading
 
-- Broker adapter for MetaTrader, cTrader, FIX, OANDA, Interactive Brokers, or another execution venue
-- Vendor-specific historical data downloader
-- Live economic calendar API connector
+- cTrader, FIX, Interactive Brokers, or other venue-specific adapters
+- Broker-specific production reconciliation
+- Provider-specific live economic calendar connector where a fixed commercial API is chosen
 - Walk-forward optimization workflow
 - Persistent database layer beyond CSV
 - Production alerting and incident response

@@ -121,26 +121,48 @@ class PaperBroker:
     ) -> OrderFill:
         """Close an open paper position."""
 
+        return self.close_position_units(position_id, units=None, market_price=market_price, timestamp=timestamp)
+
+    def close_position_units(
+        self,
+        position_id: str,
+        *,
+        units: float | None,
+        market_price: float,
+        timestamp: datetime | None = None,
+    ) -> OrderFill:
+        """Close all or part of an open paper position."""
+
         if position_id not in self.positions:
             raise KeyError(f"unknown position_id: {position_id}")
         position = self.positions[position_id]
         if not position.is_open:
             raise ValueError(f"position is already closed: {position_id}")
+        close_units = position.units if units is None else min(float(units), position.units)
+        if close_units <= 0:
+            raise ValueError("close units must be positive")
 
         close_side = "sell" if position.side == "long" else "buy"
         price, spread, slippage = self._execution_price(position.symbol, close_side, market_price)
         close_time = timestamp or utc_now()
-        pnl = position.unrealized_pnl(price)
-        position.closed_at = close_time
-        position.exit_price = price
-        position.realized_pnl = pnl - self.commission_per_order
-        self.balance += position.realized_pnl
+        if position.side == "long":
+            pnl = (price - position.entry_price) * close_units
+        else:
+            pnl = (position.entry_price - price) * close_units
+        realized = pnl - self.commission_per_order
+        position.realized_pnl += realized
+        self.balance += realized
+        position.units -= close_units
+        if position.units <= 1e-9:
+            position.units = 0.0
+            position.closed_at = close_time
+            position.exit_price = price
 
         fill = OrderFill(
             order_id=uuid4().hex,
             symbol=position.symbol,
             side=close_side,
-            units=position.units,
+            units=close_units,
             price=price,
             spread=spread,
             slippage=slippage,
@@ -150,4 +172,3 @@ class PaperBroker:
         self.fills.append(fill)
         self.mark_price(position.symbol, market_price)
         return fill
-

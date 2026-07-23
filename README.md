@@ -47,12 +47,17 @@ Symbiosis engine:
 Live-readiness components:
 
 - Broker-neutral execution interface
+- OANDA v20 REST adapter and candle downloader
+- Optional MetaTrader 5 terminal adapter and candle downloader
 - Paper broker for demo forward testing
 - CSV historical data source
 - Backtester with spread, slippage, and commission
 - Economic news blocking filter
+- Generic JSON economic calendar API source
 - Risk manager for position sizing and exposure limits
 - CSV journal and monitoring metrics
+- SQLite journal, Telegram/Discord/email alerts, static dashboard
+- Multi-timeframe analysis and named SMC setup classifier
 
 ## Install
 
@@ -82,6 +87,27 @@ result = run_backtest(
     candles,
     config=BacktestConfig(symbol="EURUSD", spread_pips=1.2, slippage_pips=0.1),
 )
+```
+
+## Multi-Timeframe Analysis
+
+```python
+from smc_ta.engine import MultiTimeframeConfig, analyze_multi_timeframe
+
+result = analyze_multi_timeframe(
+    {"M15": m15, "H1": h1, "H4": h4},
+    symbol="EURUSD",
+    config=MultiTimeframeConfig(entry_timeframe="M15", higher_timeframes=("H1", "H4")),
+)
+```
+
+## OANDA Demo Download
+
+```python
+from smc_ta.broker import OandaCandleDataSource, OandaConfig
+
+source = OandaCandleDataSource(OandaConfig(account_id="...", token="...", practice=True))
+candles = source.get_candles("EURUSD", "M15", limit=500)
 ```
 
 ## Demo Forward Test
@@ -147,6 +173,9 @@ smc_ta/
   live/           Demo-forward bot orchestration
   journal/        CSV trade journal
   monitoring/     Equity and strategy health metrics
+  strategy/       Strategy presets
+  alerts/         Telegram, Discord, and email alerts
+  dashboard/      Static local dashboard renderer
 docs/             Codex, bot, and instrument documentation
 examples/         Working Python examples
 tests/            Deterministic pytest coverage

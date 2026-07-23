@@ -30,3 +30,17 @@ This document lists the implemented instruments and how each one is represented 
 
 Use `build_smc_ta_features` for a single candle-aligned feature table and `generate_confluence_signals` for long/short/flat analysis output.
 
+## Multi-Timeframe
+
+Use `analyze_multi_timeframe` to project higher-timeframe structure and premium/discount context onto the entry timeframe.
+
+## SMC Setup Classifier
+
+Use `classify_smc_setups` to label named setups:
+
+- `liquidity_sweep_choch`
+- `fvg_continuation`
+- `order_block_mitigation`
+- `premium_reversal`
+- `discount_continuation`
+- `london_sweep_reversal`

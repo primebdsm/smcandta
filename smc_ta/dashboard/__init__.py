@@ -1,0 +1,6 @@
+"""Static dashboard rendering."""
+
+from smc_ta.dashboard.static import render_dashboard_html, write_dashboard
+
+__all__ = ["render_dashboard_html", "write_dashboard"]
+

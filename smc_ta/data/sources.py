@@ -26,6 +26,34 @@ class CandleDataSource(Protocol):
         """Return normalized OHLCV candles."""
 
 
+@dataclass(frozen=True)
+class MemoryCandleDataSource:
+    """In-memory candle source useful for tests and notebook workflows."""
+
+    candles: dict[tuple[str, str], pd.DataFrame]
+
+    def get_candles(
+        self,
+        symbol: str,
+        timeframe: str,
+        *,
+        start: pd.Timestamp | None = None,
+        end: pd.Timestamp | None = None,
+        limit: int | None = None,
+    ) -> pd.DataFrame:
+        key = (symbol.upper(), timeframe)
+        if key not in self.candles:
+            raise KeyError(f"no candles for {key}")
+        data = normalize_ohlcv(self.candles[key])
+        if start is not None:
+            data = data[data.index >= pd.Timestamp(start)]
+        if end is not None:
+            data = data[data.index <= pd.Timestamp(end)]
+        if limit is not None:
+            data = data.tail(limit)
+        return data
+
+
 def load_csv_candles(
     path: str | Path,
     *,
@@ -84,4 +112,3 @@ class CsvCandleDataSource:
         if limit is not None:
             candles = candles.tail(limit)
         return candles
-

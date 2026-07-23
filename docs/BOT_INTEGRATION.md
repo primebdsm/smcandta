@@ -42,11 +42,19 @@ def on_new_closed_candle(candles):
 
 ## Required Before Live Trading
 
-- Broker adapter for orders, positions, and account state
-- Economic calendar/news filter
-- Spread and slippage model
+- Demo-tested broker adapter for orders, positions, and account state
+- Economic calendar/news source
+- Spread and slippage model selected for the target broker
 - Session schedule adjusted for daylight saving time when needed
 - Backtesting engine with realistic transaction costs
 - Demo forward testing
 - Risk limits: max daily loss, max open trades, max correlated exposure
 
+## Current Live-Readiness Modules
+
+- `OandaBroker` and `OandaCandleDataSource` for OANDA v20 REST demo/live accounts
+- `MetaTrader5Broker` and `MetaTrader5CandleDataSource` for local MT5 terminal workflows
+- `JsonEconomicCalendarSource` for provider-specific calendar APIs
+- `SQLiteTradeJournal` for persistent local journals
+- `analyze_multi_timeframe` for higher-timeframe context
+- `classify_smc_setups` for setup labels
