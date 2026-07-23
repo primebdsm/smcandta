@@ -69,6 +69,14 @@ python examples/oanda_execution_validate.py --symbol EURUSD --max-spread-pips 2 
 
 Use this only with an OANDA practice account. It validates minimum-size order open/close, SL/TP order open/close, rejected-order handling, restart reconciliation, and spread/slippage reporting. See `docs/OANDA_EXECUTION_VALIDATION.md`.
 
+## Live Dashboard
+
+```python
+from smc_ta import build_live_monitoring_snapshot, write_live_dashboard
+```
+
+Use `build_live_monitoring_snapshot` after each bot cycle and `write_live_dashboard` to render the latest local monitoring state. See `docs/LIVE_DASHBOARD_MONITORING.md`.
+
 ## Real News Provider
 
 ```python

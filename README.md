@@ -66,7 +66,7 @@ Live-readiness components:
 - Preflight readiness checks for config, data, broker, safety, news, persistence, and lifecycle state
 - Walk-forward optimization for train/test strategy validation
 - CSV journal and monitoring metrics
-- SQLite journal, Telegram/Discord/email alerts, static dashboard
+- SQLite journal, Telegram/Discord/email alerts, live monitoring snapshot, and upgraded local dashboard
 - Static SMC/TA chart visualization with candles, zones, liquidity, structure, signals, and risk references
 - Multi-timeframe analysis and named SMC setup classifier
 
@@ -134,6 +134,12 @@ python examples/oanda_execution_validate.py --symbol EURUSD --max-spread-pips 2 
 ```
 
 The execution validator opens and closes minimum-size OANDA practice trades only when `--execute` is passed.
+
+## Live Dashboard
+
+```bash
+python examples/live_dashboard_monitor.py --output live_dashboard.html
+```
 
 ## Economic News Filter
 
@@ -305,7 +311,7 @@ smc_ta/
   monitoring/     Equity and strategy health metrics
   strategy/       Strategy presets
   alerts/         Telegram, Discord, and email alerts
-  dashboard/      Static local dashboard renderer
+  dashboard/      Static/live local dashboard renderer
   visualization/  Static SMC/TA chart renderer
 docs/             Codex, bot, and instrument documentation
 examples/         Working Python examples

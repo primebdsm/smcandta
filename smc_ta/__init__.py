@@ -19,6 +19,7 @@ from smc_ta.config import (
     validate_runtime_config,
 )
 from smc_ta.data import DataQualityConfig, DataQualityReport, validate_candle_quality
+from smc_ta.dashboard import render_live_dashboard_html, write_dashboard, write_live_dashboard
 from smc_ta.lifecycle import (
     MemoryTradeLifecycleStore,
     SQLiteTradeLifecycleStore,
@@ -27,6 +28,7 @@ from smc_ta.lifecycle import (
     TradeLifecycleStateMachine,
 )
 from smc_ta.live import DemoTradingBot
+from smc_ta.monitoring import LiveMonitoringSnapshot, build_live_monitoring_snapshot
 from smc_ta.news import TradingEconomicsApiError, TradingEconomicsCalendarSource, TradingEconomicsConfig
 from smc_ta.preflight import (
     PreflightCheck,
@@ -70,6 +72,7 @@ __all__ = [
     "EmergencyStopController",
     "EmergencyStopResult",
     "LIVE_CONFIRMATION_PHRASE",
+    "LiveMonitoringSnapshot",
     "MemoryPositionLedger",
     "MemoryTradeLifecycleStore",
     "MultiTimeframeConfig",
@@ -105,6 +108,7 @@ __all__ = [
     "assert_preflight_ready",
     "assert_runtime_ready",
     "build_smc_ta_features",
+    "build_live_monitoring_snapshot",
     "generate_confluence_signals",
     "get_strategy_profile",
     "list_strategy_profiles",
@@ -113,7 +117,10 @@ __all__ = [
     "run_walk_forward",
     "render_analysis_chart_html",
     "render_analysis_chart_svg",
+    "render_live_dashboard_html",
     "validate_candle_quality",
     "validate_runtime_config",
     "write_analysis_chart",
+    "write_dashboard",
+    "write_live_dashboard",
 ]

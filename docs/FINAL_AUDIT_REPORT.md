@@ -19,6 +19,7 @@ It is ready for:
 - OANDA and MT5 demo integration work
 - OANDA practice readiness checks with account instruments and live pricing probes
 - OANDA practice execution validation tooling for guarded minimum-size demo trades
+- Live monitoring snapshot and upgraded local dashboard
 - Structured startup safety checks before demo/live loops
 
 It is not yet a turnkey live-money trading system.
@@ -176,6 +177,7 @@ Before real live trading, the selected broker must be demo-tested end to end wit
   - win rate
   - profit factor
 - Static local dashboard
+- Live monitoring dashboard with account, positions, preflight, emergency stop, lifecycle, journal, blocks, and execution samples
 - Static SMC/TA chart visualization
 
 ## What Is Real
@@ -265,20 +267,16 @@ cTrader, FIX, Interactive Brokers, and other venues are not implemented yet.
 
 ### Dashboard And Monitoring Expansion
 
-The repository has a static dashboard and health metrics. For production-style monitoring, add:
+The repository has a static/live dashboard and health metrics. Current dashboard support includes account state, open positions, signal state, SMC/TA context, equity curve, performance metrics, preflight checks, emergency-stop state, lifecycle records, journal rows, blocked events, and execution samples.
 
-- auto-refreshing local dashboard
-- live account/equity panel
-- open positions panel
-- current signal and setup panel
-- active order block/FVG/liquidity panel
-- news-block panel
-- emergency-stop state panel
-- preflight result panel
-- lifecycle/journal event stream
-- drawdown and risk exposure charts
+For production-style monitoring, still add:
+
+- periodic dashboard writer process for live broker loops
 - alert delivery status
 - broker connectivity status
+- hosted/authenticated dashboard if deployed off the local machine
+- live broker transaction stream panel
+- process supervisor status
 
 ### Operations Still Needed
 
@@ -298,10 +296,10 @@ Before live trading:
 ## Recommended Next Build Order
 
 1. Run OANDA practice-account execution validation with the user's credentials and save the report artifacts
-2. Live dashboard/monitoring upgrade
-3. Broker transaction sync and restart recovery
-4. Demo-forward testing package with reports
-5. Deployment runbook and incident procedures
+2. Broker transaction sync and restart recovery
+3. Demo-forward testing package with reports
+4. Deployment runbook and incident procedures
+5. Hosted/authenticated monitoring if deployed off the local machine
 6. Optional MT5 hardening or cTrader/FIX adapter
 
 ## Current Verification
@@ -315,13 +313,13 @@ The repository test suite currently passes:
 Expected result:
 
 ```text
-81 passed
+84 passed
 ```
 
 ## Final Audit Conclusion
 
 The project is a real Forex SMC/TA analysis, testing, paper execution, and broker-integration framework.
 
-The strongest next engineering move is not adding more indicators. The strongest next move is running OANDA practice-account execution validation with real practice credentials, then connecting that broker path to monitoring, preflight, lifecycle recovery, and demo-forward reporting.
+The strongest next engineering move is not adding more indicators. The strongest next move is running OANDA practice-account execution validation with real practice credentials, then adding broker transaction sync/restart recovery and demo-forward reporting.
 
 After that, the project can move toward carefully controlled live micro-size testing.

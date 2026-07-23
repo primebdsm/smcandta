@@ -36,7 +36,7 @@ For the complete post-roadmap audit, see `docs/FINAL_AUDIT_REPORT.md`.
 - Demo forward-testing bot
 - CSV and SQLite journals
 - Telegram, Discord, and email alerts
-- Static HTML dashboard and monitoring metrics
+- Live monitoring snapshot model, upgraded static HTML dashboard, and monitoring metrics
 - Static HTML/SVG chart visualization for candles, SMC zones, liquidity, BOS/CHoCH, TA overlays, signals, and risk reference lines
 - Example script for reading CSV candles and printing latest analysis
 - Pytest suite covering core indicators, SMC events, Forex helpers, and confluence output
@@ -47,7 +47,7 @@ For the complete post-roadmap audit, see `docs/FINAL_AUDIT_REPORT.md`.
 .venv/bin/python -m pytest
 ```
 
-Result: 81 passed.
+Result: 84 passed.
 
 ## What Is Real
 

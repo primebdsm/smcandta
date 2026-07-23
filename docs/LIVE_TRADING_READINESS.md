@@ -25,7 +25,7 @@ This repository now contains the main components needed before connecting a real
 - Demo forward bot: `smc_ta.live.DemoTradingBot`
 - CSV and SQLite journals: `smc_ta.journal.TradeJournal`, `smc_ta.journal.SQLiteTradeJournal`
 - Monitoring metrics: `smc_ta.monitoring.performance_summary`
-- Static dashboard: `smc_ta.dashboard.write_dashboard`
+- Static/live dashboard: `smc_ta.dashboard.write_dashboard`, `smc_ta.dashboard.write_live_dashboard`
 - Static chart visualization: `smc_ta.visualization.write_analysis_chart`
 - Alerts: `smc_ta.alerts.TelegramAlert`, `smc_ta.alerts.DiscordWebhookAlert`, `smc_ta.alerts.EmailAlert`
 - Strategy profiles: `smc_ta.strategy.get_strategy_profile`
@@ -118,6 +118,12 @@ Run `python examples/oanda_practice_check.py --symbols EURUSD --max-spread-pips 
 `run_oanda_practice_execution_validation` can place and close minimum-size OANDA practice trades, validate SL/TP-on-fill, verify rejected-order handling, simulate restart reconciliation through SQLite, and print spread/slippage samples.
 
 Run `python examples/oanda_execution_validate.py --symbol EURUSD --max-spread-pips 2 --execute` only on a practice account. See `docs/OANDA_EXECUTION_VALIDATION.md`.
+
+## Live Dashboard Monitoring
+
+`build_live_monitoring_snapshot` and `write_live_dashboard` render account state, signal state, SMC/TA context, equity, preflight checks, emergency-stop state, open positions, lifecycle records, journal rows, blocked events, and execution samples into one local HTML dashboard.
+
+Run `python examples/live_dashboard_monitor.py --output live_dashboard.html` for a paper-mode sample. See `docs/LIVE_DASHBOARD_MONITORING.md`.
 
 ## Still Broker-Specific
 
