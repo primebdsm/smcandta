@@ -56,5 +56,6 @@ def on_new_closed_candle(candles):
 - `MetaTrader5Broker` and `MetaTrader5CandleDataSource` for local MT5 terminal workflows
 - `JsonEconomicCalendarSource` for provider-specific calendar APIs
 - `SQLiteTradeJournal` for persistent local journals
+- `BrokerReconciler` for blocking when broker positions differ from bot ledger state
 - `analyze_multi_timeframe` for higher-timeframe context
 - `classify_smc_setups` for setup labels

@@ -19,6 +19,7 @@
 - Economic news filter and generic JSON economic calendar source
 - Strategy profiles
 - Risk manager for position sizing, daily loss, open-position, and confidence/RR checks
+- Broker reconciliation service with in-memory and SQLite expected-position ledgers
 - Demo forward-testing bot
 - CSV and SQLite journals
 - Telegram, Discord, and email alerts
@@ -32,7 +33,7 @@
 .venv/bin/python -m pytest
 ```
 
-Result: 19 passed.
+Result: 24 passed.
 
 ## What Is Real
 

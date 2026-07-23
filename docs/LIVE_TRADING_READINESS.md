@@ -11,6 +11,8 @@ This repository now contains the main components needed before connecting a real
 - Backtester with spread/slippage: `smc_ta.backtest.run_backtest`
 - Economic news filter and JSON API source: `smc_ta.news.NewsFilter`, `smc_ta.news.JsonEconomicCalendarSource`
 - Position/risk manager: `smc_ta.risk.RiskManager`
+- Broker reconciliation: `smc_ta.reconciliation.BrokerReconciler`
+- Expected-position ledgers: `MemoryPositionLedger`, `SQLitePositionLedger`
 - Demo forward bot: `smc_ta.live.DemoTradingBot`
 - CSV and SQLite journals: `smc_ta.journal.TradeJournal`, `smc_ta.journal.SQLiteTradeJournal`
 - Monitoring metrics: `smc_ta.monitoring.performance_summary`
@@ -39,10 +41,11 @@ Keep broker-specific authentication, order IDs, retry logic, and reconciliation 
 1. Backtest with spread, slippage, and commission.
 2. Review the trade journal and monitoring metrics.
 3. Forward test through `PaperBroker`.
-4. Connect one broker adapter in demo mode.
-5. Reconcile positions and balances after every cycle.
-6. Add emergency stop controls.
-7. Only then consider small live size.
+4. Add `BrokerReconciler` with a persistent expected-position ledger.
+5. Connect one broker adapter in demo mode.
+6. Reconcile positions and balances after every cycle.
+7. Add emergency stop controls.
+8. Only then consider small live size.
 
 ## Still Broker-Specific
 

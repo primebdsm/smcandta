@@ -12,6 +12,7 @@ from smc_ta.broker.models import OrderFill
 from smc_ta.engine.confluence import ConfluenceConfig, analyze_forex
 from smc_ta.journal.store import TradeJournal
 from smc_ta.news.calendar import NewsFilter
+from smc_ta.reconciliation import BrokerReconciler, ReconciliationResult
 from smc_ta.risk.manager import RiskDecision, RiskManager
 from smc_ta.smc.setups import classify_smc_setups
 from smc_ta.validation import normalize_ohlcv
@@ -28,6 +29,7 @@ class CycleResult:
     fill: OrderFill | None
     reasons: str
     setup_name: str = "none"
+    reconciliation_result: ReconciliationResult | None = None
 
 
 class DemoTradingBot:
@@ -48,6 +50,7 @@ class DemoTradingBot:
         news_filter: NewsFilter | None = None,
         journal: TradeJournal | None = None,
         alert_channel: AlertChannel | None = None,
+        reconciler: BrokerReconciler | None = None,
     ) -> None:
         self.symbol = symbol.upper()
         self.broker = broker
@@ -56,6 +59,7 @@ class DemoTradingBot:
         self.news_filter = news_filter
         self.journal = journal
         self.alert_channel = alert_channel
+        self.reconciler = reconciler
 
     def run_cycle(self, candles: pd.DataFrame) -> CycleResult:
         """Analyze the latest closed candle and place a demo/paper order if approved."""
@@ -86,6 +90,21 @@ class DemoTradingBot:
                 setup_name=setup_name,
             )
 
+        reconciliation_result = None
+        if self.reconciler is not None:
+            reconciliation_result = self.reconciler.reconcile_broker(self.broker, self.symbol)
+            if not reconciliation_result.ok:
+                return CycleResult(
+                    timestamp=timestamp,
+                    side=str(signal["side"]),
+                    action="blocked_by_reconciliation",
+                    risk_decision=None,
+                    fill=None,
+                    reasons=reconciliation_result.summary(),
+                    setup_name=setup_name,
+                    reconciliation_result=reconciliation_result,
+                )
+
         decision = self.risk_manager.evaluate_signal(
             signal,
             symbol=self.symbol,
@@ -102,9 +121,12 @@ class DemoTradingBot:
                 fill=None,
                 reasons=";".join(decision.reasons),
                 setup_name=setup_name,
+                reconciliation_result=reconciliation_result,
             )
 
         fill = self.broker.place_order(decision.order, market_price=market_price)
+        if self.reconciler is not None:
+            self._record_latest_broker_position(fill)
         if self.journal and hasattr(self.journal, "append_fill"):
             self.journal.append_fill(fill)
         return CycleResult(
@@ -115,4 +137,19 @@ class DemoTradingBot:
             fill=fill,
             reasons=str(signal.get("reasons", "")),
             setup_name=setup_name,
+            reconciliation_result=reconciliation_result,
         )
+
+    def _record_latest_broker_position(self, fill: OrderFill) -> None:
+        if self.reconciler is None:
+            return
+        expected_side = "long" if fill.side == "buy" else "short"
+        broker_positions = [
+            position
+            for position in self.broker.get_open_positions(self.symbol)
+            if position.symbol == fill.symbol and position.side == expected_side
+        ]
+        if not broker_positions:
+            return
+        exact = [position for position in broker_positions if position.position_id == fill.order_id]
+        self.reconciler.record_expected_position((exact or broker_positions)[-1])
