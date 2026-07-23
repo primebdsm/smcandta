@@ -48,6 +48,7 @@ Live-readiness components:
 
 - Broker-neutral execution interface
 - OANDA v20 REST adapter and candle downloader
+- OANDA practice hardening for instrument metadata, pricing checks, retries, and non-trading readiness probes
 - Optional MetaTrader 5 terminal adapter and candle downloader
 - Paper broker for demo forward testing
 - CSV historical data source
@@ -118,6 +119,12 @@ from smc_ta.broker import OandaCandleDataSource, OandaConfig
 
 source = OandaCandleDataSource(OandaConfig(account_id="...", token="...", practice=True))
 candles = source.get_candles("EURUSD", "M15", limit=500)
+```
+
+## OANDA Practice Readiness
+
+```bash
+python examples/oanda_practice_check.py --symbols EURUSD,GBPUSD --max-spread-pips 2
 ```
 
 ## Economic News Filter

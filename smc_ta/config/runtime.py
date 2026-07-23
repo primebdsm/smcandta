@@ -91,6 +91,9 @@ class RuntimeConfig:
     oanda_account_id: str | None = None
     oanda_token: str | None = None
     oanda_practice: bool = True
+    oanda_max_spread_pips: float | None = None
+    oanda_max_price_age_seconds: float = 15.0
+    oanda_max_order_slippage_pips: float | None = None
     mt5_login: int | None = None
     mt5_password: str | None = None
     mt5_server: str | None = None
@@ -123,6 +126,11 @@ class RuntimeConfig:
             oanda_account_id=_env_get_optional(source, prefix, "OANDA_ACCOUNT_ID"),
             oanda_token=_env_get_optional(source, prefix, "OANDA_TOKEN"),
             oanda_practice=_to_bool(_env_get(source, prefix, "OANDA_PRACTICE", default="true")),
+            oanda_max_spread_pips=_optional_float(_env_get_optional(source, prefix, "OANDA_MAX_SPREAD_PIPS")),
+            oanda_max_price_age_seconds=float(_env_get(source, prefix, "OANDA_MAX_PRICE_AGE_SECONDS", default="15.0")),
+            oanda_max_order_slippage_pips=_optional_float(
+                _env_get_optional(source, prefix, "OANDA_MAX_ORDER_SLIPPAGE_PIPS")
+            ),
             mt5_login=_optional_int(_env_get_optional(source, prefix, "MT5_LOGIN")),
             mt5_password=_env_get_optional(source, prefix, "MT5_PASSWORD"),
             mt5_server=_env_get_optional(source, prefix, "MT5_SERVER"),
@@ -171,8 +179,12 @@ class RuntimeConfig:
         for key in ("allow_live_trading", "require_news_filter", "oanda_practice"):
             if key in data:
                 data[key] = _to_bool(data[key])
-        if "max_trade_risk_percent" in data:
-            data["max_trade_risk_percent"] = float(data["max_trade_risk_percent"])
+        for key in ("max_trade_risk_percent", "oanda_max_price_age_seconds"):
+            if key in data:
+                data[key] = float(data[key])
+        for key in ("oanda_max_spread_pips", "oanda_max_order_slippage_pips"):
+            if key in data:
+                data[key] = _optional_float(data[key])
         if "mt5_login" in data:
             data["mt5_login"] = _optional_int(data["mt5_login"])
         return cls(**data)
@@ -248,6 +260,14 @@ def validate_runtime_config(config: RuntimeConfig) -> ConfigValidationReport:
             issues.append(_error("oanda_demo_must_use_practice", "OANDA demo mode must use the practice endpoint"))
         if config.mode == "live" and config.oanda_practice:
             issues.append(_error("oanda_live_must_not_use_practice", "OANDA live mode must use practice=False"))
+        if config.oanda_max_spread_pips is not None and config.oanda_max_spread_pips <= 0:
+            issues.append(_error("invalid_oanda_max_spread_pips", "OANDA max spread must be positive when set"))
+        if config.oanda_max_price_age_seconds < 0:
+            issues.append(_error("invalid_oanda_max_price_age_seconds", "OANDA max price age must be >= 0"))
+        if config.oanda_max_order_slippage_pips is not None and config.oanda_max_order_slippage_pips < 0:
+            issues.append(
+                _error("invalid_oanda_max_order_slippage_pips", "OANDA max order slippage must be >= 0 when set")
+            )
 
     if config.broker == "mt5" and config.mode == "live" and not any((config.mt5_login, config.mt5_server, config.mt5_path)):
         issues.append(_warning("mt5_terminal_session_unverified", "MT5 live mode relies on the currently initialized terminal session"))
@@ -292,6 +312,9 @@ def build_oanda_config(config: RuntimeConfig) -> OandaConfig:
         account_id=config.oanda_account_id,
         token=config.oanda_token,
         practice=config.oanda_practice,
+        max_spread_pips=config.oanda_max_spread_pips,
+        max_price_age_seconds=config.oanda_max_price_age_seconds,
+        max_order_slippage_pips=config.oanda_max_order_slippage_pips,
     )
 
 
@@ -378,6 +401,12 @@ def _optional_int(value: object | None) -> int | None:
     if value is None or str(value).strip() == "":
         return None
     return int(value)
+
+
+def _optional_float(value: object | None) -> float | None:
+    if value is None or str(value).strip() == "":
+        return None
+    return float(value)
 
 
 def _normalize_mode(value: str) -> RuntimeMode:

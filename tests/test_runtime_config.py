@@ -62,6 +62,9 @@ def test_armed_live_oanda_config_builds_adapter_configs_and_redacts_secrets() ->
         oanda_account_id="001-123",
         oanda_token="super-secret-token",
         oanda_practice=False,
+        oanda_max_spread_pips=2.0,
+        oanda_max_price_age_seconds=10.0,
+        oanda_max_order_slippage_pips=0.5,
         require_news_filter=True,
         trading_economics_api_key="te-secret-key",
         journal_path="journal.csv",
@@ -77,6 +80,9 @@ def test_armed_live_oanda_config_builds_adapter_configs_and_redacts_secrets() ->
     assert oanda.account_id == "001-123"
     assert oanda.token == "super-secret-token"
     assert not oanda.practice
+    assert oanda.max_spread_pips == 2.0
+    assert oanda.max_price_age_seconds == 10.0
+    assert oanda.max_order_slippage_pips == 0.5
     assert news.api_key == "te-secret-key"
     assert news.importance == (2, 3)
     assert safe["oanda_token"].endswith("oken")
@@ -95,6 +101,9 @@ def test_env_file_and_env_aliases_load_runtime_config(tmp_path) -> None:
         SMC_TA_TIMEFRAMES=M15,H1
         OANDA_ACCOUNT_ID=demo-account
         OANDA_TOKEN="demo-token"
+        SMC_TA_OANDA_MAX_SPREAD_PIPS=1.5
+        SMC_TA_OANDA_MAX_PRICE_AGE_SECONDS=8
+        SMC_TA_OANDA_MAX_ORDER_SLIPPAGE_PIPS=0.25
         TRADING_ECONOMICS_API_KEY=calendar-key
         SMC_TA_REQUIRE_NEWS_FILTER=true
         SMC_TA_JOURNAL_PATH=journal.csv
@@ -112,6 +121,9 @@ def test_env_file_and_env_aliases_load_runtime_config(tmp_path) -> None:
     assert config.timeframes == ("M15", "H1")
     assert config.oanda_account_id == "demo-account"
     assert config.oanda_token == "demo-token"
+    assert config.oanda_max_spread_pips == 1.5
+    assert config.oanda_max_price_age_seconds == 8
+    assert config.oanda_max_order_slippage_pips == 0.25
     assert config.trading_economics_api_key == "calendar-key"
     assert config.validate().ok
 
@@ -154,3 +166,20 @@ def test_invalid_symbols_timeframes_and_risk_are_errors() -> None:
     codes = issue_codes(config)
 
     assert {"invalid_symbol", "invalid_timeframe", "invalid_risk_percent"}.issubset(codes)
+
+
+def test_invalid_oanda_safety_values_are_errors() -> None:
+    config = RuntimeConfig(
+        broker="oanda",
+        oanda_max_spread_pips=0.0,
+        oanda_max_price_age_seconds=-1.0,
+        oanda_max_order_slippage_pips=-0.1,
+    )
+
+    codes = issue_codes(config)
+
+    assert {
+        "invalid_oanda_max_spread_pips",
+        "invalid_oanda_max_price_age_seconds",
+        "invalid_oanda_max_order_slippage_pips",
+    }.issubset(codes)

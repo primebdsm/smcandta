@@ -53,6 +53,14 @@ assert_preflight_ready(
 
 Use preflight after constructing runtime objects and before starting a repeated demo/live bot loop. See `docs/PREFLIGHT_READINESS.md`.
 
+## OANDA Practice Check
+
+```bash
+python examples/oanda_practice_check.py --symbols EURUSD --max-spread-pips 2
+```
+
+Use this before OANDA demo forward testing. It probes account, instrument metadata, and current pricing without placing an order. See `docs/OANDA_PRACTICE_HARDENING.md`.
+
 ## Real News Provider
 
 ```python

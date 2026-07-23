@@ -13,6 +13,7 @@ For the complete post-roadmap audit, see `docs/FINAL_AUDIT_REPORT.md`.
 - Confluence engine combining SMC and TA into analysis signals
 - Broker adapter protocol and paper broker
 - OANDA REST broker adapter and OANDA candle downloader
+- OANDA practice-mode hardening with account instrument metadata checks, price freshness/spread gates, conservative REST retries, order-rejection classification, and a non-trading readiness CLI
 - Optional MetaTrader 5 terminal adapter and candle downloader
 - CSV historical data source
 - Data quality validator for required columns, NaNs, invalid OHLC, duplicate/non-monotonic timestamps, missing candles, weekend candles, spread anomalies, and range spikes
@@ -45,7 +46,7 @@ For the complete post-roadmap audit, see `docs/FINAL_AUDIT_REPORT.md`.
 .venv/bin/python -m pytest
 ```
 
-Result: 69 passed.
+Result: 77 passed.
 
 ## What Is Real
 

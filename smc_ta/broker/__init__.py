@@ -8,7 +8,21 @@ from smc_ta.broker.models import (
     Position,
 )
 from smc_ta.broker.mt5 import MetaTrader5Broker, MetaTrader5CandleDataSource, Mt5UnavailableError
-from smc_ta.broker.oanda import OandaBroker, OandaCandleDataSource, OandaConfig
+from smc_ta.broker.oanda import (
+    OandaApiError,
+    OandaBroker,
+    OandaCandleDataSource,
+    OandaClient,
+    OandaConfig,
+    OandaConnectionError,
+    OandaInstrumentSpec,
+    OandaInstrumentValidationError,
+    OandaOrderRejected,
+    OandaPracticeReadinessReport,
+    OandaPriceSnapshot,
+    OandaPriceValidationError,
+    OandaRateLimitError,
+)
 from smc_ta.broker.paper import PaperBroker
 
 __all__ = [
@@ -17,9 +31,19 @@ __all__ = [
     "MetaTrader5Broker",
     "MetaTrader5CandleDataSource",
     "Mt5UnavailableError",
+    "OandaApiError",
     "OandaBroker",
     "OandaCandleDataSource",
+    "OandaClient",
     "OandaConfig",
+    "OandaConnectionError",
+    "OandaInstrumentSpec",
+    "OandaInstrumentValidationError",
+    "OandaOrderRejected",
+    "OandaPracticeReadinessReport",
+    "OandaPriceSnapshot",
+    "OandaPriceValidationError",
+    "OandaRateLimitError",
     "OrderFill",
     "OrderRequest",
     "PaperBroker",

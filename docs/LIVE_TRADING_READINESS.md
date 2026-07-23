@@ -9,6 +9,7 @@ This repository now contains the main components needed before connecting a real
 - Preflight startup readiness: `smc_ta.preflight.run_preflight`
 - OANDA REST adapter: `smc_ta.broker.OandaBroker`
 - OANDA candle downloader: `smc_ta.broker.OandaCandleDataSource`
+- OANDA practice hardening: `OandaBroker.practice_readiness`, instrument metadata checks, price freshness, spread checks, and order rejection classification
 - Optional MetaTrader 5 adapter: `smc_ta.broker.MetaTrader5Broker`
 - Paper/demo execution: `smc_ta.broker.PaperBroker`
 - Historical CSV source: `smc_ta.data.CsvCandleDataSource`
@@ -105,6 +106,12 @@ Live mode requires `allow_live_trading=True` and `live_confirmation="I_UNDERSTAN
 `run_preflight` combines runtime config, data quality, broker account/position probes, reconciliation, emergency stop, news-filter presence, persistence paths, and lifecycle-store checks into one startup report.
 
 Use `assert_preflight_ready` as the final gate before a repeated demo/live loop starts. See `docs/PREFLIGHT_READINESS.md`.
+
+## OANDA Practice Hardening
+
+`OandaBroker` now validates account-specific instrument metadata before order placement, checks current OANDA bid/ask pricing, blocks stale or wide-spread prices, classifies rate-limit/order-rejection errors, and provides a non-trading practice readiness probe.
+
+Run `python examples/oanda_practice_check.py --symbols EURUSD --max-spread-pips 2` before OANDA demo forward testing. See `docs/OANDA_PRACTICE_HARDENING.md`.
 
 ## Still Broker-Specific
 

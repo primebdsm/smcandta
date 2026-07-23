@@ -17,6 +17,7 @@ It is ready for:
 - Walk-forward strategy comparison
 - Paper broker forward testing
 - OANDA and MT5 demo integration work
+- OANDA practice readiness checks with account instruments and live pricing probes
 - Structured startup safety checks before demo/live loops
 
 It is not yet a turnkey live-money trading system.
@@ -104,6 +105,7 @@ Before real live trading, the selected broker must be demo-tested end to end wit
   - `close_position()`
 - Paper broker for local/demo forward testing
 - OANDA v20 REST adapter
+- OANDA practice-mode hardening for instrument metadata, pricing, spread/freshness checks, conservative retries, and order rejection handling
 - Optional MetaTrader 5 terminal adapter
 - Broker-neutral order, fill, account, and position models
 
@@ -224,18 +226,22 @@ OANDA is the strongest current live-adapter candidate because the repo already h
 - practice/live endpoint switch
 - runtime config builder
 
-OANDA still needs before live:
+OANDA hardening now includes:
 
-- practice-account integration test script
+- non-trading practice readiness CLI
 - instrument precision and minimum/maximum unit validation
-- broker-specific order rejection mapping
-- retry and idempotency policy
-- rate-limit handling
-- market-closed handling
 - price freshness checks
 - spread freshness checks
-- reconnect and timeout policy
-- broker-side transaction sync after restart
+- conservative retry handling for safe REST methods
+- rate-limit and order-rejection classification
+
+OANDA still needs before live:
+
+- real practice-account test evidence with the user's credentials
+- broker-specific transaction sync after restart
+- more exhaustive order-rejection mapping
+- reconnect and timeout policy for long-running bot loops
+- streaming-price support if the bot moves beyond polling
 - live runbook for manual intervention
 
 MT5 is also implemented, but it depends on a local terminal session. MT5 still needs:
@@ -285,13 +291,12 @@ Before live trading:
 
 ## Recommended Next Build Order
 
-1. OANDA practice-mode hardening
-2. Broker-specific execution validation and integration tests
-3. Live dashboard/monitoring upgrade
-4. Broker transaction sync and restart recovery
-5. Demo-forward testing package with reports
-6. Deployment runbook and incident procedures
-7. Optional MT5 hardening or cTrader/FIX adapter
+1. OANDA practice-account execution validation and integration tests
+2. Live dashboard/monitoring upgrade
+3. Broker transaction sync and restart recovery
+4. Demo-forward testing package with reports
+5. Deployment runbook and incident procedures
+6. Optional MT5 hardening or cTrader/FIX adapter
 
 ## Current Verification
 
@@ -304,13 +309,13 @@ The repository test suite currently passes:
 Expected result:
 
 ```text
-69 passed
+77 passed
 ```
 
 ## Final Audit Conclusion
 
 The project is a real Forex SMC/TA analysis, testing, paper execution, and broker-integration framework.
 
-The strongest next engineering move is not adding more indicators. The strongest next move is hardening one broker path, preferably OANDA practice mode first, then connecting that path to monitoring, preflight, lifecycle recovery, and demo-forward reporting.
+The strongest next engineering move is not adding more indicators. The strongest next move is OANDA practice-account execution validation, then connecting that broker path to monitoring, preflight, lifecycle recovery, and demo-forward reporting.
 
 After that, the project can move toward carefully controlled live micro-size testing.
