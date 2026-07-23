@@ -1,5 +1,7 @@
 # Implementation Report
 
+For the complete post-roadmap audit, see `docs/FINAL_AUDIT_REPORT.md`.
+
 ## Added
 
 - Python package `smc_ta`
@@ -72,4 +74,4 @@ The implemented instruments are real in the sense that each one maps to explicit
 
 ## Final Note
 
-This project is an analysis engine. It should be connected to a backtester and demo execution environment before any live-money trading.
+This project is an analysis and broker-integration engine. It should be run through broker-specific demo testing, preflight checks, monitoring, and operational review before any live-money trading.

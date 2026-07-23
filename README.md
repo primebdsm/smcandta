@@ -299,4 +299,6 @@ tests/            Deterministic pytest coverage
 
 ## Status
 
-This is a real, usable analysis library for Forex research, backtesting, paper execution, and broker-adapter integration. It does not include a live broker connector with credentials. Before live use, implement and demo-test the broker-specific adapter for your venue.
+This is a real, usable analysis library for Forex research, backtesting, paper execution, and broker-adapter integration. It includes OANDA and optional MT5 adapter foundations, but it is not a certified turnkey live deployment and does not store broker credentials. Before live use, harden and demo-test the broker-specific path for your venue.
+
+For the final post-roadmap audit and recommended next build order, see `docs/FINAL_AUDIT_REPORT.md`.

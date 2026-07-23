@@ -1,5 +1,7 @@
 # Live Trading Readiness
 
+For the complete post-roadmap audit and recommended next build order, see `docs/FINAL_AUDIT_REPORT.md`.
+
 This repository now contains the main components needed before connecting a real broker:
 
 - Broker interface: `smc_ta.broker.BrokerAdapter`
