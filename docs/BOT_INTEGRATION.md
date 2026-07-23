@@ -11,6 +11,7 @@ flowchart LR
   D --> F["Backtester or Research Notebook"]
   E --> G["Risk Manager"]
   G --> H["Broker Adapter"]
+  C --> I["Chart / Journal Snapshot"]
 ```
 
 ## Expected Candle Shape
@@ -49,6 +50,7 @@ def on_new_closed_candle(candles):
 - Backtesting engine with realistic transaction costs
 - Demo forward testing
 - Risk limits: max daily loss, max open trades, max correlated exposure
+- Optional chart snapshots for review and monitoring
 
 ## Current Live-Readiness Modules
 
@@ -62,5 +64,6 @@ def on_new_closed_candle(candles):
 - `PortfolioRiskManager` for currency exposure, symbol concentration, same-currency, and correlation limits
 - `run_walk_forward` for train/test validation before demo/live use
 - `validate_candle_quality` for missing candles, duplicate timestamps, invalid OHLC, spread spikes, weekend candles, and range spikes
+- `write_analysis_chart` for static SMC/TA chart snapshots from `analyze_forex` output
 - `analyze_multi_timeframe` for higher-timeframe context
 - `classify_smc_setups` for setup labels

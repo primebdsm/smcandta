@@ -40,6 +40,17 @@ calendar = TradingEconomicsCalendarSource(
 
 Use the provider to build the same `NewsFilter` object that the backtester and demo bot already accept. See `docs/NEWS_PROVIDERS.md`.
 
+## Chart Snapshot
+
+```python
+from smc_ta import analyze_forex, write_analysis_chart
+
+result = analyze_forex(candles, symbol="EURUSD")
+write_analysis_chart("analysis_chart.html", result, symbol="EURUSD")
+```
+
+The chart is a review artifact for Codex, journals, alerts, or dashboard snapshots. It renders the existing analysis output and should not be used as a separate source of trading decisions.
+
 ## No-Lookahead Notes
 
 Swing highs/lows require right-side candles for confirmation. The SMC structure module exposes both pivot candle fields and confirmation-time fields. Use confirmation-time columns when backtesting or trading live.

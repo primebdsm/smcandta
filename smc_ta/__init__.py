@@ -23,6 +23,7 @@ from smc_ta.reconciliation import (
 from smc_ta.risk import PortfolioRiskConfig, PortfolioRiskDecision, PortfolioRiskManager, RiskConfig, RiskDecision, RiskManager
 from smc_ta.safety import EmergencyStopConfig, EmergencyStopController, EmergencyStopResult
 from smc_ta.strategy import StrategyProfile, get_strategy_profile, list_strategy_profiles
+from smc_ta.visualization import ChartConfig, render_analysis_chart_html, render_analysis_chart_svg, write_analysis_chart
 from smc_ta.walkforward import (
     WalkForwardCandidate,
     WalkForwardConfig,
@@ -35,6 +36,7 @@ __all__ = [
     "BacktestConfig",
     "BacktestResult",
     "BrokerReconciler",
+    "ChartConfig",
     "ConfluenceConfig",
     "DataQualityConfig",
     "DataQualityReport",
@@ -70,5 +72,8 @@ __all__ = [
     "list_strategy_profiles",
     "run_backtest",
     "run_walk_forward",
+    "render_analysis_chart_html",
+    "render_analysis_chart_svg",
     "validate_candle_quality",
+    "write_analysis_chart",
 ]

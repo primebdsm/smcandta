@@ -20,6 +20,7 @@ This repository now contains the main components needed before connecting a real
 - CSV and SQLite journals: `smc_ta.journal.TradeJournal`, `smc_ta.journal.SQLiteTradeJournal`
 - Monitoring metrics: `smc_ta.monitoring.performance_summary`
 - Static dashboard: `smc_ta.dashboard.write_dashboard`
+- Static chart visualization: `smc_ta.visualization.write_analysis_chart`
 - Alerts: `smc_ta.alerts.TelegramAlert`, `smc_ta.alerts.DiscordWebhookAlert`, `smc_ta.alerts.EmailAlert`
 - Strategy profiles: `smc_ta.strategy.get_strategy_profile`
 
@@ -72,6 +73,12 @@ When `close_positions_on_trigger=True`, `DemoTradingBot` closes open positions f
 `TradingEconomicsCalendarSource` downloads provider calendar rows, maps country events to Forex currencies, maps provider importance to low/medium/high impact, normalizes timestamps to UTC, and feeds the same `NewsFilter` used by the backtester and demo bot.
 
 Credentials are read from `TRADING_ECONOMICS_API_KEY` through `TradingEconomicsConfig.from_env()`. See `docs/NEWS_PROVIDERS.md` for usage.
+
+## Chart Visualization
+
+`write_analysis_chart` renders a standalone HTML/SVG chart from `analyze_forex` output. It shows candles, volume, EMA/VWAP overlays, FVGs, order blocks, liquidity pools, liquidity sweeps, BOS/CHoCH, signal arrows, and latest entry/stop/target reference lines.
+
+Use charts for review, alerts, journal snapshots, and debugging. The chart renderer does not make execution decisions.
 
 ## Still Broker-Specific
 

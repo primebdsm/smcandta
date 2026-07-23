@@ -63,6 +63,7 @@ Live-readiness components:
 - Walk-forward optimization for train/test strategy validation
 - CSV journal and monitoring metrics
 - SQLite journal, Telegram/Discord/email alerts, static dashboard
+- Static SMC/TA chart visualization with candles, zones, liquidity, structure, signals, and risk references
 - Multi-timeframe analysis and named SMC setup classifier
 
 ## Install
@@ -148,6 +149,20 @@ result = run_walk_forward(
 print(result.summary)
 ```
 
+## Chart Visualization
+
+```python
+from smc_ta import ChartConfig, analyze_forex, write_analysis_chart
+
+result = analyze_forex(candles, symbol="EURUSD")
+write_analysis_chart(
+    "analysis_chart.html",
+    result,
+    symbol="EURUSD",
+    config=ChartConfig(visible_bars=160),
+)
+```
+
 ## Demo Forward Test
 
 ```python
@@ -231,6 +246,7 @@ smc_ta/
   strategy/       Strategy presets
   alerts/         Telegram, Discord, and email alerts
   dashboard/      Static local dashboard renderer
+  visualization/  Static SMC/TA chart renderer
 docs/             Codex, bot, and instrument documentation
 examples/         Working Python examples
 tests/            Deterministic pytest coverage

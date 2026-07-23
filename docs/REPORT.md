@@ -30,6 +30,7 @@
 - CSV and SQLite journals
 - Telegram, Discord, and email alerts
 - Static HTML dashboard and monitoring metrics
+- Static HTML/SVG chart visualization for candles, SMC zones, liquidity, BOS/CHoCH, TA overlays, signals, and risk reference lines
 - Example script for reading CSV candles and printing latest analysis
 - Pytest suite covering core indicators, SMC events, Forex helpers, and confluence output
 
@@ -39,7 +40,7 @@
 .venv/bin/python -m pytest
 ```
 
-Result: 51 passed.
+Result: 53 passed.
 
 ## What Is Real
 
@@ -50,6 +51,7 @@ The implemented instruments are real in the sense that each one maps to explicit
 - Forex helpers use real pip-size conventions and spread/risk math.
 - The signal engine produces reproducible scores and reasons from candle data.
 - The Trading Economics connector is real provider plumbing: it calls the provider calendar API, maps response fields to this package's `EconomicEvent`, and feeds the existing `NewsFilter`.
+- The chart renderer is a real reporting instrument: it converts the package's `AnalysisResult` tables into portable HTML/SVG review charts without changing strategy decisions.
 
 ## What Still Needs To Be Added Before Live Trading
 
@@ -57,6 +59,7 @@ The implemented instruments are real in the sense that each one maps to explicit
 - Broker-specific production reconciliation
 - Persistent database layer beyond CSV
 - Production alerting and incident response
+- Interactive live chart streaming and broker-synchronized screenshot automation
 - Broker-specific disaster recovery runbook
 - More broker-specific contract metadata
 
