@@ -13,6 +13,7 @@
 - OANDA REST broker adapter and OANDA candle downloader
 - Optional MetaTrader 5 terminal adapter and candle downloader
 - CSV historical data source
+- Data quality validator for required columns, NaNs, invalid OHLC, duplicate/non-monotonic timestamps, missing candles, weekend candles, spread anomalies, and range spikes
 - Multi-timeframe analysis engine
 - Named SMC setup classifier
 - Backtester with candle spread, slippage, commission, sessions, trailing stops, partial closes, daily trade limits, and pair reports
@@ -35,7 +36,7 @@
 .venv/bin/python -m pytest
 ```
 
-Result: 33 passed.
+Result: 40 passed.
 
 ## What Is Real
 

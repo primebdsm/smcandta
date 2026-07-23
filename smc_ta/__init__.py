@@ -10,6 +10,7 @@ from smc_ta.engine.confluence import (
 from smc_ta.engine.multitimeframe import MultiTimeframeConfig, MultiTimeframeResult, analyze_multi_timeframe
 from smc_ta.backtest import BacktestConfig, BacktestResult, run_backtest
 from smc_ta.broker import PaperBroker
+from smc_ta.data import DataQualityConfig, DataQualityReport, validate_candle_quality
 from smc_ta.live import DemoTradingBot
 from smc_ta.reconciliation import (
     BrokerReconciler,
@@ -34,6 +35,8 @@ __all__ = [
     "BacktestResult",
     "BrokerReconciler",
     "ConfluenceConfig",
+    "DataQualityConfig",
+    "DataQualityReport",
     "DemoTradingBot",
     "EmergencyStopConfig",
     "EmergencyStopController",
@@ -60,4 +63,5 @@ __all__ = [
     "list_strategy_profiles",
     "run_backtest",
     "run_walk_forward",
+    "validate_candle_quality",
 ]

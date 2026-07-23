@@ -8,6 +8,7 @@ This repository now contains the main components needed before connecting a real
 - Optional MetaTrader 5 adapter: `smc_ta.broker.MetaTrader5Broker`
 - Paper/demo execution: `smc_ta.broker.PaperBroker`
 - Historical CSV source: `smc_ta.data.CsvCandleDataSource`
+- Data quality validator: `smc_ta.data.validate_candle_quality`
 - Backtester with spread/slippage: `smc_ta.backtest.run_backtest`
 - Economic news filter and JSON API source: `smc_ta.news.NewsFilter`, `smc_ta.news.JsonEconomicCalendarSource`
 - Position/risk manager: `smc_ta.risk.RiskManager`

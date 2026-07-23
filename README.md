@@ -51,6 +51,7 @@ Live-readiness components:
 - Optional MetaTrader 5 terminal adapter and candle downloader
 - Paper broker for demo forward testing
 - CSV historical data source
+- Data quality validator for missing candles, duplicates, invalid OHLC, spread spikes, weekend candles, and range spikes
 - Backtester with spread, slippage, and commission
 - Economic news blocking filter
 - Generic JSON economic calendar API source
@@ -163,6 +164,18 @@ from smc_ta.validation import normalize_ohlcv
 df = normalize_ohlcv(raw_df)
 ```
 
+## Data Quality Check
+
+```python
+from smc_ta.data import DataQualityConfig, validate_candle_quality
+
+report = validate_candle_quality(
+    candles,
+    config=DataQualityConfig(symbol="EURUSD", timeframe="M15"),
+)
+print(report.summary())
+```
+
 ## Forex Reality
 
 Forex is decentralized, broker spreads vary, and spot FX volume is normally not centralized. The volume tools in this repository treat broker tick volume as a proxy, not as exchange-wide volume.
@@ -183,6 +196,7 @@ smc_ta/
   engine/         SMC + TA confluence engine
   broker/         Broker interface and paper execution
   data/           Historical candle sources
+  data/quality.py Data quality reports
   backtest/       Spread/slippage-aware backtester
   news/           Economic calendar filters
   risk/           Position sizing and exposure controls
