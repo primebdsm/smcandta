@@ -61,6 +61,7 @@ Live-readiness components:
 - Broker reconciliation layer with in-memory and SQLite expected-position ledgers
 - Emergency stop / kill-switch controller with optional close-all behavior
 - Trade lifecycle state machine with memory and SQLite stores
+- Runtime configuration and live-mode guardrails with secret redaction
 - Walk-forward optimization for train/test strategy validation
 - CSV journal and monitoring metrics
 - SQLite journal, Telegram/Discord/email alerts, static dashboard
@@ -179,6 +180,16 @@ bot = DemoTradingBot(
 )
 ```
 
+## Runtime Guardrails
+
+```python
+from smc_ta import RuntimeConfig, assert_runtime_ready
+
+config = RuntimeConfig.from_env()
+assert_runtime_ready(config)
+print(config.to_safe_dict())
+```
+
 ## Demo Forward Test
 
 ```python
@@ -256,6 +267,7 @@ smc_ta/
   reconciliation/ Broker-vs-ledger state safety checks
   safety/         Emergency stop / kill-switch controls
   lifecycle/      Trade lifecycle state machine and stores
+  config/         Runtime config validation and live guardrails
   walkforward/    Rolling train/test optimization
   live/           Demo-forward bot orchestration
   journal/        CSV trade journal

@@ -28,6 +28,17 @@ The result object contains:
 5. Apply your risk, news, spread, execution, and account rules.
 6. Send orders through a separate broker adapter.
 
+## Runtime Guardrails
+
+```python
+from smc_ta import RuntimeConfig, assert_runtime_ready
+
+config = RuntimeConfig.from_env()
+assert_runtime_ready(config)
+```
+
+Use runtime config checks before constructing broker adapters or starting demo/live loops. See `docs/RUNTIME_CONFIG.md`.
+
 ## Real News Provider
 
 ```python

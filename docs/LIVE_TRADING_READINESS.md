@@ -3,6 +3,7 @@
 This repository now contains the main components needed before connecting a real broker:
 
 - Broker interface: `smc_ta.broker.BrokerAdapter`
+- Runtime config and live guardrails: `smc_ta.config.RuntimeConfig`
 - OANDA REST adapter: `smc_ta.broker.OandaBroker`
 - OANDA candle downloader: `smc_ta.broker.OandaCandleDataSource`
 - Optional MetaTrader 5 adapter: `smc_ta.broker.MetaTrader5Broker`
@@ -46,14 +47,15 @@ Keep broker-specific authentication, order IDs, retry logic, and reconciliation 
 1. Backtest with spread, slippage, and commission.
 2. Review the trade journal and monitoring metrics.
 3. Forward test through `PaperBroker`.
-4. Add `BrokerReconciler` with a persistent expected-position ledger.
-5. Connect one broker adapter in demo mode.
-6. Reconcile positions and balances after every cycle.
-7. Add portfolio/correlation limits for multi-pair trading.
-8. Enable `EmergencyStopController` with manual stop, equity, drawdown, position, runtime-error, and reconciliation-failure limits.
-9. Enable `SQLiteTradeLifecycleStore` so every signal, block, submission, fill, failure, and close is auditable.
-10. Add a real economic calendar source such as `TradingEconomicsCalendarSource` and verify event times against your broker/server timezone.
-11. Only then consider small live size.
+4. Validate `RuntimeConfig` and keep live mode blocked unless explicitly armed.
+5. Add `BrokerReconciler` with a persistent expected-position ledger.
+6. Connect one broker adapter in demo mode.
+7. Reconcile positions and balances after every cycle.
+8. Add portfolio/correlation limits for multi-pair trading.
+9. Enable `EmergencyStopController` with manual stop, equity, drawdown, position, runtime-error, and reconciliation-failure limits.
+10. Enable `SQLiteTradeLifecycleStore` so every signal, block, submission, fill, failure, and close is auditable.
+11. Add a real economic calendar source such as `TradingEconomicsCalendarSource` and verify event times against your broker/server timezone.
+12. Only then consider small live size.
 
 ## Emergency Stop
 
@@ -87,6 +89,12 @@ Use charts for review, alerts, journal snapshots, and debugging. The chart rende
 `TradeLifecycleStateMachine` tracks each trade attempt through `signal`, `approved`, `blocked`, `submitted`, `open`, `partially_closed`, `closed`, `cancelled`, and `failed` states. `SQLiteTradeLifecycleStore` persists the latest state plus event history for audit and replay.
 
 `DemoTradingBot` can write lifecycle records automatically through `trade_lifecycle_store`. This does not replace broker reconciliation or emergency stop controls; it makes their decisions visible and durable.
+
+## Runtime Guardrails
+
+`RuntimeConfig` loads environment, `.env`-style files, or JSON config and validates mode, broker, symbols, timeframes, required credentials, news-filter requirements, lifecycle/journal paths, and live-mode arming.
+
+Live mode requires `allow_live_trading=True` and `live_confirmation="I_UNDERSTAND_LIVE_FOREX_RISK"`. OANDA live mode also requires `oanda_practice=False`. See `docs/RUNTIME_CONFIG.md`.
 
 ## Still Broker-Specific
 

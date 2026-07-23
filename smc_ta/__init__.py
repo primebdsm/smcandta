@@ -10,6 +10,14 @@ from smc_ta.engine.confluence import (
 from smc_ta.engine.multitimeframe import MultiTimeframeConfig, MultiTimeframeResult, analyze_multi_timeframe
 from smc_ta.backtest import BacktestConfig, BacktestResult, run_backtest
 from smc_ta.broker import PaperBroker
+from smc_ta.config import (
+    LIVE_CONFIRMATION_PHRASE,
+    ConfigValidationError,
+    ConfigValidationReport,
+    RuntimeConfig,
+    assert_runtime_ready,
+    validate_runtime_config,
+)
 from smc_ta.data import DataQualityConfig, DataQualityReport, validate_candle_quality
 from smc_ta.lifecycle import (
     MemoryTradeLifecycleStore,
@@ -45,12 +53,15 @@ __all__ = [
     "BrokerReconciler",
     "ChartConfig",
     "ConfluenceConfig",
+    "ConfigValidationError",
+    "ConfigValidationReport",
     "DataQualityConfig",
     "DataQualityReport",
     "DemoTradingBot",
     "EmergencyStopConfig",
     "EmergencyStopController",
     "EmergencyStopResult",
+    "LIVE_CONFIRMATION_PHRASE",
     "MemoryPositionLedger",
     "MemoryTradeLifecycleStore",
     "MultiTimeframeConfig",
@@ -64,6 +75,7 @@ __all__ = [
     "RiskConfig",
     "RiskDecision",
     "RiskManager",
+    "RuntimeConfig",
     "SQLitePositionLedger",
     "SQLiteTradeLifecycleStore",
     "StrategyProfile",
@@ -78,6 +90,7 @@ __all__ = [
     "WalkForwardResult",
     "analyze_forex",
     "analyze_multi_timeframe",
+    "assert_runtime_ready",
     "build_smc_ta_features",
     "generate_confluence_signals",
     "get_strategy_profile",
@@ -87,5 +100,6 @@ __all__ = [
     "render_analysis_chart_html",
     "render_analysis_chart_svg",
     "validate_candle_quality",
+    "validate_runtime_config",
     "write_analysis_chart",
 ]
