@@ -20,6 +20,7 @@
 - Strategy profiles
 - Risk manager for position sizing, daily loss, open-position, and confidence/RR checks
 - Broker reconciliation service with in-memory and SQLite expected-position ledgers
+- Emergency stop / kill-switch controller with manual, file, equity, drawdown, position, runtime-error, reconciliation-failure, and optional close-all controls
 - Demo forward-testing bot
 - CSV and SQLite journals
 - Telegram, Discord, and email alerts
@@ -33,7 +34,7 @@
 .venv/bin/python -m pytest
 ```
 
-Result: 24 passed.
+Result: 29 passed.
 
 ## What Is Real
 
@@ -52,7 +53,7 @@ The implemented instruments are real in the sense that each one maps to explicit
 - Walk-forward optimization workflow
 - Persistent database layer beyond CSV
 - Production alerting and incident response
-- Broker reconciliation and emergency stop workflow
+- Broker-specific disaster recovery runbook
 - More broker-specific contract metadata
 
 ## Final Note

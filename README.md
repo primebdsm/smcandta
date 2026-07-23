@@ -56,6 +56,7 @@ Live-readiness components:
 - Generic JSON economic calendar API source
 - Risk manager for position sizing and exposure limits
 - Broker reconciliation layer with in-memory and SQLite expected-position ledgers
+- Emergency stop / kill-switch controller with optional close-all behavior
 - CSV journal and monitoring metrics
 - SQLite journal, Telegram/Discord/email alerts, static dashboard
 - Multi-timeframe analysis and named SMC setup classifier
@@ -172,6 +173,7 @@ smc_ta/
   news/           Economic calendar filters
   risk/           Position sizing and exposure controls
   reconciliation/ Broker-vs-ledger state safety checks
+  safety/         Emergency stop / kill-switch controls
   live/           Demo-forward bot orchestration
   journal/        CSV trade journal
   monitoring/     Equity and strategy health metrics

@@ -57,5 +57,6 @@ def on_new_closed_candle(candles):
 - `JsonEconomicCalendarSource` for provider-specific calendar APIs
 - `SQLiteTradeJournal` for persistent local journals
 - `BrokerReconciler` for blocking when broker positions differ from bot ledger state
+- `EmergencyStopController` for hard stop, manual stop file, drawdown, equity, runtime-error, and optional close-all controls
 - `analyze_multi_timeframe` for higher-timeframe context
 - `classify_smc_setups` for setup labels

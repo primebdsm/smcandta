@@ -19,6 +19,7 @@ from smc_ta.reconciliation import (
     SQLitePositionLedger,
 )
 from smc_ta.risk import RiskConfig, RiskDecision, RiskManager
+from smc_ta.safety import EmergencyStopConfig, EmergencyStopController, EmergencyStopResult
 from smc_ta.strategy import StrategyProfile, get_strategy_profile, list_strategy_profiles
 
 __all__ = [
@@ -28,6 +29,9 @@ __all__ = [
     "BrokerReconciler",
     "ConfluenceConfig",
     "DemoTradingBot",
+    "EmergencyStopConfig",
+    "EmergencyStopController",
+    "EmergencyStopResult",
     "MemoryPositionLedger",
     "MultiTimeframeConfig",
     "MultiTimeframeResult",

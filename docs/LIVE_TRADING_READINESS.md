@@ -13,6 +13,7 @@ This repository now contains the main components needed before connecting a real
 - Position/risk manager: `smc_ta.risk.RiskManager`
 - Broker reconciliation: `smc_ta.reconciliation.BrokerReconciler`
 - Expected-position ledgers: `MemoryPositionLedger`, `SQLitePositionLedger`
+- Emergency stop / kill switch: `smc_ta.safety.EmergencyStopController`
 - Demo forward bot: `smc_ta.live.DemoTradingBot`
 - CSV and SQLite journals: `smc_ta.journal.TradeJournal`, `smc_ta.journal.SQLiteTradeJournal`
 - Monitoring metrics: `smc_ta.monitoring.performance_summary`
@@ -44,8 +45,23 @@ Keep broker-specific authentication, order IDs, retry logic, and reconciliation 
 4. Add `BrokerReconciler` with a persistent expected-position ledger.
 5. Connect one broker adapter in demo mode.
 6. Reconcile positions and balances after every cycle.
-7. Add emergency stop controls.
+7. Enable `EmergencyStopController` with manual stop, equity, drawdown, position, runtime-error, and reconciliation-failure limits.
 8. Only then consider small live size.
+
+## Emergency Stop
+
+The kill switch can stop all new trading when any configured safety rule is hit:
+
+- manual controller activation
+- manual stop file exists
+- equity falls below a minimum
+- daily loss reaches a configured percent
+- total drawdown reaches a configured percent
+- open positions reach a configured limit
+- reconciliation fails
+- runtime error threshold is reached
+
+When `close_positions_on_trigger=True`, `DemoTradingBot` closes open positions for the active symbol and records them in the reconciliation ledger and journal.
 
 ## Still Broker-Specific
 
