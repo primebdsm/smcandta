@@ -127,6 +127,14 @@ candles = source.get_candles("EURUSD", "M15", limit=500)
 python examples/oanda_practice_check.py --symbols EURUSD,GBPUSD --max-spread-pips 2
 ```
 
+## OANDA Practice Execution Validation
+
+```bash
+python examples/oanda_execution_validate.py --symbol EURUSD --max-spread-pips 2 --execute
+```
+
+The execution validator opens and closes minimum-size OANDA practice trades only when `--execute` is passed.
+
 ## Economic News Filter
 
 ```python

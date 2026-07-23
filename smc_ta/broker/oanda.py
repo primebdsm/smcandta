@@ -578,6 +578,7 @@ class OandaBroker:
             raise _order_rejected_from_response(response, fallback_message="OANDA order did not fill")
         price = float(fill_tx.get("price", reference_price))
         filled_units = abs(float(fill_tx.get("units", signed_units)))
+        trade_opened_id = _trade_opened_id(fill_tx)
         return OrderFill(
             order_id=str(fill_tx.get("id", request.client_order_id)),
             symbol=request.symbol.upper(),
@@ -589,6 +590,13 @@ class OandaBroker:
             commission=float(fill_tx.get("commission", 0.0)),
             timestamp=_parse_oanda_time(fill_tx.get("time")),
             client_order_id=request.client_order_id,
+            metadata={
+                "oanda_transaction_id": str(fill_tx.get("id", "")),
+                "oanda_trade_opened_id": trade_opened_id,
+                "oanda_trade_reduced_id": _trade_reduced_id(fill_tx),
+                "oanda_trade_closed_ids": _trade_closed_ids(fill_tx),
+                "oanda_related_transaction_ids": tuple(str(item) for item in response.get("relatedTransactionIDs", [])),
+            },
         )
 
     def close_position(self, position_id: str, *, market_price: float) -> OrderFill:
@@ -613,6 +621,13 @@ class OandaBroker:
             slippage=abs(price - market_price),
             commission=float(fill_tx.get("commission", 0.0)),
             timestamp=_parse_oanda_time(fill_tx.get("time")),
+            metadata={
+                "oanda_transaction_id": str(fill_tx.get("id", "")),
+                "oanda_trade_opened_id": _trade_opened_id(fill_tx),
+                "oanda_trade_reduced_id": _trade_reduced_id(fill_tx),
+                "oanda_trade_closed_ids": _trade_closed_ids(fill_tx),
+                "oanda_related_transaction_ids": tuple(str(item) for item in response.get("relatedTransactionIDs", [])),
+            },
         )
 
 
@@ -746,6 +761,54 @@ def _has_order_rejection(payload: dict[str, Any]) -> bool:
 def _order_rejected_from_response(response: dict[str, Any], *, fallback_message: str) -> OandaOrderRejected:
     reason = _payload_error_message(response) or fallback_message
     return OandaOrderRejected(reason, error_code=_payload_error_code(response), error_message=reason, response=response)
+
+
+def _trade_opened_id(fill_tx: dict[str, Any]) -> str | None:
+    for key in ("tradeOpenedID", "tradeID"):
+        if fill_tx.get(key):
+            return str(fill_tx[key])
+    opened = fill_tx.get("tradeOpened")
+    if isinstance(opened, dict):
+        for key in ("tradeID", "id"):
+            if opened.get(key):
+                return str(opened[key])
+    opened_list = fill_tx.get("tradesOpened")
+    if isinstance(opened_list, list):
+        for item in opened_list:
+            if isinstance(item, dict):
+                for key in ("tradeID", "id"):
+                    if item.get(key):
+                        return str(item[key])
+    return None
+
+
+def _trade_reduced_id(fill_tx: dict[str, Any]) -> str | None:
+    for key in ("tradeReducedID",):
+        if fill_tx.get(key):
+            return str(fill_tx[key])
+    reduced = fill_tx.get("tradeReduced")
+    if isinstance(reduced, dict):
+        for key in ("tradeID", "id"):
+            if reduced.get(key):
+                return str(reduced[key])
+    return None
+
+
+def _trade_closed_ids(fill_tx: dict[str, Any]) -> tuple[str, ...]:
+    closed_ids: list[str] = []
+    for key in ("tradeClosedIDs",):
+        value = fill_tx.get(key)
+        if isinstance(value, list):
+            closed_ids.extend(str(item) for item in value)
+    closed_list = fill_tx.get("tradesClosed")
+    if isinstance(closed_list, list):
+        for item in closed_list:
+            if isinstance(item, dict):
+                for key in ("tradeID", "id"):
+                    if item.get(key):
+                        closed_ids.append(str(item[key]))
+                        break
+    return tuple(dict.fromkeys(closed_ids))
 
 
 def _json_payload(detail: str) -> dict[str, Any]:

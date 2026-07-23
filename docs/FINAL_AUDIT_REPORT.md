@@ -18,6 +18,7 @@ It is ready for:
 - Paper broker forward testing
 - OANDA and MT5 demo integration work
 - OANDA practice readiness checks with account instruments and live pricing probes
+- OANDA practice execution validation tooling for guarded minimum-size demo trades
 - Structured startup safety checks before demo/live loops
 
 It is not yet a turnkey live-money trading system.
@@ -106,6 +107,7 @@ Before real live trading, the selected broker must be demo-tested end to end wit
 - Paper broker for local/demo forward testing
 - OANDA v20 REST adapter
 - OANDA practice-mode hardening for instrument metadata, pricing, spread/freshness checks, conservative retries, and order rejection handling
+- OANDA practice execution validator for minimum-unit open/close, SL/TP open/close, rejected-order probe, restart reconciliation, and spread/slippage reporting
 - Optional MetaTrader 5 terminal adapter
 - Broker-neutral order, fill, account, and position models
 
@@ -229,15 +231,19 @@ OANDA is the strongest current live-adapter candidate because the repo already h
 OANDA hardening now includes:
 
 - non-trading practice readiness CLI
+- guarded practice execution validation CLI
 - instrument precision and minimum/maximum unit validation
 - price freshness checks
 - spread freshness checks
 - conservative retry handling for safe REST methods
 - rate-limit and order-rejection classification
+- minimum-size order open/close validation
+- SL/TP order open/close validation
+- restart/reconciliation validation
+- spread/slippage execution report
 
 OANDA still needs before live:
 
-- real practice-account test evidence with the user's credentials
 - broker-specific transaction sync after restart
 - more exhaustive order-rejection mapping
 - reconnect and timeout policy for long-running bot loops
@@ -291,7 +297,7 @@ Before live trading:
 
 ## Recommended Next Build Order
 
-1. OANDA practice-account execution validation and integration tests
+1. Run OANDA practice-account execution validation with the user's credentials and save the report artifacts
 2. Live dashboard/monitoring upgrade
 3. Broker transaction sync and restart recovery
 4. Demo-forward testing package with reports
@@ -309,13 +315,13 @@ The repository test suite currently passes:
 Expected result:
 
 ```text
-77 passed
+81 passed
 ```
 
 ## Final Audit Conclusion
 
 The project is a real Forex SMC/TA analysis, testing, paper execution, and broker-integration framework.
 
-The strongest next engineering move is not adding more indicators. The strongest next move is OANDA practice-account execution validation, then connecting that broker path to monitoring, preflight, lifecycle recovery, and demo-forward reporting.
+The strongest next engineering move is not adding more indicators. The strongest next move is running OANDA practice-account execution validation with real practice credentials, then connecting that broker path to monitoring, preflight, lifecycle recovery, and demo-forward reporting.
 
 After that, the project can move toward carefully controlled live micro-size testing.

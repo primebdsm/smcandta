@@ -50,6 +50,7 @@ class OrderFill:
     commission: float
     timestamp: datetime
     client_order_id: str | None = None
+    metadata: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
@@ -91,4 +92,3 @@ class AccountState:
     free_margin: float = 0.0
     currency: str = "USD"
     timestamp: datetime = field(default_factory=utc_now)
-

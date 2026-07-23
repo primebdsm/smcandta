@@ -140,6 +140,7 @@ def test_oanda_place_order_uses_metadata_pricing_and_price_bound() -> None:
                 "price": "1.10021",
                 "commission": "0.0",
                 "time": pd.Timestamp.now(tz="UTC").isoformat(),
+                "tradeOpened": {"tradeID": "trade-1"},
             }
         },
     }
@@ -160,6 +161,7 @@ def test_oanda_place_order_uses_metadata_pricing_and_price_bound() -> None:
     order_call = broker.client.calls[-1]
     order = order_call["payload"]["order"]
     assert fill.order_id == "fill-1"
+    assert fill.metadata["oanda_trade_opened_id"] == "trade-1"
     assert fill.spread == pytest.approx(0.0002)
     assert order["instrument"] == "EUR_USD"
     assert order["units"] == "1000"

@@ -14,6 +14,7 @@ For the complete post-roadmap audit, see `docs/FINAL_AUDIT_REPORT.md`.
 - Broker adapter protocol and paper broker
 - OANDA REST broker adapter and OANDA candle downloader
 - OANDA practice-mode hardening with account instrument metadata checks, price freshness/spread gates, conservative REST retries, order-rejection classification, and a non-trading readiness CLI
+- OANDA practice execution validator for minimum-size order open/close, SL/TP order open/close, rejected-order probe, restart reconciliation, and spread/slippage reports
 - Optional MetaTrader 5 terminal adapter and candle downloader
 - CSV historical data source
 - Data quality validator for required columns, NaNs, invalid OHLC, duplicate/non-monotonic timestamps, missing candles, weekend candles, spread anomalies, and range spikes
@@ -46,7 +47,7 @@ For the complete post-roadmap audit, see `docs/FINAL_AUDIT_REPORT.md`.
 .venv/bin/python -m pytest
 ```
 
-Result: 77 passed.
+Result: 81 passed.
 
 ## What Is Real
 

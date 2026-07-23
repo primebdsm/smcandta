@@ -61,6 +61,14 @@ python examples/oanda_practice_check.py --symbols EURUSD --max-spread-pips 2
 
 Use this before OANDA demo forward testing. It probes account, instrument metadata, and current pricing without placing an order. See `docs/OANDA_PRACTICE_HARDENING.md`.
 
+## OANDA Execution Validation
+
+```bash
+python examples/oanda_execution_validate.py --symbol EURUSD --max-spread-pips 2 --execute
+```
+
+Use this only with an OANDA practice account. It validates minimum-size order open/close, SL/TP order open/close, rejected-order handling, restart reconciliation, and spread/slippage reporting. See `docs/OANDA_EXECUTION_VALIDATION.md`.
+
 ## Real News Provider
 
 ```python

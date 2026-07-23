@@ -23,6 +23,14 @@ from smc_ta.broker.oanda import (
     OandaPriceValidationError,
     OandaRateLimitError,
 )
+from smc_ta.broker.oanda_validation import (
+    OandaExecutionSample,
+    OandaExecutionValidationCheck,
+    OandaExecutionValidationConfig,
+    OandaExecutionValidationReport,
+    OandaPracticeExecutionValidator,
+    run_oanda_practice_execution_validation,
+)
 from smc_ta.broker.paper import PaperBroker
 
 __all__ = [
@@ -37,10 +45,15 @@ __all__ = [
     "OandaClient",
     "OandaConfig",
     "OandaConnectionError",
+    "OandaExecutionSample",
+    "OandaExecutionValidationCheck",
+    "OandaExecutionValidationConfig",
+    "OandaExecutionValidationReport",
     "OandaInstrumentSpec",
     "OandaInstrumentValidationError",
     "OandaOrderRejected",
     "OandaPracticeReadinessReport",
+    "OandaPracticeExecutionValidator",
     "OandaPriceSnapshot",
     "OandaPriceValidationError",
     "OandaRateLimitError",
@@ -48,4 +61,5 @@ __all__ = [
     "OrderRequest",
     "PaperBroker",
     "Position",
+    "run_oanda_practice_execution_validation",
 ]

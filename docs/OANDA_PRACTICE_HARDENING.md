@@ -129,6 +129,8 @@ With this config, a buy order is blocked locally if:
 
 Code-level hardening is not the same as broker certification.
 
+For guarded minimum-size practice order tests, use `docs/OANDA_EXECUTION_VALIDATION.md`.
+
 Before live trading, still run:
 
 - practice-account readiness check

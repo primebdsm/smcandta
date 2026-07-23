@@ -113,6 +113,12 @@ Use `assert_preflight_ready` as the final gate before a repeated demo/live loop 
 
 Run `python examples/oanda_practice_check.py --symbols EURUSD --max-spread-pips 2` before OANDA demo forward testing. See `docs/OANDA_PRACTICE_HARDENING.md`.
 
+## OANDA Execution Validation
+
+`run_oanda_practice_execution_validation` can place and close minimum-size OANDA practice trades, validate SL/TP-on-fill, verify rejected-order handling, simulate restart reconciliation through SQLite, and print spread/slippage samples.
+
+Run `python examples/oanda_execution_validate.py --symbol EURUSD --max-spread-pips 2 --execute` only on a practice account. See `docs/OANDA_EXECUTION_VALIDATION.md`.
+
 ## Still Broker-Specific
 
 The repository ships OANDA REST and optional MetaTrader 5 adapter implementations. cTrader/FIX and any broker-specific production controls still need to be implemented for the selected venue. Credentials are never stored in the repository.
