@@ -57,6 +57,7 @@ Live-readiness components:
 - Risk manager for position sizing and exposure limits
 - Broker reconciliation layer with in-memory and SQLite expected-position ledgers
 - Emergency stop / kill-switch controller with optional close-all behavior
+- Walk-forward optimization for train/test strategy validation
 - CSV journal and monitoring metrics
 - SQLite journal, Telegram/Discord/email alerts, static dashboard
 - Multi-timeframe analysis and named SMC setup classifier
@@ -110,6 +111,19 @@ from smc_ta.broker import OandaCandleDataSource, OandaConfig
 
 source = OandaCandleDataSource(OandaConfig(account_id="...", token="...", practice=True))
 candles = source.get_candles("EURUSD", "M15", limit=500)
+```
+
+## Walk-Forward Optimization
+
+```python
+from smc_ta.walkforward import WalkForwardCandidate, WalkForwardConfig, run_walk_forward
+
+result = run_walk_forward(
+    candles,
+    candidates=[WalkForwardCandidate("base", backtest_config)],
+    config=WalkForwardConfig(train_size=500, test_size=150),
+)
+print(result.summary)
 ```
 
 ## Demo Forward Test
@@ -174,6 +188,7 @@ smc_ta/
   risk/           Position sizing and exposure controls
   reconciliation/ Broker-vs-ledger state safety checks
   safety/         Emergency stop / kill-switch controls
+  walkforward/    Rolling train/test optimization
   live/           Demo-forward bot orchestration
   journal/        CSV trade journal
   monitoring/     Equity and strategy health metrics

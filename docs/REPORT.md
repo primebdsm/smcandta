@@ -21,6 +21,7 @@
 - Risk manager for position sizing, daily loss, open-position, and confidence/RR checks
 - Broker reconciliation service with in-memory and SQLite expected-position ledgers
 - Emergency stop / kill-switch controller with manual, file, equity, drawdown, position, runtime-error, reconciliation-failure, and optional close-all controls
+- Walk-forward optimizer with rolling train/test windows, candidate ranking, out-of-sample reports, combined equity, and combined trade output
 - Demo forward-testing bot
 - CSV and SQLite journals
 - Telegram, Discord, and email alerts
@@ -34,7 +35,7 @@
 .venv/bin/python -m pytest
 ```
 
-Result: 29 passed.
+Result: 33 passed.
 
 ## What Is Real
 
@@ -50,7 +51,6 @@ The implemented instruments are real in the sense that each one maps to explicit
 - cTrader, FIX, Interactive Brokers, or other venue-specific adapters
 - Broker-specific production reconciliation
 - Provider-specific live economic calendar connector where a fixed commercial API is chosen
-- Walk-forward optimization workflow
 - Persistent database layer beyond CSV
 - Production alerting and incident response
 - Broker-specific disaster recovery runbook

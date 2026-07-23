@@ -21,6 +21,12 @@ from smc_ta.reconciliation import (
 from smc_ta.risk import RiskConfig, RiskDecision, RiskManager
 from smc_ta.safety import EmergencyStopConfig, EmergencyStopController, EmergencyStopResult
 from smc_ta.strategy import StrategyProfile, get_strategy_profile, list_strategy_profiles
+from smc_ta.walkforward import (
+    WalkForwardCandidate,
+    WalkForwardConfig,
+    WalkForwardResult,
+    run_walk_forward,
+)
 
 __all__ = [
     "AnalysisResult",
@@ -43,6 +49,9 @@ __all__ = [
     "RiskManager",
     "SQLitePositionLedger",
     "StrategyProfile",
+    "WalkForwardCandidate",
+    "WalkForwardConfig",
+    "WalkForwardResult",
     "analyze_forex",
     "analyze_multi_timeframe",
     "build_smc_ta_features",
@@ -50,4 +59,5 @@ __all__ = [
     "get_strategy_profile",
     "list_strategy_profiles",
     "run_backtest",
+    "run_walk_forward",
 ]
