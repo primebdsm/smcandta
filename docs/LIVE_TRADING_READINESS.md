@@ -4,6 +4,7 @@ This repository now contains the main components needed before connecting a real
 
 - Broker interface: `smc_ta.broker.BrokerAdapter`
 - Runtime config and live guardrails: `smc_ta.config.RuntimeConfig`
+- Preflight startup readiness: `smc_ta.preflight.run_preflight`
 - OANDA REST adapter: `smc_ta.broker.OandaBroker`
 - OANDA candle downloader: `smc_ta.broker.OandaCandleDataSource`
 - Optional MetaTrader 5 adapter: `smc_ta.broker.MetaTrader5Broker`
@@ -55,7 +56,8 @@ Keep broker-specific authentication, order IDs, retry logic, and reconciliation 
 9. Enable `EmergencyStopController` with manual stop, equity, drawdown, position, runtime-error, and reconciliation-failure limits.
 10. Enable `SQLiteTradeLifecycleStore` so every signal, block, submission, fill, failure, and close is auditable.
 11. Add a real economic calendar source such as `TradingEconomicsCalendarSource` and verify event times against your broker/server timezone.
-12. Only then consider small live size.
+12. Run `assert_preflight_ready` before every demo/live process start.
+13. Only then consider small live size.
 
 ## Emergency Stop
 
@@ -95,6 +97,12 @@ Use charts for review, alerts, journal snapshots, and debugging. The chart rende
 `RuntimeConfig` loads environment, `.env`-style files, or JSON config and validates mode, broker, symbols, timeframes, required credentials, news-filter requirements, lifecycle/journal paths, and live-mode arming.
 
 Live mode requires `allow_live_trading=True` and `live_confirmation="I_UNDERSTAND_LIVE_FOREX_RISK"`. OANDA live mode also requires `oanda_practice=False`. See `docs/RUNTIME_CONFIG.md`.
+
+## Preflight Readiness
+
+`run_preflight` combines runtime config, data quality, broker account/position probes, reconciliation, emergency stop, news-filter presence, persistence paths, and lifecycle-store checks into one startup report.
+
+Use `assert_preflight_ready` as the final gate before a repeated demo/live loop starts. See `docs/PREFLIGHT_READINESS.md`.
 
 ## Still Broker-Specific
 

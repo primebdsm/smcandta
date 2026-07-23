@@ -15,6 +15,7 @@ flowchart LR
   C --> I["Chart / Journal Snapshot"]
   K["Runtime Config"] --> G
   K --> H
+  K --> L["Preflight Readiness"]
 ```
 
 ## Expected Candle Shape
@@ -48,6 +49,7 @@ def on_new_closed_candle(candles):
 
 - Demo-tested broker adapter for orders, positions, and account state
 - Runtime config validation and explicit live-mode arming
+- Preflight readiness check before starting the execution loop
 - Economic calendar/news source such as `TradingEconomicsCalendarSource`
 - Spread and slippage model selected for the target broker
 - Session schedule adjusted for daylight saving time when needed
@@ -61,6 +63,7 @@ def on_new_closed_candle(candles):
 
 - `OandaBroker` and `OandaCandleDataSource` for OANDA v20 REST demo/live accounts
 - `RuntimeConfig` and `assert_runtime_ready` for mode, broker, credential, and live guardrail validation
+- `run_preflight` and `assert_preflight_ready` for startup readiness checks
 - `MetaTrader5Broker` and `MetaTrader5CandleDataSource` for local MT5 terminal workflows
 - `JsonEconomicCalendarSource` for provider-specific calendar APIs
 - `TradingEconomicsCalendarSource` for real Trading Economics calendar events

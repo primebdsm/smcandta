@@ -39,6 +39,20 @@ assert_runtime_ready(config)
 
 Use runtime config checks before constructing broker adapters or starting demo/live loops. See `docs/RUNTIME_CONFIG.md`.
 
+## Preflight Check
+
+```python
+from smc_ta import assert_preflight_ready
+
+assert_preflight_ready(
+    runtime_config=config,
+    candles_by_symbol={"EURUSD": candles},
+    broker=broker,
+)
+```
+
+Use preflight after constructing runtime objects and before starting a repeated demo/live bot loop. See `docs/PREFLIGHT_READINESS.md`.
+
 ## Real News Provider
 
 ```python

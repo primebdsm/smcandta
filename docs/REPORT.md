@@ -27,6 +27,7 @@
 - Emergency stop / kill-switch controller with manual, file, equity, drawdown, position, runtime-error, reconciliation-failure, and optional close-all controls
 - Trade lifecycle state machine with explicit transitions, memory store, SQLite store, and optional `DemoTradingBot` integration
 - Runtime configuration guardrails for modes, brokers, credentials, live arming, news-filter requirements, lifecycle/journal paths, adapter config builders, and secret redaction
+- Preflight readiness checker for runtime config, candle quality, broker probes, reconciliation, emergency stop, news filter, persistence paths, and lifecycle store
 - Walk-forward optimizer with rolling train/test windows, candidate ranking, out-of-sample reports, combined equity, and combined trade output
 - Demo forward-testing bot
 - CSV and SQLite journals
@@ -42,7 +43,7 @@
 .venv/bin/python -m pytest
 ```
 
-Result: 63 passed.
+Result: 69 passed.
 
 ## What Is Real
 
@@ -56,6 +57,7 @@ The implemented instruments are real in the sense that each one maps to explicit
 - The chart renderer is a real reporting instrument: it converts the package's `AnalysisResult` tables into portable HTML/SVG review charts without changing strategy decisions.
 - The lifecycle state machine is a real audit instrument: it enforces valid trade states and persists signal, block, submit, fill, close, fail, and cancel history.
 - The runtime config layer is a real safety instrument: it validates selected mode, broker, credentials, and explicit live arming before adapter setup.
+- The preflight checker is a real startup gate: it probes configured dependencies and returns blocking/warning/info checks before a bot loop starts.
 
 ## What Still Needs To Be Added Before Live Trading
 

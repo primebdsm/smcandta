@@ -62,6 +62,7 @@ Live-readiness components:
 - Emergency stop / kill-switch controller with optional close-all behavior
 - Trade lifecycle state machine with memory and SQLite stores
 - Runtime configuration and live-mode guardrails with secret redaction
+- Preflight readiness checks for config, data, broker, safety, news, persistence, and lifecycle state
 - Walk-forward optimization for train/test strategy validation
 - CSV journal and monitoring metrics
 - SQLite journal, Telegram/Discord/email alerts, static dashboard
@@ -190,6 +191,20 @@ assert_runtime_ready(config)
 print(config.to_safe_dict())
 ```
 
+## Preflight Readiness
+
+```python
+from smc_ta import assert_preflight_ready
+
+assert_preflight_ready(
+    runtime_config=config,
+    candles_by_symbol={"EURUSD": candles},
+    broker=broker,
+    emergency_stop=emergency_stop,
+    lifecycle_store=lifecycle_store,
+)
+```
+
 ## Demo Forward Test
 
 ```python
@@ -268,6 +283,7 @@ smc_ta/
   safety/         Emergency stop / kill-switch controls
   lifecycle/      Trade lifecycle state machine and stores
   config/         Runtime config validation and live guardrails
+  preflight/      Demo/live startup readiness checks
   walkforward/    Rolling train/test optimization
   live/           Demo-forward bot orchestration
   journal/        CSV trade journal

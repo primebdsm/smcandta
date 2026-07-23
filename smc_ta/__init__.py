@@ -28,6 +28,14 @@ from smc_ta.lifecycle import (
 )
 from smc_ta.live import DemoTradingBot
 from smc_ta.news import TradingEconomicsApiError, TradingEconomicsCalendarSource, TradingEconomicsConfig
+from smc_ta.preflight import (
+    PreflightCheck,
+    PreflightConfig,
+    PreflightReport,
+    PreflightValidationError,
+    assert_preflight_ready,
+    run_preflight,
+)
 from smc_ta.reconciliation import (
     BrokerReconciler,
     MemoryPositionLedger,
@@ -70,6 +78,10 @@ __all__ = [
     "PortfolioRiskConfig",
     "PortfolioRiskDecision",
     "PortfolioRiskManager",
+    "PreflightCheck",
+    "PreflightConfig",
+    "PreflightReport",
+    "PreflightValidationError",
     "ReconciliationConfig",
     "ReconciliationResult",
     "RiskConfig",
@@ -90,12 +102,14 @@ __all__ = [
     "WalkForwardResult",
     "analyze_forex",
     "analyze_multi_timeframe",
+    "assert_preflight_ready",
     "assert_runtime_ready",
     "build_smc_ta_features",
     "generate_confluence_signals",
     "get_strategy_profile",
     "list_strategy_profiles",
     "run_backtest",
+    "run_preflight",
     "run_walk_forward",
     "render_analysis_chart_html",
     "render_analysis_chart_svg",
