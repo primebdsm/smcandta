@@ -28,9 +28,20 @@ The result object contains:
 5. Apply your risk, news, spread, execution, and account rules.
 6. Send orders through a separate broker adapter.
 
+## Real News Provider
+
+```python
+from smc_ta.news import TradingEconomicsCalendarSource, TradingEconomicsConfig
+
+calendar = TradingEconomicsCalendarSource(
+    TradingEconomicsConfig.from_env(importance=(3,))
+)
+```
+
+Use the provider to build the same `NewsFilter` object that the backtester and demo bot already accept. See `docs/NEWS_PROVIDERS.md`.
+
 ## No-Lookahead Notes
 
 Swing highs/lows require right-side candles for confirmation. The SMC structure module exposes both pivot candle fields and confirmation-time fields. Use confirmation-time columns when backtesting or trading live.
 
 FVGs form after the third candle closes. Order blocks form after a displacement or structure event. These are event-based detectors and are safe to use after the event candle closes.
-

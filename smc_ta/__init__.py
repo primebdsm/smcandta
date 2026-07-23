@@ -12,6 +12,7 @@ from smc_ta.backtest import BacktestConfig, BacktestResult, run_backtest
 from smc_ta.broker import PaperBroker
 from smc_ta.data import DataQualityConfig, DataQualityReport, validate_candle_quality
 from smc_ta.live import DemoTradingBot
+from smc_ta.news import TradingEconomicsApiError, TradingEconomicsCalendarSource, TradingEconomicsConfig
 from smc_ta.reconciliation import (
     BrokerReconciler,
     MemoryPositionLedger,
@@ -55,6 +56,9 @@ __all__ = [
     "RiskManager",
     "SQLitePositionLedger",
     "StrategyProfile",
+    "TradingEconomicsApiError",
+    "TradingEconomicsCalendarSource",
+    "TradingEconomicsConfig",
     "WalkForwardCandidate",
     "WalkForwardConfig",
     "WalkForwardResult",

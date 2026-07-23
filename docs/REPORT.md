@@ -18,6 +18,8 @@
 - Named SMC setup classifier
 - Backtester with candle spread, slippage, commission, sessions, trailing stops, partial closes, daily trade limits, and pair reports
 - Economic news filter and generic JSON economic calendar source
+- Trading Economics real economic calendar connector with UTC normalization, Forex country/currency mapping, importance mapping, API error handling, docs, and example script
+- Correct asymmetric before/after news blocking windows
 - Strategy profiles
 - Risk manager for position sizing, daily loss, open-position, and confidence/RR checks
 - Portfolio/correlation risk manager for symbol concentration, gross/net currency exposure, same-currency direction counts, opposite same-symbol exposure, and return-correlation limits
@@ -37,7 +39,7 @@
 .venv/bin/python -m pytest
 ```
 
-Result: 45 passed.
+Result: 51 passed.
 
 ## What Is Real
 
@@ -47,12 +49,12 @@ The implemented instruments are real in the sense that each one maps to explicit
 - SMC instruments are deterministic price-action rules on OHLC candles.
 - Forex helpers use real pip-size conventions and spread/risk math.
 - The signal engine produces reproducible scores and reasons from candle data.
+- The Trading Economics connector is real provider plumbing: it calls the provider calendar API, maps response fields to this package's `EconomicEvent`, and feeds the existing `NewsFilter`.
 
 ## What Still Needs To Be Added Before Live Trading
 
 - cTrader, FIX, Interactive Brokers, or other venue-specific adapters
 - Broker-specific production reconciliation
-- Provider-specific live economic calendar connector where a fixed commercial API is chosen
 - Persistent database layer beyond CSV
 - Production alerting and incident response
 - Broker-specific disaster recovery runbook

@@ -43,7 +43,7 @@ def on_new_closed_candle(candles):
 ## Required Before Live Trading
 
 - Demo-tested broker adapter for orders, positions, and account state
-- Economic calendar/news source
+- Economic calendar/news source such as `TradingEconomicsCalendarSource`
 - Spread and slippage model selected for the target broker
 - Session schedule adjusted for daylight saving time when needed
 - Backtesting engine with realistic transaction costs
@@ -55,6 +55,7 @@ def on_new_closed_candle(candles):
 - `OandaBroker` and `OandaCandleDataSource` for OANDA v20 REST demo/live accounts
 - `MetaTrader5Broker` and `MetaTrader5CandleDataSource` for local MT5 terminal workflows
 - `JsonEconomicCalendarSource` for provider-specific calendar APIs
+- `TradingEconomicsCalendarSource` for real Trading Economics calendar events
 - `SQLiteTradeJournal` for persistent local journals
 - `BrokerReconciler` for blocking when broker positions differ from bot ledger state
 - `EmergencyStopController` for hard stop, manual stop file, drawdown, equity, runtime-error, and optional close-all controls

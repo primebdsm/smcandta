@@ -55,6 +55,7 @@ Live-readiness components:
 - Backtester with spread, slippage, and commission
 - Economic news blocking filter
 - Generic JSON economic calendar API source
+- Trading Economics real economic calendar connector
 - Risk manager for position sizing and exposure limits
 - Portfolio/correlation risk manager for currency exposure and correlated-position limits
 - Broker reconciliation layer with in-memory and SQLite expected-position ledgers
@@ -113,6 +114,25 @@ from smc_ta.broker import OandaCandleDataSource, OandaConfig
 
 source = OandaCandleDataSource(OandaConfig(account_id="...", token="...", practice=True))
 candles = source.get_candles("EURUSD", "M15", limit=500)
+```
+
+## Economic News Filter
+
+```python
+from datetime import timedelta
+
+import pandas as pd
+
+from smc_ta.news import TradingEconomicsCalendarSource, TradingEconomicsConfig
+
+source = TradingEconomicsCalendarSource(TradingEconomicsConfig.from_env(importance=(3,)))
+news_filter = source.build_news_filter(
+    start=pd.Timestamp("2024-01-01"),
+    end=pd.Timestamp("2024-01-07"),
+    currencies={"USD", "EUR"},
+    block_before=timedelta(minutes=30),
+    block_after=timedelta(minutes=30),
+)
 ```
 
 ## Walk-Forward Optimization
@@ -199,7 +219,7 @@ smc_ta/
   data/           Historical candle sources
   data/quality.py Data quality reports
   backtest/       Spread/slippage-aware backtester
-  news/           Economic calendar filters
+  news/           Economic calendar filters and provider connectors
   risk/           Position sizing and exposure controls
   risk/portfolio.py Portfolio/correlation risk controls
   reconciliation/ Broker-vs-ledger state safety checks

@@ -85,8 +85,9 @@ class NewsFilter:
         ts = pd.Timestamp(timestamp)
         ts = ts.tz_localize("UTC") if ts.tzinfo is None else ts.tz_convert("UTC")
         currencies = self.currencies_for_symbol(symbol)
-        start = ts - self.block_before
-        end = ts + self.block_after
+        # Convert a trade-time check into event-time bounds.
+        start = ts - self.block_after
+        end = ts + self.block_before
         mask = (
             self.events["currency"].isin(currencies)
             & self.events["impact"].isin(self.impacts)
@@ -98,4 +99,3 @@ class NewsFilter:
         """Return false when a matching event is inside the block window."""
 
         return self.blocking_events(symbol, timestamp).empty
-

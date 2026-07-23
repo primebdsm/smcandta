@@ -10,7 +10,7 @@ This repository now contains the main components needed before connecting a real
 - Historical CSV source: `smc_ta.data.CsvCandleDataSource`
 - Data quality validator: `smc_ta.data.validate_candle_quality`
 - Backtester with spread/slippage: `smc_ta.backtest.run_backtest`
-- Economic news filter and JSON API source: `smc_ta.news.NewsFilter`, `smc_ta.news.JsonEconomicCalendarSource`
+- Economic news filter, JSON API source, and Trading Economics connector: `NewsFilter`, `JsonEconomicCalendarSource`, `TradingEconomicsCalendarSource`
 - Position/risk manager: `smc_ta.risk.RiskManager`
 - Portfolio/correlation risk: `smc_ta.risk.PortfolioRiskManager`
 - Broker reconciliation: `smc_ta.reconciliation.BrokerReconciler`
@@ -49,7 +49,8 @@ Keep broker-specific authentication, order IDs, retry logic, and reconciliation 
 6. Reconcile positions and balances after every cycle.
 7. Add portfolio/correlation limits for multi-pair trading.
 8. Enable `EmergencyStopController` with manual stop, equity, drawdown, position, runtime-error, and reconciliation-failure limits.
-9. Only then consider small live size.
+9. Add a real economic calendar source such as `TradingEconomicsCalendarSource` and verify event times against your broker/server timezone.
+10. Only then consider small live size.
 
 ## Emergency Stop
 
@@ -66,6 +67,12 @@ The kill switch can stop all new trading when any configured safety rule is hit:
 
 When `close_positions_on_trigger=True`, `DemoTradingBot` closes open positions for the active symbol and records them in the reconciliation ledger and journal.
 
+## Economic Calendar Connector
+
+`TradingEconomicsCalendarSource` downloads provider calendar rows, maps country events to Forex currencies, maps provider importance to low/medium/high impact, normalizes timestamps to UTC, and feeds the same `NewsFilter` used by the backtester and demo bot.
+
+Credentials are read from `TRADING_ECONOMICS_API_KEY` through `TradingEconomicsConfig.from_env()`. See `docs/NEWS_PROVIDERS.md` for usage.
+
 ## Still Broker-Specific
 
 The repository ships OANDA REST and optional MetaTrader 5 adapter implementations. cTrader/FIX and any broker-specific production controls still need to be implemented for the selected venue. Credentials are never stored in the repository.
@@ -74,3 +81,4 @@ The repository ships OANDA REST and optional MetaTrader 5 adapter implementation
 
 - OANDA v20 REST documents candle granularities and the `/v3/accounts/{accountID}/orders` order endpoint.
 - MetaTrader 5 Python integration documents `initialize`, `positions_get`, and `order_send`.
+- Trading Economics documents calendar country/date endpoints and event response fields.

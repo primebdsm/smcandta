@@ -63,6 +63,20 @@ def test_news_filter_blocks_pair_currency() -> None:
     assert news.allow_trading("EURUSD", pd.Timestamp("2024-01-01 13:00", tz="UTC"))
 
 
+def test_news_filter_honors_asymmetric_before_after_windows() -> None:
+    event = EconomicEvent(
+        timestamp=pd.Timestamp("2024-01-01 12:00", tz="UTC"),
+        currency="USD",
+        impact="high",
+        title="FOMC",
+    )
+    news = NewsFilter([event], block_before=timedelta(minutes=45), block_after=timedelta(minutes=15))
+
+    assert not news.allow_trading("EURUSD", pd.Timestamp("2024-01-01 11:30", tz="UTC"))
+    assert not news.allow_trading("EURUSD", pd.Timestamp("2024-01-01 12:10", tz="UTC"))
+    assert news.allow_trading("EURUSD", pd.Timestamp("2024-01-01 12:20", tz="UTC"))
+
+
 def test_risk_manager_approves_and_blocks() -> None:
     manager = RiskManager(RiskConfig(risk_percent_per_trade=1, max_units=50_000))
     account = PaperBroker(initial_balance=10_000).get_account()
