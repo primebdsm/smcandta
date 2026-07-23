@@ -13,6 +13,7 @@ from smc_ta.engine.confluence import ConfluenceConfig, analyze_forex
 from smc_ta.journal.store import TradeJournal
 from smc_ta.news.calendar import NewsFilter
 from smc_ta.reconciliation import BrokerReconciler, ReconciliationResult
+from smc_ta.risk import PortfolioRiskDecision, PortfolioRiskManager
 from smc_ta.risk.manager import RiskDecision, RiskManager
 from smc_ta.safety import EmergencyStopController, EmergencyStopResult
 from smc_ta.smc.setups import classify_smc_setups
@@ -30,6 +31,7 @@ class CycleResult:
     fill: OrderFill | None
     reasons: str
     setup_name: str = "none"
+    portfolio_risk_decision: PortfolioRiskDecision | None = None
     reconciliation_result: ReconciliationResult | None = None
     emergency_stop_result: EmergencyStopResult | None = None
     emergency_close_fills: tuple[OrderFill, ...] = ()
@@ -49,6 +51,7 @@ class DemoTradingBot:
         symbol: str,
         broker: BrokerAdapter,
         risk_manager: RiskManager,
+        portfolio_risk_manager: PortfolioRiskManager | None = None,
         confluence_config: ConfluenceConfig | None = None,
         news_filter: NewsFilter | None = None,
         journal: TradeJournal | None = None,
@@ -59,6 +62,7 @@ class DemoTradingBot:
         self.symbol = symbol.upper()
         self.broker = broker
         self.risk_manager = risk_manager
+        self.portfolio_risk_manager = portfolio_risk_manager
         self.confluence_config = confluence_config or ConfluenceConfig()
         self.news_filter = news_filter
         self.journal = journal
@@ -115,6 +119,7 @@ class DemoTradingBot:
                 fill=None,
                 reasons=emergency_stop_result.summary(),
                 setup_name=setup_name,
+                portfolio_risk_decision=None,
                 reconciliation_result=reconciliation_result,
                 emergency_stop_result=emergency_stop_result,
                 emergency_close_fills=tuple(close_fills),
@@ -129,6 +134,7 @@ class DemoTradingBot:
                 fill=None,
                 reasons=reconciliation_result.summary(),
                 setup_name=setup_name,
+                portfolio_risk_decision=None,
                 reconciliation_result=reconciliation_result,
                 emergency_stop_result=emergency_stop_result,
             )
@@ -149,9 +155,31 @@ class DemoTradingBot:
                 fill=None,
                 reasons=";".join(decision.reasons),
                 setup_name=setup_name,
+                portfolio_risk_decision=None,
                 reconciliation_result=reconciliation_result,
                 emergency_stop_result=emergency_stop_result,
             )
+
+        portfolio_decision = None
+        if self.portfolio_risk_manager is not None:
+            portfolio_decision = self.portfolio_risk_manager.evaluate_order(
+                decision.order,
+                open_positions=self.broker.get_open_positions(),
+                market_price=market_price,
+            )
+            if not portfolio_decision.approved:
+                return CycleResult(
+                    timestamp=timestamp,
+                    side=str(signal["side"]),
+                    action="blocked_by_portfolio_risk",
+                    risk_decision=decision,
+                    fill=None,
+                    reasons=";".join(portfolio_decision.reasons),
+                    setup_name=setup_name,
+                    portfolio_risk_decision=portfolio_decision,
+                    reconciliation_result=reconciliation_result,
+                    emergency_stop_result=emergency_stop_result,
+                )
 
         if self.alert_channel and signal["side"] in {"long", "short"}:
             self.alert_channel.send(format_signal_alert(self.symbol, signal, setup_name=setup_name))
@@ -168,6 +196,7 @@ class DemoTradingBot:
             fill=fill,
             reasons=str(signal.get("reasons", "")),
             setup_name=setup_name,
+            portfolio_risk_decision=portfolio_decision,
             reconciliation_result=reconciliation_result,
             emergency_stop_result=emergency_stop_result,
         )

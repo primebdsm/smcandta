@@ -58,6 +58,7 @@ def on_new_closed_candle(candles):
 - `SQLiteTradeJournal` for persistent local journals
 - `BrokerReconciler` for blocking when broker positions differ from bot ledger state
 - `EmergencyStopController` for hard stop, manual stop file, drawdown, equity, runtime-error, and optional close-all controls
+- `PortfolioRiskManager` for currency exposure, symbol concentration, same-currency, and correlation limits
 - `run_walk_forward` for train/test validation before demo/live use
 - `validate_candle_quality` for missing candles, duplicate timestamps, invalid OHLC, spread spikes, weekend candles, and range spikes
 - `analyze_multi_timeframe` for higher-timeframe context

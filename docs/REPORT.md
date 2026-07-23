@@ -20,6 +20,7 @@
 - Economic news filter and generic JSON economic calendar source
 - Strategy profiles
 - Risk manager for position sizing, daily loss, open-position, and confidence/RR checks
+- Portfolio/correlation risk manager for symbol concentration, gross/net currency exposure, same-currency direction counts, opposite same-symbol exposure, and return-correlation limits
 - Broker reconciliation service with in-memory and SQLite expected-position ledgers
 - Emergency stop / kill-switch controller with manual, file, equity, drawdown, position, runtime-error, reconciliation-failure, and optional close-all controls
 - Walk-forward optimizer with rolling train/test windows, candidate ranking, out-of-sample reports, combined equity, and combined trade output
@@ -36,7 +37,7 @@
 .venv/bin/python -m pytest
 ```
 
-Result: 40 passed.
+Result: 45 passed.
 
 ## What Is Real
 

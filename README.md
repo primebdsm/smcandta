@@ -56,6 +56,7 @@ Live-readiness components:
 - Economic news blocking filter
 - Generic JSON economic calendar API source
 - Risk manager for position sizing and exposure limits
+- Portfolio/correlation risk manager for currency exposure and correlated-position limits
 - Broker reconciliation layer with in-memory and SQLite expected-position ledgers
 - Emergency stop / kill-switch controller with optional close-all behavior
 - Walk-forward optimization for train/test strategy validation
@@ -200,6 +201,7 @@ smc_ta/
   backtest/       Spread/slippage-aware backtester
   news/           Economic calendar filters
   risk/           Position sizing and exposure controls
+  risk/portfolio.py Portfolio/correlation risk controls
   reconciliation/ Broker-vs-ledger state safety checks
   safety/         Emergency stop / kill-switch controls
   walkforward/    Rolling train/test optimization

@@ -12,6 +12,7 @@ This repository now contains the main components needed before connecting a real
 - Backtester with spread/slippage: `smc_ta.backtest.run_backtest`
 - Economic news filter and JSON API source: `smc_ta.news.NewsFilter`, `smc_ta.news.JsonEconomicCalendarSource`
 - Position/risk manager: `smc_ta.risk.RiskManager`
+- Portfolio/correlation risk: `smc_ta.risk.PortfolioRiskManager`
 - Broker reconciliation: `smc_ta.reconciliation.BrokerReconciler`
 - Expected-position ledgers: `MemoryPositionLedger`, `SQLitePositionLedger`
 - Emergency stop / kill switch: `smc_ta.safety.EmergencyStopController`
@@ -46,8 +47,9 @@ Keep broker-specific authentication, order IDs, retry logic, and reconciliation 
 4. Add `BrokerReconciler` with a persistent expected-position ledger.
 5. Connect one broker adapter in demo mode.
 6. Reconcile positions and balances after every cycle.
-7. Enable `EmergencyStopController` with manual stop, equity, drawdown, position, runtime-error, and reconciliation-failure limits.
-8. Only then consider small live size.
+7. Add portfolio/correlation limits for multi-pair trading.
+8. Enable `EmergencyStopController` with manual stop, equity, drawdown, position, runtime-error, and reconciliation-failure limits.
+9. Only then consider small live size.
 
 ## Emergency Stop
 

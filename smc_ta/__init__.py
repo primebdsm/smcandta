@@ -19,7 +19,7 @@ from smc_ta.reconciliation import (
     ReconciliationResult,
     SQLitePositionLedger,
 )
-from smc_ta.risk import RiskConfig, RiskDecision, RiskManager
+from smc_ta.risk import PortfolioRiskConfig, PortfolioRiskDecision, PortfolioRiskManager, RiskConfig, RiskDecision, RiskManager
 from smc_ta.safety import EmergencyStopConfig, EmergencyStopController, EmergencyStopResult
 from smc_ta.strategy import StrategyProfile, get_strategy_profile, list_strategy_profiles
 from smc_ta.walkforward import (
@@ -45,6 +45,9 @@ __all__ = [
     "MultiTimeframeConfig",
     "MultiTimeframeResult",
     "PaperBroker",
+    "PortfolioRiskConfig",
+    "PortfolioRiskDecision",
+    "PortfolioRiskManager",
     "ReconciliationConfig",
     "ReconciliationResult",
     "RiskConfig",
