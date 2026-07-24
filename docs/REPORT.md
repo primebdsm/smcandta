@@ -57,7 +57,7 @@ For the complete post-roadmap audit, see `docs/FINAL_AUDIT_REPORT.md`.
 .venv/bin/python -m pytest
 ```
 
-Result: 116 passed.
+Result: 117 passed.
 
 ## What Is Real
 

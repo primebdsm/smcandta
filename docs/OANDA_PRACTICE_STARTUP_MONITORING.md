@@ -48,6 +48,13 @@ export OANDA_ACCOUNT_ID="..."
 export OANDA_TOKEN="..."
 ```
 
+The drill also accepts the runtime config naming style:
+
+```bash
+export SMC_TA_OANDA_ACCOUNT_ID="..."
+export SMC_TA_OANDA_TOKEN="..."
+```
+
 Then run:
 
 ```bash

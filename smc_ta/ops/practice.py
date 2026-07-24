@@ -421,7 +421,11 @@ def _finalize_partial_result(
 
 
 def _secret_sources(cfg: PracticeStartupRunConfig):
-    sources: list[Any] = [EnvSecretSource(keys=("OANDA_ACCOUNT_ID", "OANDA_TOKEN"))]
+    keys = ("OANDA_ACCOUNT_ID", "OANDA_TOKEN")
+    sources: list[Any] = [
+        EnvSecretSource(keys=keys),
+        EnvSecretSource(keys=keys, prefix="SMC_TA_", name="env_smc_ta"),
+    ]
     if cfg.env_file is not None:
         sources.append(EnvFileSecretSource(cfg.env_file))
     return tuple(sources)
