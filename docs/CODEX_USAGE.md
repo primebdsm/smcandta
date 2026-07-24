@@ -86,6 +86,17 @@ python examples/oanda_execution_validate.py --symbol EURUSD --max-spread-pips 2 
 
 Use this only with an OANDA practice account. It validates minimum-size order open/close, SL/TP order open/close, rejected-order handling, restart reconciliation, and spread/slippage reporting. See `docs/OANDA_EXECUTION_VALIDATION.md`.
 
+## Demo-Forward Reports
+
+```python
+from smc_ta import DemoForwardConfig, run_demo_forward_test, write_demo_forward_report_bundle
+
+result = run_demo_forward_test(candles, config=DemoForwardConfig(symbol="EURUSD"))
+write_demo_forward_report_bundle(result, "reports/demo_forward")
+```
+
+Use this after backtesting/walk-forward and before broker-demo live loops. It exercises the bot path and writes cycle, equity, fill, trade, setup, session, daily, and blocked-reason reports. See `docs/DEMO_FORWARD_REPORTS.md`.
+
 ## Live Dashboard
 
 ```python

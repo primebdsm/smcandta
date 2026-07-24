@@ -66,6 +66,7 @@ Live-readiness components:
 - Runtime configuration and live-mode guardrails with secret redaction
 - Preflight readiness checks for config, data, broker, safety, news, persistence, and lifecycle state
 - Walk-forward optimization for train/test strategy validation
+- Demo-forward report package with cycle, equity, trade, setup, session, daily, and block reports
 - CSV journal and monitoring metrics
 - SQLite journal, Telegram/Discord/email alerts, live monitoring snapshot, and upgraded local dashboard
 - Static SMC/TA chart visualization with candles, zones, liquidity, structure, signals, and risk references
@@ -250,6 +251,14 @@ bot = DemoTradingBot(
 cycle = bot.run_cycle(candles)
 ```
 
+## Demo Forward Reports
+
+```bash
+python examples/demo_forward_report.py --output-dir reports/demo_forward
+```
+
+This writes `summary.json`, `report.html`, cycle/equity/trade/fill CSVs, setup and session reports, daily reports, blocked-reason counts, and paper position events. See `docs/DEMO_FORWARD_REPORTS.md`.
+
 ## Input Format
 
 The package expects a pandas DataFrame with these columns:
@@ -315,6 +324,7 @@ smc_ta/
   config/         Runtime config validation and live guardrails
   preflight/      Demo/live startup readiness checks
   walkforward/    Rolling train/test optimization
+  forwardtest/    Demo-forward replay and report bundles
   live/           Demo-forward bot orchestration
   journal/        CSV trade journal
   monitoring/     Equity and strategy health metrics

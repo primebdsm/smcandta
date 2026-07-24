@@ -35,6 +35,7 @@ For the complete post-roadmap audit, see `docs/FINAL_AUDIT_REPORT.md`.
 - Preflight readiness checker for runtime config, candle quality, broker probes, reconciliation, emergency stop, news filter, persistence paths, and lifecycle store
 - Walk-forward optimizer with rolling train/test windows, candidate ranking, out-of-sample reports, combined equity, and combined trade output
 - Demo forward-testing bot
+- Demo-forward report package with bot-cycle replay, paper broker SL/TP management, equity/trade/fill/setup/session/daily/block reports, JSON/CSV/HTML artifacts, docs, and CLI
 - CSV and SQLite journals
 - Telegram, Discord, and email alerts
 - Live monitoring snapshot model, upgraded static HTML dashboard, and monitoring metrics
@@ -48,7 +49,7 @@ For the complete post-roadmap audit, see `docs/FINAL_AUDIT_REPORT.md`.
 .venv/bin/python -m pytest
 ```
 
-Result: 91 passed.
+Result: 96 passed.
 
 ## What Is Real
 
@@ -64,6 +65,7 @@ The implemented instruments are real in the sense that each one maps to explicit
 - The runtime config layer is a real safety instrument: it validates selected mode, broker, credentials, and explicit live arming before adapter setup.
 - The preflight checker is a real startup gate: it probes configured dependencies and returns blocking/warning/info checks before a bot loop starts.
 - The restart sync layer is a real recovery instrument: it reads broker positions, OANDA transaction checkpoints, and pending orders, then either blocks startup or explicitly repairs the expected-position ledger.
+- The demo-forward report package is a real evidence instrument: it exercises `DemoTradingBot` over closed candles and writes measurable bot-cycle, fill, equity, setup, session, daily, and block artifacts.
 
 ## What Still Needs To Be Added Before Live Trading
 

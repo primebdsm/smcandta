@@ -20,6 +20,14 @@ from smc_ta.config import (
 )
 from smc_ta.data import DataQualityConfig, DataQualityReport, validate_candle_quality
 from smc_ta.dashboard import render_live_dashboard_html, write_dashboard, write_live_dashboard
+from smc_ta.forwardtest import (
+    DemoForwardConfig,
+    DemoForwardReportBundle,
+    DemoForwardResult,
+    render_demo_forward_html_report,
+    run_demo_forward_test,
+    write_demo_forward_report_bundle,
+)
 from smc_ta.lifecycle import (
     MemoryTradeLifecycleStore,
     SQLiteTradeLifecycleStore,
@@ -74,6 +82,9 @@ __all__ = [
     "ConfigValidationReport",
     "DataQualityConfig",
     "DataQualityReport",
+    "DemoForwardConfig",
+    "DemoForwardReportBundle",
+    "DemoForwardResult",
     "DemoTradingBot",
     "EmergencyStopConfig",
     "EmergencyStopController",
@@ -124,16 +135,19 @@ __all__ = [
     "get_strategy_profile",
     "list_strategy_profiles",
     "run_backtest",
+    "run_demo_forward_test",
     "run_preflight",
     "run_walk_forward",
     "sync_broker_state_after_restart",
     "render_analysis_chart_html",
     "render_analysis_chart_svg",
+    "render_demo_forward_html_report",
     "render_live_dashboard_html",
     "validate_candle_quality",
     "validate_runtime_config",
     "write_analysis_chart",
     "write_dashboard",
+    "write_demo_forward_report_bundle",
     "write_live_dashboard",
     "write_restart_sync_report",
 ]

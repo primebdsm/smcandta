@@ -13,6 +13,7 @@ flowchart LR
   G --> H["Broker Adapter"]
   G --> J["Trade Lifecycle Store"]
   C --> I["Chart / Journal Snapshot"]
+  C --> N["Demo-Forward Reports"]
   K["Runtime Config"] --> G
   K --> H
   K --> L["Preflight Readiness"]
@@ -58,6 +59,7 @@ def on_new_closed_candle(candles):
 - Session schedule adjusted for daylight saving time when needed
 - Backtesting engine with realistic transaction costs
 - Demo forward testing
+- Demo-forward report bundles for cycle, equity, trade, setup, session, daily, and block review
 - Risk limits: max daily loss, max open trades, max correlated exposure
 - Trade lifecycle store for signal/block/order/fill/close audit trail
 - Optional chart snapshots for review and monitoring
@@ -77,6 +79,7 @@ def on_new_closed_candle(candles):
 - `TradeLifecycleStateMachine` and `SQLiteTradeLifecycleStore` for deterministic trade state tracking
 - `PortfolioRiskManager` for currency exposure, symbol concentration, same-currency, and correlation limits
 - `run_walk_forward` for train/test validation before demo/live use
+- `run_demo_forward_test` and `write_demo_forward_report_bundle` for bot-path replay evidence before broker-demo operation
 - `validate_candle_quality` for missing candles, duplicate timestamps, invalid OHLC, spread spikes, weekend candles, and range spikes
 - `write_analysis_chart` for static SMC/TA chart snapshots from `analyze_forex` output
 - `analyze_multi_timeframe` for higher-timeframe context

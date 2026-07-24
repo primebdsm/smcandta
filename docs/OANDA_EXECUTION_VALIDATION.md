@@ -143,6 +143,6 @@ Next production steps:
 
 - live monitoring dashboard
 - run broker restart sync on every OANDA bot process start
+- run demo-forward report bundles on recent out-of-sample candles
 - process supervisor and log rotation
 - incident/kill-switch runbook
-- demo-forward reporting package

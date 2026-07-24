@@ -24,6 +24,7 @@ This repository now contains the main components needed before connecting a real
 - Emergency stop / kill switch: `smc_ta.safety.EmergencyStopController`
 - Trade lifecycle state machine and stores: `TradeLifecycleStateMachine`, `SQLiteTradeLifecycleStore`
 - Demo forward bot: `smc_ta.live.DemoTradingBot`
+- Demo-forward report package: `run_demo_forward_test`, `write_demo_forward_report_bundle`
 - CSV and SQLite journals: `smc_ta.journal.TradeJournal`, `smc_ta.journal.SQLiteTradeJournal`
 - Monitoring metrics: `smc_ta.monitoring.performance_summary`
 - Static/live dashboard: `smc_ta.dashboard.write_dashboard`, `smc_ta.dashboard.write_live_dashboard`
@@ -51,7 +52,7 @@ Keep broker-specific authentication, order IDs, retry logic, and reconciliation 
 
 1. Backtest with spread, slippage, and commission.
 2. Review the trade journal and monitoring metrics.
-3. Forward test through `PaperBroker`.
+3. Generate demo-forward reports through `run_demo_forward_test`.
 4. Validate `RuntimeConfig` and keep live mode blocked unless explicitly armed.
 5. Add `BrokerReconciler` with a persistent expected-position ledger.
 6. Run broker restart sync before preflight whenever the process starts.
@@ -126,6 +127,12 @@ Run `python examples/oanda_practice_check.py --symbols EURUSD --max-spread-pips 
 `run_oanda_practice_execution_validation` can place and close minimum-size OANDA practice trades, validate SL/TP-on-fill, verify rejected-order handling, simulate restart reconciliation through SQLite, and print spread/slippage samples.
 
 Run `python examples/oanda_execution_validate.py --symbol EURUSD --max-spread-pips 2 --execute` only on a practice account. See `docs/OANDA_EXECUTION_VALIDATION.md`.
+
+## Demo-Forward Reports
+
+`run_demo_forward_test` replays closed candles through the `DemoTradingBot` path and writes cycle, equity, trade, fill, setup, session, daily, blocked-reason, and paper-position-event reports.
+
+Run `python examples/demo_forward_report.py --output-dir reports/demo_forward` for a deterministic sample, or pass a Forex CSV path for recent out-of-sample candles. See `docs/DEMO_FORWARD_REPORTS.md`.
 
 ## Live Dashboard Monitoring
 

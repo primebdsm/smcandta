@@ -16,6 +16,7 @@ It is ready for:
 - Historical backtesting with spread/slippage assumptions
 - Walk-forward strategy comparison
 - Paper broker forward testing
+- Demo-forward report generation for bot-cycle evidence
 - OANDA and MT5 demo integration work
 - OANDA practice readiness checks with account instruments and live pricing probes
 - OANDA practice execution validation tooling for guarded minimum-size demo trades
@@ -98,6 +99,11 @@ Before real live trading, the selected broker must be demo-tested end to end wit
   - max daily trades
   - pair reports
 - Walk-forward optimizer for rolling train/test evaluation
+- Demo-forward report package:
+  - closed-candle bot-cycle replay
+  - paper broker SL/TP and final-close event handling
+  - cycle, equity, trade, fill, setup, session, daily, and blocked-reason reports
+  - JSON, CSV, and local HTML report artifacts
 
 ### Broker And Execution Foundation
 
@@ -202,6 +208,7 @@ The project does not contain placeholder analysis claims. The implemented instru
 - Broker adapters implement the shared broker protocol.
 - OANDA adapter uses real OANDA v20 REST endpoints.
 - OANDA restart sync uses account changes, pending orders, and transaction checkpoint IDs from the OANDA v20 REST API.
+- Demo-forward reports exercise the real `DemoTradingBot`, risk manager, paper broker, reconciliation, lifecycle, and journal integration path.
 - MT5 adapter uses the real optional `MetaTrader5` Python package and terminal session.
 - Trading Economics connector maps provider events into the repository's news filter.
 - Preflight probes real runtime objects before a loop starts.
@@ -225,6 +232,7 @@ The toolkit can improve profit potential indirectly by improving process quality
 - Better strategy selection: walk-forward tests help avoid choosing settings that only worked on one historical window.
 - Better execution review: spread, slippage, commission, and broker fills can be compared against backtest assumptions.
 - Better restart recovery: broker sync reduces duplicate entries, stale ledger exposure, and unknown pending orders after crashes or deploys.
+- Better demo evidence: forward report artifacts show what the bot actually did cycle by cycle before broker-demo or live deployment.
 
 The main profit path is not "more indicators." The main profit path is controlled testing, selective execution, risk consistency, and fast detection of bad conditions.
 
@@ -296,6 +304,7 @@ Before live trading:
 
 - demo forward testing for the chosen broker
 - minimum 2-4 weeks of stable demo logs
+- demo-forward report bundles for out-of-sample candle windows
 - restart sync must be run on every process start and reviewed in demo logs
 - real spread/slippage comparison versus backtest assumptions
 - secret manager or deployment-safe credential handling
@@ -310,7 +319,7 @@ Before live trading:
 
 1. Run OANDA practice-account execution validation with the user's credentials and save the report artifacts
 2. Run broker restart sync against the same OANDA practice account and save startup reports
-3. Demo-forward testing package with reports
+3. Run demo-forward report bundles on recent out-of-sample candles and review setup/session/block performance
 4. Broker-synchronized lifecycle recovery after restart
 5. Deployment runbook and incident procedures
 6. Hosted/authenticated monitoring if deployed off the local machine
@@ -327,13 +336,13 @@ The repository test suite currently passes:
 Expected result:
 
 ```text
-91 passed
+96 passed
 ```
 
 ## Final Audit Conclusion
 
 The project is a real Forex SMC/TA analysis, testing, paper execution, and broker-integration framework.
 
-The strongest next engineering move is not adding more indicators. The strongest next move is running OANDA practice-account execution validation and broker restart sync with real practice credentials, then adding demo-forward reporting and broker-synchronized lifecycle recovery.
+The strongest next engineering move is not adding more indicators. The strongest next move is running OANDA practice-account execution validation, broker restart sync, and demo-forward report bundles with real practice data, then adding broker-synchronized lifecycle recovery.
 
 After that, the project can move toward carefully controlled live micro-size testing.
