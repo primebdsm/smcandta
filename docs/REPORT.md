@@ -43,6 +43,7 @@ For the complete post-roadmap audit, see `docs/FINAL_AUDIT_REPORT.md`.
 - Secret resolution helper for env, `.env`, JSON, and external command providers with redacted reports
 - Hosted authenticated monitoring server for dashboard, status, snapshot, health, and read-only artifact routes
 - Broker connectivity and alert delivery status probes for monitoring panels and incident evidence
+- Integrated paper/OANDA practice startup monitoring drill with redacted secrets, OANDA readiness, restart sync, lifecycle recovery, preflight, broker/alert probes, dashboard snapshot, summary report, docs, CLI, and tests
 - CSV and SQLite journals
 - Telegram, Discord, and email alerts
 - Live monitoring snapshot model, upgraded static HTML dashboard, and monitoring metrics
@@ -56,7 +57,7 @@ For the complete post-roadmap audit, see `docs/FINAL_AUDIT_REPORT.md`.
 .venv/bin/python -m pytest
 ```
 
-Result: 114 passed.
+Result: 116 passed.
 
 ## What Is Real
 
@@ -81,9 +82,11 @@ The implemented instruments are real in the sense that each one maps to explicit
 - The hosted monitoring server is a real operations instrument: it serves dashboard and snapshot artifacts with Basic or Bearer auth, health/status routes, safe artifact path handling, and security headers.
 - The broker connectivity probe is a real operations instrument: it calls read-only broker APIs and blocks monitoring status when account or position probes fail.
 - The alert delivery probe is a real operations instrument: it sends explicit channel probes and reports warning/blocking status for operator visibility.
+- The integrated practice startup drill is a real rehearsal instrument: it runs the same startup gates together, writes durable reports, and blocks OANDA startup when required practice credentials are missing.
 
 ## What Still Needs To Be Added Before Live Trading
 
+- Actual OANDA practice startup-monitoring runs with the user's practice credentials and saved artifacts
 - cTrader, FIX, Interactive Brokers, or other venue-specific adapters
 - More broker-specific production reconciliation beyond OANDA restart hooks
 - Broker-specific recovery of complex in-flight order states beyond open positions and basic lifecycle rows

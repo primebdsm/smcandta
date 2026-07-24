@@ -73,6 +73,7 @@ Live-readiness components:
 - Runtime logging and external secret resolution with redacted reports
 - Hosted authenticated monitoring server for dashboard and snapshot artifacts
 - Broker connectivity and alert delivery status panels
+- Integrated paper/OANDA practice startup monitoring drill with restart sync, lifecycle recovery, preflight, dashboard, and incident-ready reports
 - CSV journal and monitoring metrics
 - SQLite journal, Telegram/Discord/email alerts, live monitoring snapshot, and upgraded local dashboard
 - Static SMC/TA chart visualization with candles, zones, liquidity, structure, signals, and risk references
@@ -142,6 +143,15 @@ python examples/oanda_execution_validate.py --symbol EURUSD --max-spread-pips 2 
 ```
 
 The execution validator opens and closes minimum-size OANDA practice trades only when `--execute` is passed.
+
+## OANDA Practice Startup Monitoring
+
+```bash
+python examples/oanda_practice_startup_monitor.py --broker paper --output-dir reports/practice_startup/paper
+python examples/oanda_practice_startup_monitor.py --broker oanda --symbol EURUSD --max-spread-pips 2 --output-dir reports/practice_startup/oanda
+```
+
+This runs secret checks, OANDA readiness, restart sync, lifecycle recovery, preflight, broker/alert status probes, SMC/TA analysis, dashboard generation, and summary reports without placing orders. See `docs/OANDA_PRACTICE_STARTUP_MONITORING.md`.
 
 ## Broker Restart Sync
 

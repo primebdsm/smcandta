@@ -27,6 +27,7 @@ It is ready for:
 - Runtime logging, secret resolution, log rotation, and supervisor artifact generation
 - Hosted dashboard/status/snapshot server with Basic or Bearer authentication
 - Broker connectivity and alert delivery status panels
+- Integrated paper/OANDA practice startup monitoring drill with dashboard and artifact bundle
 
 It is not yet a turnkey live-money trading system.
 
@@ -207,6 +208,16 @@ Before real live trading, the selected broker must be demo-tested end to end wit
 - Live monitoring dashboard with account, positions, preflight, emergency stop, lifecycle, journal, blocks, and execution samples
 - Hosted authenticated monitoring server for dashboard, status, snapshot, health, and read-only artifact routes
 - Broker connectivity and alert delivery status probes for local dashboards, hosted JSON, and incident bundles
+- Integrated paper/OANDA practice startup monitoring drill:
+  - redacted OANDA secret resolution
+  - OANDA practice readiness
+  - candle loading or download
+  - broker restart sync
+  - lifecycle recovery
+  - preflight
+  - broker connectivity and alert probes
+  - local dashboard and snapshot JSON
+  - summary artifacts and incident bundle hook
 - Static SMC/TA chart visualization
 - Deployment runbook and incident procedures
 - Incident evidence bundle helper for JSON, Markdown, and CSV startup/runtime artifacts
@@ -240,6 +251,7 @@ The project does not contain placeholder analysis claims. The implemented instru
 - Hosted monitoring serves dashboard and snapshot artifacts through authenticated read-only routes with security headers and safe artifact path handling.
 - Broker connectivity probes call read-only account/position APIs and surface broker failures before operators trust the bot state.
 - Alert delivery probes verify notification channels explicitly and surface failed delivery as warning or blocking status.
+- The integrated practice startup drill runs the real startup controls together and writes reviewable reports before a demo/live loop is allowed to start.
 
 ## What Is Not Guaranteed
 
@@ -264,6 +276,7 @@ The toolkit can improve profit potential indirectly by improving process quality
 - Better operations: runbooks and incident bundles reduce downtime and help prevent unsafe restarts after broker or state mismatches.
 - Better deployment hygiene: supervised restarts, rotating logs, and secret redaction reduce avoidable operational failures.
 - Better visibility: broker connectivity and alert delivery panels make it easier to detect blind spots before continuing a demo/live loop.
+- Better startup discipline: the integrated practice drill catches missing credentials, broker-state mismatches, lifecycle drift, preflight blocks, and monitoring gaps in one repeatable rehearsal.
 
 The main profit path is not "more indicators." The main profit path is controlled testing, selective execution, risk consistency, and fast detection of bad conditions.
 
@@ -343,20 +356,21 @@ Before live trading:
 - generated supervisor/logrotate artifacts installed and tested on the target host
 - hosted monitor installed behind HTTPS, VPN, or tunnel controls when viewed off-machine
 - broker connectivity and alert delivery panels reviewed in every startup/demo drill
+- integrated OANDA practice startup-monitoring artifacts reviewed with real practice credentials
 - manual kill-switch procedure
 - post-trade review workflow
 - broker outage procedure
 
 ## Recommended Next Build Order
 
-1. Run OANDA practice-account execution validation with the user's credentials and save the report artifacts
-2. Run broker restart sync against the same OANDA practice account and save startup reports
+1. Run the integrated OANDA practice startup-monitoring drill with the user's practice credentials and save the full artifact bundle
+2. Run OANDA practice-account execution validation with the user's credentials and save the report artifacts
 3. Run demo-forward report bundles on recent out-of-sample candles and review setup/session/block performance
-4. Run lifecycle restart recovery on the same demo startup sequence and save reports
-5. Run deployment and incident drills in OANDA practice using the new runbook and incident bundle helper
+4. Repeat broker restart sync and lifecycle recovery on the same OANDA practice account after an intentional process restart
+5. Run deployment and incident drills in OANDA practice using the runbook and incident bundle helper
 6. Install and test generated supervisor/logrotate artifacts on the chosen demo host
 7. Install hosted monitoring behind HTTPS, VPN, or tunnel controls on the chosen demo host
-8. Run broker connectivity/alert delivery panels in OANDA practice and save incident-ready snapshots
+8. Run real Telegram/Discord/email alert delivery probes in OANDA practice and save incident-ready snapshots
 9. Optional MT5 hardening or cTrader/FIX adapter
 
 ## Current Verification
@@ -370,7 +384,7 @@ The repository test suite currently passes:
 Expected result:
 
 ```text
-114 passed
+116 passed
 ```
 
 ## Final Audit Conclusion

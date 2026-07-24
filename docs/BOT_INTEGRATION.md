@@ -29,6 +29,11 @@ flowchart LR
   R --> P
   S["Broker / Alert Status"] --> R
   S --> P
+  T["Practice Startup Drill"] --> M
+  T --> O
+  T --> L
+  T --> R
+  T --> P
 ```
 
 ## Expected Candle Shape
@@ -75,6 +80,7 @@ def on_new_closed_candle(candles):
 - Runtime logging, secret resolution, process supervision, and log rotation
 - Authenticated hosted dashboard/snapshot server for off-machine monitoring
 - Broker connectivity and alert delivery status panels
+- Integrated paper/OANDA practice startup monitoring drill with saved artifact bundle
 - Risk limits: max daily loss, max open trades, max correlated exposure
 - Trade lifecycle store for signal/block/order/fill/close audit trail
 - Optional chart snapshots for review and monitoring
@@ -100,6 +106,7 @@ def on_new_closed_candle(candles):
 - `resolve_runtime_secrets`, `configure_runtime_logging`, and `write_supervisor_artifacts` for deployment operations
 - `create_hosted_monitoring_server` and `write_monitoring_snapshot_json` for authenticated dashboard hosting
 - `check_broker_connectivity` and `probe_alert_channel` for operational status panels
+- `run_practice_startup_monitoring` for integrated restart sync, lifecycle recovery, preflight, dashboard, and status reports before a practice startup
 - `validate_candle_quality` for missing candles, duplicate timestamps, invalid OHLC, spread spikes, weekend candles, and range spikes
 - `write_analysis_chart` for static SMC/TA chart snapshots from `analyze_forex` output
 - `analyze_multi_timeframe` for higher-timeframe context

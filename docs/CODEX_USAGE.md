@@ -151,6 +151,27 @@ alert_status = probe_alert_channel(alert_channel, channel_name="telegram")
 
 Pass these into `build_live_monitoring_snapshot` as `broker_connectivity` and `alert_delivery`. See `docs/BROKER_ALERT_STATUS_MONITORING.md`.
 
+## Practice Startup Monitoring
+
+```python
+from smc_ta import PracticeStartupRunConfig, run_practice_startup_monitoring
+
+result = run_practice_startup_monitoring(
+    PracticeStartupRunConfig(
+        broker="oanda",
+        symbol="EURUSD",
+        timeframe="M15",
+        output_dir="reports/practice_startup/oanda",
+        max_spread_pips=2,
+    )
+)
+
+if not result.ok:
+    raise RuntimeError(result.summary())
+```
+
+Use paper mode for local smoke tests and OANDA mode with practice credentials before a repeated demo/live process starts. See `docs/OANDA_PRACTICE_STARTUP_MONITORING.md`.
+
 ## Deployment And Incidents
 
 ```python

@@ -31,6 +31,7 @@ This repository now contains the main components needed before connecting a real
 - Static/live dashboard: `smc_ta.dashboard.write_dashboard`, `smc_ta.dashboard.write_live_dashboard`
 - Hosted authenticated monitoring: `create_hosted_monitoring_server`, `write_monitoring_snapshot_json`
 - Broker connectivity and alert delivery status: `check_broker_connectivity`, `probe_alert_channel`
+- Integrated practice startup monitoring: `run_practice_startup_monitoring`
 - Deployment runbook and incident bundle helper: `write_incident_report_bundle`
 - Runtime logging, secret resolution, and supervisor artifacts: `configure_runtime_logging`, `resolve_runtime_secrets`, `write_supervisor_artifacts`
 - Static chart visualization: `smc_ta.visualization.write_analysis_chart`
@@ -74,7 +75,8 @@ Keep broker-specific authentication, order IDs, retry logic, and reconciliation 
 17. Generate and review process supervisor/logrotate artifacts for the target host.
 18. Enable hosted monitoring only behind auth and HTTPS/VPN/tunnel controls when viewed off-machine.
 19. Add broker connectivity and alert delivery status records to every dashboard snapshot.
-20. Only then consider small live size.
+20. Run the integrated paper/OANDA practice startup monitoring drill and save the artifacts.
+21. Only then consider small live size.
 
 ## Emergency Stop
 
@@ -142,6 +144,12 @@ Run `python examples/oanda_practice_check.py --symbols EURUSD --max-spread-pips 
 `run_oanda_practice_execution_validation` can place and close minimum-size OANDA practice trades, validate SL/TP-on-fill, verify rejected-order handling, simulate restart reconciliation through SQLite, and print spread/slippage samples.
 
 Run `python examples/oanda_execution_validate.py --symbol EURUSD --max-spread-pips 2 --execute` only on a practice account. See `docs/OANDA_EXECUTION_VALIDATION.md`.
+
+## OANDA Practice Startup Monitoring
+
+`run_practice_startup_monitoring` rehearses the real startup path without placing orders. It resolves OANDA secrets into a redacted report, checks practice account readiness, downloads or loads candles, runs restart sync, lifecycle recovery, preflight, broker connectivity, alert probes, SMC/TA analysis, dashboard rendering, snapshot JSON, and incident evidence when a post-snapshot gate blocks.
+
+Run `python examples/oanda_practice_startup_monitor.py --broker paper --output-dir reports/practice_startup/paper` for a local smoke test. Run OANDA mode only with practice credentials. See `docs/OANDA_PRACTICE_STARTUP_MONITORING.md`.
 
 ## Demo-Forward Reports
 

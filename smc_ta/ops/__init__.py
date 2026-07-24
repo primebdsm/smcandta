@@ -19,6 +19,11 @@ from smc_ta.ops.secrets import (
     resolve_runtime_secrets,
     write_secret_resolution_report,
 )
+from smc_ta.ops.practice import (
+    PracticeStartupRunConfig,
+    PracticeStartupRunResult,
+    run_practice_startup_monitoring,
+)
 from smc_ta.ops.supervision import (
     SupervisorArtifactBundle,
     SupervisorConfig,
@@ -34,6 +39,8 @@ __all__ = [
     "IncidentReportBundle",
     "JsonSecretSource",
     "LogrotateConfig",
+    "PracticeStartupRunConfig",
+    "PracticeStartupRunResult",
     "RuntimeLogConfig",
     "SecretResolutionConfig",
     "SecretResolutionIssue",
@@ -45,6 +52,7 @@ __all__ = [
     "render_logrotate_config",
     "render_systemd_unit",
     "resolve_runtime_secrets",
+    "run_practice_startup_monitoring",
     "write_incident_report_bundle",
     "write_logrotate_config",
     "write_secret_resolution_report",

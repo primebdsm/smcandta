@@ -35,6 +35,7 @@ Keep these files on persistent storage, not a temporary folder:
 - redacted startup secret report
 - generated supervisor artifacts for the target host
 - hosted monitoring endpoint and authentication secret when monitoring off-machine
+- integrated practice startup monitoring report directory
 
 Back up SQLite files before deploys that change execution, reconciliation, lifecycle, or broker adapter behavior.
 
@@ -78,6 +79,7 @@ For OANDA practice:
 ```bash
 python examples/oanda_practice_check.py --symbols EURUSD --max-spread-pips 2
 python examples/oanda_execution_validate.py --symbol EURUSD --max-spread-pips 2 --execute
+python examples/oanda_practice_startup_monitor.py --broker oanda --symbol EURUSD --max-spread-pips 2 --output-dir reports/practice_startup/oanda
 ```
 
 Only continue when the output is safe and the practice account has no unexpected exposure.
@@ -101,7 +103,23 @@ Use this order after a deploy, VPS restart, process crash, or manual restart:
 13. Watch the first cycles and broker platform together.
 14. Confirm Broker Connectivity and Alert Delivery panels are current.
 
-Command shape:
+Integrated command shape:
+
+```bash
+python examples/oanda_practice_startup_monitor.py \
+  --broker oanda \
+  --symbol EURUSD \
+  --timeframe M15 \
+  --max-spread-pips 2 \
+  --ledger-path state/positions.sqlite \
+  --checkpoint-path state/positions.sqlite \
+  --lifecycle-path state/trade_lifecycle.sqlite \
+  --output-dir reports/practice_startup/oanda
+```
+
+This single command writes restart sync, lifecycle recovery, preflight, broker connectivity, alert delivery, dashboard, snapshot, and summary artifacts. Use repair flags such as `--adopt-unmanaged` only after broker-side exposure has been manually reviewed.
+
+Individual command shape:
 
 ```bash
 python examples/broker_restart_sync.py \
@@ -169,9 +187,10 @@ Move through these stages in order:
 1. Paper replay: deterministic demo-forward reports are acceptable.
 2. Demo broker observation: no real orders, only connectivity and data checks.
 3. Demo minimum-size execution: OANDA practice execution validation passes.
-4. Demo forward loop: repeated closed-candle cycles with reports and dashboard.
-5. Tiny live pilot: one symbol, minimum practical size, strict risk and emergency stop.
-6. Controlled expansion: add symbols only after journal and incident review.
+4. Integrated OANDA practice startup monitoring passes with saved artifacts.
+5. Demo forward loop: repeated closed-candle cycles with reports and dashboard.
+6. Tiny live pilot: one symbol, minimum practical size, strict risk and emergency stop.
+7. Controlled expansion: add symbols only after journal and incident review.
 
 Do not promote after a single good day. Require enough trades to compare setup, session, spread, and slippage behavior against the backtest/demo-forward assumptions.
 
