@@ -16,6 +16,8 @@ flowchart LR
   K["Runtime Config"] --> G
   K --> H
   K --> L["Preflight Readiness"]
+  H --> M["Restart Sync"]
+  M --> L
 ```
 
 ## Expected Candle Shape
@@ -49,6 +51,7 @@ def on_new_closed_candle(candles):
 
 - Demo-tested broker adapter for orders, positions, and account state
 - Runtime config validation and explicit live-mode arming
+- Broker restart sync before resuming after crashes/deploys
 - Preflight readiness check before starting the execution loop
 - Economic calendar/news source such as `TradingEconomicsCalendarSource`
 - Spread and slippage model selected for the target broker
@@ -69,6 +72,7 @@ def on_new_closed_candle(candles):
 - `TradingEconomicsCalendarSource` for real Trading Economics calendar events
 - `SQLiteTradeJournal` for persistent local journals
 - `BrokerReconciler` for blocking when broker positions differ from bot ledger state
+- `sync_broker_state_after_restart` for transaction checkpoints, pending-order reporting, and explicit ledger repair before startup
 - `EmergencyStopController` for hard stop, manual stop file, drawdown, equity, runtime-error, and optional close-all controls
 - `TradeLifecycleStateMachine` and `SQLiteTradeLifecycleStore` for deterministic trade state tracking
 - `PortfolioRiskManager` for currency exposure, symbol concentration, same-currency, and correlation limits

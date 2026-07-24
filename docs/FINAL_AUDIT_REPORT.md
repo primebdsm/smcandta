@@ -20,6 +20,7 @@ It is ready for:
 - OANDA practice readiness checks with account instruments and live pricing probes
 - OANDA practice execution validation tooling for guarded minimum-size demo trades
 - Live monitoring snapshot and upgraded local dashboard
+- Broker restart sync with OANDA transaction checkpoints and pending-order reporting
 - Structured startup safety checks before demo/live loops
 
 It is not yet a turnkey live-money trading system.
@@ -109,8 +110,9 @@ Before real live trading, the selected broker must be demo-tested end to end wit
 - OANDA v20 REST adapter
 - OANDA practice-mode hardening for instrument metadata, pricing, spread/freshness checks, conservative retries, and order rejection handling
 - OANDA practice execution validator for minimum-unit open/close, SL/TP open/close, rejected-order probe, restart reconciliation, and spread/slippage reporting
+- OANDA restart-sync support for account-change checkpoints and pending orders
 - Optional MetaTrader 5 terminal adapter
-- Broker-neutral order, fill, account, and position models
+- Broker-neutral order, fill, account, pending-order, and position models
 
 ### Safety And Live-Readiness
 
@@ -130,6 +132,14 @@ Before real live trading, the selected broker must be demo-tested end to end wit
   - opposite same-symbol exposure
   - correlated-position limits
 - Broker reconciliation with memory and SQLite expected-position ledgers
+- Broker restart sync:
+  - report-only startup mode
+  - optional broker-position adoption into the expected ledger
+  - optional stale ledger position closure
+  - optional mismatch update from broker state
+  - SQLite transaction checkpoint store
+  - pending-order report with unlinked-order blocking
+  - `DemoTradingBot.sync_after_restart`
 - Emergency stop / kill switch:
   - manual activation
   - manual stop file
@@ -191,6 +201,7 @@ The project does not contain placeholder analysis claims. The implemented instru
 - Data quality checks inspect actual candle rows before the engine uses them.
 - Broker adapters implement the shared broker protocol.
 - OANDA adapter uses real OANDA v20 REST endpoints.
+- OANDA restart sync uses account changes, pending orders, and transaction checkpoint IDs from the OANDA v20 REST API.
 - MT5 adapter uses the real optional `MetaTrader5` Python package and terminal session.
 - Trading Economics connector maps provider events into the repository's news filter.
 - Preflight probes real runtime objects before a loop starts.
@@ -213,6 +224,7 @@ The toolkit can improve profit potential indirectly by improving process quality
 - Better learning loop: journal, lifecycle records, setup names, and reports make it possible to measure which setups and sessions work.
 - Better strategy selection: walk-forward tests help avoid choosing settings that only worked on one historical window.
 - Better execution review: spread, slippage, commission, and broker fills can be compared against backtest assumptions.
+- Better restart recovery: broker sync reduces duplicate entries, stale ledger exposure, and unknown pending orders after crashes or deploys.
 
 The main profit path is not "more indicators." The main profit path is controlled testing, selective execution, risk consistency, and fast detection of bad conditions.
 
@@ -243,10 +255,10 @@ OANDA hardening now includes:
 - SL/TP order open/close validation
 - restart/reconciliation validation
 - spread/slippage execution report
+- restart sync for account-change checkpoints, broker positions, and pending orders
 
 OANDA still needs before live:
 
-- broker-specific transaction sync after restart
 - more exhaustive order-rejection mapping
 - reconnect and timeout policy for long-running bot loops
 - streaming-price support if the bot moves beyond polling
@@ -284,6 +296,7 @@ Before live trading:
 
 - demo forward testing for the chosen broker
 - minimum 2-4 weeks of stable demo logs
+- restart sync must be run on every process start and reviewed in demo logs
 - real spread/slippage comparison versus backtest assumptions
 - secret manager or deployment-safe credential handling
 - process supervision
@@ -296,11 +309,12 @@ Before live trading:
 ## Recommended Next Build Order
 
 1. Run OANDA practice-account execution validation with the user's credentials and save the report artifacts
-2. Broker transaction sync and restart recovery
+2. Run broker restart sync against the same OANDA practice account and save startup reports
 3. Demo-forward testing package with reports
-4. Deployment runbook and incident procedures
-5. Hosted/authenticated monitoring if deployed off the local machine
-6. Optional MT5 hardening or cTrader/FIX adapter
+4. Broker-synchronized lifecycle recovery after restart
+5. Deployment runbook and incident procedures
+6. Hosted/authenticated monitoring if deployed off the local machine
+7. Optional MT5 hardening or cTrader/FIX adapter
 
 ## Current Verification
 
@@ -313,13 +327,13 @@ The repository test suite currently passes:
 Expected result:
 
 ```text
-84 passed
+91 passed
 ```
 
 ## Final Audit Conclusion
 
 The project is a real Forex SMC/TA analysis, testing, paper execution, and broker-integration framework.
 
-The strongest next engineering move is not adding more indicators. The strongest next move is running OANDA practice-account execution validation with real practice credentials, then adding broker transaction sync/restart recovery and demo-forward reporting.
+The strongest next engineering move is not adding more indicators. The strongest next move is running OANDA practice-account execution validation and broker restart sync with real practice credentials, then adding demo-forward reporting and broker-synchronized lifecycle recovery.
 
 After that, the project can move toward carefully controlled live micro-size testing.

@@ -189,6 +189,58 @@ def test_oanda_place_order_raises_when_response_has_no_fill() -> None:
         broker.place_order(OrderRequest(symbol="EURUSD", side="buy", units=1000), market_price=1.1)
 
 
+def test_oanda_restart_sync_helpers_fetch_transactions_and_pending_orders() -> None:
+    config = OandaConfig(account_id="acct", token="token")
+    responses = {
+        ("GET", "/accounts/acct/summary"): {
+            "lastTransactionID": "10",
+            "account": {"lastTransactionID": "10"},
+        },
+        ("GET", "/accounts/acct/changes"): {
+            "lastTransactionID": "12",
+            "changes": {"transactions": [{"id": "11", "type": "MARKET_ORDER"}]},
+        },
+        ("GET", "/accounts/acct/pendingOrders"): {
+            "lastTransactionID": "12",
+            "orders": [
+                {
+                    "id": "tp-1",
+                    "price": "1.12000",
+                    "state": "PENDING",
+                    "timeInForce": "GTC",
+                    "tradeID": "trade-1",
+                    "type": "TAKE_PROFIT",
+                    "createTime": pd.Timestamp("2024-01-01", tz="UTC").isoformat(),
+                },
+                {
+                    "id": "entry-1",
+                    "instrument": "EUR_USD",
+                    "price": "1.09500",
+                    "state": "PENDING",
+                    "timeInForce": "GTC",
+                    "type": "LIMIT",
+                    "units": "1000",
+                    "clientExtensions": {"id": "client-entry-1"},
+                },
+            ],
+        },
+    }
+    broker = broker_with_fake_client(config, responses)
+
+    assert broker.get_latest_transaction_id() == "10"
+    changes = broker.get_account_changes("10")
+    orders = broker.get_pending_orders("EURUSD")
+
+    assert changes["lastTransactionID"] == "12"
+    assert broker.client.calls[1]["params"] == {"sinceTransactionID": "10"}
+    assert len(orders) == 2
+    assert orders[0].trade_id == "trade-1"
+    assert orders[0].symbol is None
+    assert orders[1].symbol == "EURUSD"
+    assert orders[1].side == "buy"
+    assert orders[1].client_order_id == "client-entry-1"
+
+
 def test_oanda_client_retries_get_rate_limit(monkeypatch) -> None:
     calls = []
 

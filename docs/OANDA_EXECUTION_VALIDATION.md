@@ -141,8 +141,8 @@ After this validation passes, still collect at least several weeks of demo-forwa
 
 Next production steps:
 
-- broker transaction sync after restart
 - live monitoring dashboard
+- run broker restart sync on every OANDA bot process start
 - process supervisor and log rotation
 - incident/kill-switch runbook
 - demo-forward reporting package

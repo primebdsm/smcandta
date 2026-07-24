@@ -53,6 +53,30 @@ class OrderFill:
     metadata: dict[str, Any] = field(default_factory=dict)
 
 
+@dataclass(frozen=True)
+class BrokerOrder:
+    """Broker-side open or pending order snapshot.
+
+    This model is intentionally broader than `OrderRequest`: restart recovery
+    must be able to report broker-native orders that were not created by the
+    current Python process, including protective stop-loss/take-profit orders.
+    """
+
+    order_id: str
+    symbol: str | None
+    order_type: str
+    state: str
+    side: OrderSide | None = None
+    units: float | None = None
+    price: float | None = None
+    stop_loss: float | None = None
+    take_profit: float | None = None
+    trade_id: str | None = None
+    created_at: datetime | None = None
+    client_order_id: str | None = None
+    metadata: dict[str, Any] = field(default_factory=dict)
+
+
 @dataclass
 class Position:
     """Open or closed Forex position."""

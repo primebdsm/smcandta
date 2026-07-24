@@ -18,7 +18,7 @@ from urllib.request import Request, urlopen
 
 import pandas as pd
 
-from smc_ta.broker.models import AccountState, OrderFill, OrderRequest, OrderSide, Position, utc_now
+from smc_ta.broker.models import AccountState, BrokerOrder, OrderFill, OrderRequest, OrderSide, Position, utc_now
 from smc_ta.validation import normalize_ohlcv
 
 
@@ -356,6 +356,23 @@ class OandaBroker:
             currency=account.get("currency", "USD"),
         )
 
+    def get_latest_transaction_id(self) -> str | None:
+        """Return OANDA's latest observed account transaction ID."""
+
+        response = self.client.request("GET", f"/accounts/{self.config.account_id}/summary")
+        account = response.get("account", {})
+        transaction_id = response.get("lastTransactionID") or account.get("lastTransactionID")
+        return str(transaction_id) if transaction_id else None
+
+    def get_account_changes(self, since_transaction_id: str) -> dict[str, Any]:
+        """Return account changes since an OANDA transaction checkpoint."""
+
+        return self.client.request(
+            "GET",
+            f"/accounts/{self.config.account_id}/changes",
+            params={"sinceTransactionID": str(since_transaction_id)},
+        )
+
     def get_open_positions(self, symbol: str | None = None) -> list[Position]:
         response = self.client.request("GET", f"/accounts/{self.config.account_id}/openPositions")
         positions: list[Position] = []
@@ -382,6 +399,19 @@ class OandaBroker:
                     )
                 )
         return positions
+
+    def get_pending_orders(self, symbol: str | None = None) -> list[BrokerOrder]:
+        """Return pending OANDA orders as broker-neutral snapshots."""
+
+        response = self.client.request("GET", f"/accounts/{self.config.account_id}/pendingOrders")
+        symbol_filter = symbol.upper() if symbol else None
+        orders: list[BrokerOrder] = []
+        for raw in response.get("orders", []):
+            order = _broker_order_from_oanda(raw)
+            if symbol_filter and order.symbol and order.symbol != symbol_filter:
+                continue
+            orders.append(order)
+        return orders
 
     def get_instruments(self, symbols: list[str] | tuple[str, ...] | None = None) -> list[OandaInstrumentSpec]:
         """Return OANDA account instruments, optionally filtered by symbol."""
@@ -629,6 +659,52 @@ class OandaBroker:
                 "oanda_related_transaction_ids": tuple(str(item) for item in response.get("relatedTransactionIDs", [])),
             },
         )
+
+
+def _broker_order_from_oanda(raw: dict[str, Any]) -> BrokerOrder:
+    instrument = raw.get("instrument")
+    units = _raw_float(raw.get("units"))
+    client_extensions = raw.get("clientExtensions") if isinstance(raw.get("clientExtensions"), dict) else {}
+    return BrokerOrder(
+        order_id=str(raw.get("id", "")),
+        symbol=_symbol_from_oanda(str(instrument)) if instrument else None,
+        order_type=str(raw.get("type", "unknown")),
+        state=str(raw.get("state", "unknown")),
+        side=_order_side_from_units(units),
+        units=abs(units) if units is not None else None,
+        price=_raw_float(raw.get("price")),
+        stop_loss=_nested_price(raw.get("stopLossOnFill")),
+        take_profit=_nested_price(raw.get("takeProfitOnFill")),
+        trade_id=str(raw["tradeID"]) if raw.get("tradeID") else None,
+        created_at=_parse_oanda_time(raw.get("createTime")) if raw.get("createTime") else None,
+        client_order_id=str(client_extensions["id"]) if client_extensions.get("id") else None,
+        metadata={
+            "oanda_replaces_order_id": raw.get("replacesOrderID"),
+            "oanda_replaced_by_order_id": raw.get("replacedByOrderID"),
+            "oanda_raw": dict(raw),
+        },
+    )
+
+
+def _order_side_from_units(units: float | None) -> OrderSide | None:
+    if units is None or units == 0:
+        return None
+    return "buy" if units > 0 else "sell"
+
+
+def _nested_price(value: object) -> float | None:
+    if isinstance(value, dict):
+        return _raw_float(value.get("price"))
+    return None
+
+
+def _raw_float(value: object) -> float | None:
+    if value is None or value == "":
+        return None
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
 
 
 class OandaCandleDataSource:

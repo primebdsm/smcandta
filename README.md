@@ -60,6 +60,7 @@ Live-readiness components:
 - Risk manager for position sizing and exposure limits
 - Portfolio/correlation risk manager for currency exposure and correlated-position limits
 - Broker reconciliation layer with in-memory and SQLite expected-position ledgers
+- Broker restart sync with transaction checkpoints, position-ledger recovery, and pending-order reporting
 - Emergency stop / kill-switch controller with optional close-all behavior
 - Trade lifecycle state machine with memory and SQLite stores
 - Runtime configuration and live-mode guardrails with secret redaction
@@ -134,6 +135,14 @@ python examples/oanda_execution_validate.py --symbol EURUSD --max-spread-pips 2 
 ```
 
 The execution validator opens and closes minimum-size OANDA practice trades only when `--execute` is passed.
+
+## Broker Restart Sync
+
+```bash
+python examples/broker_restart_sync.py --broker paper --symbol EURUSD --adopt-unmanaged
+```
+
+Use this before a demo/live loop resumes after a restart. OANDA mode can fetch transaction checkpoints and pending orders; generic broker mode can still reconcile and repair open-position ledger state.
 
 ## Live Dashboard
 
@@ -300,7 +309,7 @@ smc_ta/
   news/           Economic calendar filters and provider connectors
   risk/           Position sizing and exposure controls
   risk/portfolio.py Portfolio/correlation risk controls
-  reconciliation/ Broker-vs-ledger state safety checks
+  reconciliation/ Broker-vs-ledger state safety checks and restart sync
   safety/         Emergency stop / kill-switch controls
   lifecycle/      Trade lifecycle state machine and stores
   config/         Runtime config validation and live guardrails

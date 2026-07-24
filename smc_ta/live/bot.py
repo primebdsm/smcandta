@@ -13,7 +13,14 @@ from smc_ta.engine.confluence import ConfluenceConfig, analyze_forex
 from smc_ta.journal.store import TradeJournal
 from smc_ta.lifecycle import TradeLifecycleRecord, TradeLifecycleStateMachine, TradeLifecycleStore
 from smc_ta.news.calendar import NewsFilter
-from smc_ta.reconciliation import BrokerReconciler, ReconciliationResult
+from smc_ta.reconciliation import (
+    BrokerReconciler,
+    ReconciliationResult,
+    RestartSyncConfig,
+    RestartSyncReport,
+    SyncCheckpointStore,
+    sync_broker_state_after_restart,
+)
 from smc_ta.risk import PortfolioRiskDecision, PortfolioRiskManager
 from smc_ta.risk.manager import RiskDecision, RiskManager
 from smc_ta.safety import EmergencyStopController, EmergencyStopResult
@@ -76,6 +83,25 @@ class DemoTradingBot:
         self.trade_lifecycle_store = trade_lifecycle_store
         self.trade_lifecycle = trade_lifecycle or (
             TradeLifecycleStateMachine() if trade_lifecycle_store is not None else None
+        )
+
+    def sync_after_restart(
+        self,
+        *,
+        config: RestartSyncConfig | None = None,
+        checkpoint_store: SyncCheckpointStore | None = None,
+    ) -> RestartSyncReport:
+        """Synchronize broker state before resuming the trading loop."""
+
+        if self.reconciler is None or self.reconciler.ledger is None:
+            raise ValueError("sync_after_restart requires a BrokerReconciler with a position ledger")
+        return sync_broker_state_after_restart(
+            self.broker,
+            self.reconciler.ledger,
+            symbol=self.symbol,
+            config=config,
+            reconciliation_config=self.reconciler.config,
+            checkpoint_store=checkpoint_store,
         )
 
     def run_cycle(self, candles: pd.DataFrame) -> CycleResult:

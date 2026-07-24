@@ -53,6 +53,23 @@ assert_preflight_ready(
 
 Use preflight after constructing runtime objects and before starting a repeated demo/live bot loop. See `docs/PREFLIGHT_READINESS.md`.
 
+## Broker Restart Sync
+
+```python
+from smc_ta import RestartSyncConfig, SQLiteSyncCheckpointStore
+
+checkpoints = SQLiteSyncCheckpointStore("positions.sqlite")
+report = bot.sync_after_restart(
+    checkpoint_store=checkpoints,
+    config=RestartSyncConfig(
+        adopt_unmanaged_broker_positions=True,
+        mark_missing_expected_positions_closed=True,
+    ),
+)
+```
+
+Use restart sync before preflight when the process resumes after a crash, deploy, or VPS restart. See `docs/BROKER_RESTART_SYNC.md`.
+
 ## OANDA Practice Check
 
 ```bash

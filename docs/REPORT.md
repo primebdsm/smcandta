@@ -28,6 +28,7 @@ For the complete post-roadmap audit, see `docs/FINAL_AUDIT_REPORT.md`.
 - Risk manager for position sizing, daily loss, open-position, and confidence/RR checks
 - Portfolio/correlation risk manager for symbol concentration, gross/net currency exposure, same-currency direction counts, opposite same-symbol exposure, and return-correlation limits
 - Broker reconciliation service with in-memory and SQLite expected-position ledgers
+- Broker restart sync with transaction checkpoint stores, ledger repair modes, pending-order reporting, OANDA account-change hooks, docs, and CLI
 - Emergency stop / kill-switch controller with manual, file, equity, drawdown, position, runtime-error, reconciliation-failure, and optional close-all controls
 - Trade lifecycle state machine with explicit transitions, memory store, SQLite store, and optional `DemoTradingBot` integration
 - Runtime configuration guardrails for modes, brokers, credentials, live arming, news-filter requirements, lifecycle/journal paths, adapter config builders, and secret redaction
@@ -47,7 +48,7 @@ For the complete post-roadmap audit, see `docs/FINAL_AUDIT_REPORT.md`.
 .venv/bin/python -m pytest
 ```
 
-Result: 84 passed.
+Result: 91 passed.
 
 ## What Is Real
 
@@ -62,11 +63,12 @@ The implemented instruments are real in the sense that each one maps to explicit
 - The lifecycle state machine is a real audit instrument: it enforces valid trade states and persists signal, block, submit, fill, close, fail, and cancel history.
 - The runtime config layer is a real safety instrument: it validates selected mode, broker, credentials, and explicit live arming before adapter setup.
 - The preflight checker is a real startup gate: it probes configured dependencies and returns blocking/warning/info checks before a bot loop starts.
+- The restart sync layer is a real recovery instrument: it reads broker positions, OANDA transaction checkpoints, and pending orders, then either blocks startup or explicitly repairs the expected-position ledger.
 
 ## What Still Needs To Be Added Before Live Trading
 
 - cTrader, FIX, Interactive Brokers, or other venue-specific adapters
-- Broker-specific production reconciliation
+- More broker-specific production reconciliation beyond OANDA restart hooks
 - Broker-synchronized recovery of in-flight lifecycle records after process restarts
 - External secret manager integration for cloud deployment
 - Production alerting and incident response

@@ -9,7 +9,7 @@ from smc_ta.engine.confluence import (
 )
 from smc_ta.engine.multitimeframe import MultiTimeframeConfig, MultiTimeframeResult, analyze_multi_timeframe
 from smc_ta.backtest import BacktestConfig, BacktestResult, run_backtest
-from smc_ta.broker import PaperBroker
+from smc_ta.broker import BrokerOrder, PaperBroker
 from smc_ta.config import (
     LIVE_CONFIRMATION_PHRASE,
     ConfigValidationError,
@@ -41,9 +41,15 @@ from smc_ta.preflight import (
 from smc_ta.reconciliation import (
     BrokerReconciler,
     MemoryPositionLedger,
+    MemorySyncCheckpointStore,
     ReconciliationConfig,
     ReconciliationResult,
+    RestartSyncConfig,
+    RestartSyncReport,
     SQLitePositionLedger,
+    SQLiteSyncCheckpointStore,
+    sync_broker_state_after_restart,
+    write_restart_sync_report,
 )
 from smc_ta.risk import PortfolioRiskConfig, PortfolioRiskDecision, PortfolioRiskManager, RiskConfig, RiskDecision, RiskManager
 from smc_ta.safety import EmergencyStopConfig, EmergencyStopController, EmergencyStopResult
@@ -60,6 +66,7 @@ __all__ = [
     "AnalysisResult",
     "BacktestConfig",
     "BacktestResult",
+    "BrokerOrder",
     "BrokerReconciler",
     "ChartConfig",
     "ConfluenceConfig",
@@ -74,6 +81,7 @@ __all__ = [
     "LIVE_CONFIRMATION_PHRASE",
     "LiveMonitoringSnapshot",
     "MemoryPositionLedger",
+    "MemorySyncCheckpointStore",
     "MemoryTradeLifecycleStore",
     "MultiTimeframeConfig",
     "MultiTimeframeResult",
@@ -87,11 +95,14 @@ __all__ = [
     "PreflightValidationError",
     "ReconciliationConfig",
     "ReconciliationResult",
+    "RestartSyncConfig",
+    "RestartSyncReport",
     "RiskConfig",
     "RiskDecision",
     "RiskManager",
     "RuntimeConfig",
     "SQLitePositionLedger",
+    "SQLiteSyncCheckpointStore",
     "SQLiteTradeLifecycleStore",
     "StrategyProfile",
     "TradingEconomicsApiError",
@@ -115,6 +126,7 @@ __all__ = [
     "run_backtest",
     "run_preflight",
     "run_walk_forward",
+    "sync_broker_state_after_restart",
     "render_analysis_chart_html",
     "render_analysis_chart_svg",
     "render_live_dashboard_html",
@@ -123,4 +135,5 @@ __all__ = [
     "write_analysis_chart",
     "write_dashboard",
     "write_live_dashboard",
+    "write_restart_sync_report",
 ]

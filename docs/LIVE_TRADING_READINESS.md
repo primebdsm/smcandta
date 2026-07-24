@@ -20,6 +20,7 @@ This repository now contains the main components needed before connecting a real
 - Portfolio/correlation risk: `smc_ta.risk.PortfolioRiskManager`
 - Broker reconciliation: `smc_ta.reconciliation.BrokerReconciler`
 - Expected-position ledgers: `MemoryPositionLedger`, `SQLitePositionLedger`
+- Broker restart sync: `sync_broker_state_after_restart`, `RestartSyncConfig`, `SQLiteSyncCheckpointStore`
 - Emergency stop / kill switch: `smc_ta.safety.EmergencyStopController`
 - Trade lifecycle state machine and stores: `TradeLifecycleStateMachine`, `SQLiteTradeLifecycleStore`
 - Demo forward bot: `smc_ta.live.DemoTradingBot`
@@ -53,14 +54,15 @@ Keep broker-specific authentication, order IDs, retry logic, and reconciliation 
 3. Forward test through `PaperBroker`.
 4. Validate `RuntimeConfig` and keep live mode blocked unless explicitly armed.
 5. Add `BrokerReconciler` with a persistent expected-position ledger.
-6. Connect one broker adapter in demo mode.
-7. Reconcile positions and balances after every cycle.
-8. Add portfolio/correlation limits for multi-pair trading.
-9. Enable `EmergencyStopController` with manual stop, equity, drawdown, position, runtime-error, and reconciliation-failure limits.
-10. Enable `SQLiteTradeLifecycleStore` so every signal, block, submission, fill, failure, and close is auditable.
-11. Add a real economic calendar source such as `TradingEconomicsCalendarSource` and verify event times against your broker/server timezone.
-12. Run `assert_preflight_ready` before every demo/live process start.
-13. Only then consider small live size.
+6. Run broker restart sync before preflight whenever the process starts.
+7. Connect one broker adapter in demo mode.
+8. Reconcile positions and balances after every cycle.
+9. Add portfolio/correlation limits for multi-pair trading.
+10. Enable `EmergencyStopController` with manual stop, equity, drawdown, position, runtime-error, and reconciliation-failure limits.
+11. Enable `SQLiteTradeLifecycleStore` so every signal, block, submission, fill, failure, and close is auditable.
+12. Add a real economic calendar source such as `TradingEconomicsCalendarSource` and verify event times against your broker/server timezone.
+13. Run `assert_preflight_ready` before every demo/live process start.
+14. Only then consider small live size.
 
 ## Emergency Stop
 
@@ -106,6 +108,12 @@ Live mode requires `allow_live_trading=True` and `live_confirmation="I_UNDERSTAN
 `run_preflight` combines runtime config, data quality, broker account/position probes, reconciliation, emergency stop, news-filter presence, persistence paths, and lifecycle-store checks into one startup report.
 
 Use `assert_preflight_ready` as the final gate before a repeated demo/live loop starts. See `docs/PREFLIGHT_READINESS.md`.
+
+## Broker Restart Sync
+
+`sync_broker_state_after_restart` compares broker-open positions with the SQLite expected-position ledger before the bot resumes. It can run report-only, adopt broker positions into the ledger, mark ledger-only positions closed, update mismatched ledger rows from broker truth, save broker transaction checkpoints, and report pending broker orders.
+
+For OANDA, `OandaBroker` exposes account changes and pending orders so the startup report can include transactions and protective or unlinked orders. Run `python examples/broker_restart_sync.py --broker oanda --symbol EURUSD --ledger-path oanda_positions.sqlite` before preflight. See `docs/BROKER_RESTART_SYNC.md`.
 
 ## OANDA Practice Hardening
 

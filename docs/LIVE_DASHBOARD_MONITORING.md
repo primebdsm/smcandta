@@ -67,11 +67,12 @@ The dashboard does not place orders and does not change bot decisions. It only r
 
 Recommended loop:
 
-1. Run analysis on the latest closed candles.
-2. Run risk, news, preflight, reconciliation, and emergency-stop checks.
-3. Save lifecycle and journal events.
-4. Build a `LiveMonitoringSnapshot`.
-5. Write `live_dashboard.html`.
-6. Continue only if execution gates approve the trade.
+1. On process start, run broker restart sync and preflight.
+2. Run analysis on the latest closed candles.
+3. Run risk, news, reconciliation, and emergency-stop checks.
+4. Save lifecycle and journal events.
+5. Build a `LiveMonitoringSnapshot`.
+6. Write `live_dashboard.html`.
+7. Continue only if execution gates approve the trade.
 
 For OANDA practice validation, pass `report.execution_frame()` from `run_oanda_practice_execution_validation` into `execution_samples`.

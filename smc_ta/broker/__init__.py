@@ -3,6 +3,7 @@
 from smc_ta.broker.base import BrokerAdapter
 from smc_ta.broker.models import (
     AccountState,
+    BrokerOrder,
     OrderFill,
     OrderRequest,
     Position,
@@ -35,6 +36,7 @@ from smc_ta.broker.paper import PaperBroker
 
 __all__ = [
     "AccountState",
+    "BrokerOrder",
     "BrokerAdapter",
     "MetaTrader5Broker",
     "MetaTrader5CandleDataSource",
