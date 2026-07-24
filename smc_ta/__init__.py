@@ -29,11 +29,15 @@ from smc_ta.forwardtest import (
     write_demo_forward_report_bundle,
 )
 from smc_ta.lifecycle import (
+    LifecycleRecoveryConfig,
+    LifecycleRecoveryReport,
     MemoryTradeLifecycleStore,
     SQLiteTradeLifecycleStore,
     TradeLifecycleError,
     TradeLifecycleRecord,
     TradeLifecycleStateMachine,
+    recover_lifecycle_after_restart,
+    write_lifecycle_recovery_report,
 )
 from smc_ta.live import DemoTradingBot
 from smc_ta.monitoring import LiveMonitoringSnapshot, build_live_monitoring_snapshot
@@ -90,6 +94,8 @@ __all__ = [
     "EmergencyStopController",
     "EmergencyStopResult",
     "LIVE_CONFIRMATION_PHRASE",
+    "LifecycleRecoveryConfig",
+    "LifecycleRecoveryReport",
     "LiveMonitoringSnapshot",
     "MemoryPositionLedger",
     "MemorySyncCheckpointStore",
@@ -138,6 +144,7 @@ __all__ = [
     "run_demo_forward_test",
     "run_preflight",
     "run_walk_forward",
+    "recover_lifecycle_after_restart",
     "sync_broker_state_after_restart",
     "render_analysis_chart_html",
     "render_analysis_chart_svg",
@@ -149,5 +156,6 @@ __all__ = [
     "write_dashboard",
     "write_demo_forward_report_bundle",
     "write_live_dashboard",
+    "write_lifecycle_recovery_report",
     "write_restart_sync_report",
 ]

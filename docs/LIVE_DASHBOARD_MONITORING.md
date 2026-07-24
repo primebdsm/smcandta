@@ -67,7 +67,7 @@ The dashboard does not place orders and does not change bot decisions. It only r
 
 Recommended loop:
 
-1. On process start, run broker restart sync and preflight.
+1. On process start, run broker restart sync, lifecycle restart recovery, and preflight.
 2. Run analysis on the latest closed candles.
 3. Run risk, news, reconciliation, and emergency-stop checks.
 4. Save lifecycle and journal events.

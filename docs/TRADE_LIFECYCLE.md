@@ -117,6 +117,27 @@ summary = store.to_frame()
 
 The SQLite row stores the latest lifecycle state plus JSON history for each transition. This gives a replayable audit trail for research, demo forward testing, and production incident review.
 
+## Restart Recovery
+
+Use `recover_lifecycle_after_restart` after broker restart sync and before preflight:
+
+```python
+from smc_ta import LifecycleRecoveryConfig, recover_lifecycle_after_restart
+
+report = recover_lifecycle_after_restart(
+    broker,
+    store,
+    symbol="EURUSD",
+    config=LifecycleRecoveryConfig(
+        create_missing_lifecycles_for_broker_positions=True,
+        mark_missing_broker_positions_closed=True,
+        fail_unfilled_lifecycles_without_broker_position=True,
+    ),
+)
+```
+
+This keeps active lifecycle rows synchronized with broker-open positions. See `docs/LIFECYCLE_RESTART_RECOVERY.md`.
+
 ## How It Works In A Real Bot
 
 1. Signal is generated from `analyze_forex`.

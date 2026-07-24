@@ -19,6 +19,9 @@ flowchart LR
   K --> L["Preflight Readiness"]
   H --> M["Restart Sync"]
   M --> L
+  J --> O["Lifecycle Recovery"]
+  M --> O
+  O --> L
 ```
 
 ## Expected Candle Shape
@@ -53,6 +56,7 @@ def on_new_closed_candle(candles):
 - Demo-tested broker adapter for orders, positions, and account state
 - Runtime config validation and explicit live-mode arming
 - Broker restart sync before resuming after crashes/deploys
+- Lifecycle restart recovery before preflight
 - Preflight readiness check before starting the execution loop
 - Economic calendar/news source such as `TradingEconomicsCalendarSource`
 - Spread and slippage model selected for the target broker
@@ -77,6 +81,7 @@ def on_new_closed_candle(candles):
 - `sync_broker_state_after_restart` for transaction checkpoints, pending-order reporting, and explicit ledger repair before startup
 - `EmergencyStopController` for hard stop, manual stop file, drawdown, equity, runtime-error, and optional close-all controls
 - `TradeLifecycleStateMachine` and `SQLiteTradeLifecycleStore` for deterministic trade state tracking
+- `recover_lifecycle_after_restart` for synchronizing active lifecycle records with broker-open positions after restart
 - `PortfolioRiskManager` for currency exposure, symbol concentration, same-currency, and correlation limits
 - `run_walk_forward` for train/test validation before demo/live use
 - `run_demo_forward_test` and `write_demo_forward_report_bundle` for bot-path replay evidence before broker-demo operation

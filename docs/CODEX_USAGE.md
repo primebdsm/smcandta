@@ -70,6 +70,22 @@ report = bot.sync_after_restart(
 
 Use restart sync before preflight when the process resumes after a crash, deploy, or VPS restart. See `docs/BROKER_RESTART_SYNC.md`.
 
+## Lifecycle Restart Recovery
+
+```python
+from smc_ta import LifecycleRecoveryConfig
+
+lifecycle_report = bot.recover_lifecycle_after_restart(
+    config=LifecycleRecoveryConfig(
+        create_missing_lifecycles_for_broker_positions=True,
+        mark_missing_broker_positions_closed=True,
+        fail_unfilled_lifecycles_without_broker_position=True,
+    ),
+)
+```
+
+Use lifecycle recovery after broker restart sync and before preflight so active lifecycle records match broker-open positions. See `docs/LIFECYCLE_RESTART_RECOVERY.md`.
+
 ## OANDA Practice Check
 
 ```bash

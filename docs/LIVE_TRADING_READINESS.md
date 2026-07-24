@@ -23,6 +23,7 @@ This repository now contains the main components needed before connecting a real
 - Broker restart sync: `sync_broker_state_after_restart`, `RestartSyncConfig`, `SQLiteSyncCheckpointStore`
 - Emergency stop / kill switch: `smc_ta.safety.EmergencyStopController`
 - Trade lifecycle state machine and stores: `TradeLifecycleStateMachine`, `SQLiteTradeLifecycleStore`
+- Lifecycle restart recovery: `recover_lifecycle_after_restart`, `LifecycleRecoveryConfig`
 - Demo forward bot: `smc_ta.live.DemoTradingBot`
 - Demo-forward report package: `run_demo_forward_test`, `write_demo_forward_report_bundle`
 - CSV and SQLite journals: `smc_ta.journal.TradeJournal`, `smc_ta.journal.SQLiteTradeJournal`
@@ -56,14 +57,15 @@ Keep broker-specific authentication, order IDs, retry logic, and reconciliation 
 4. Validate `RuntimeConfig` and keep live mode blocked unless explicitly armed.
 5. Add `BrokerReconciler` with a persistent expected-position ledger.
 6. Run broker restart sync before preflight whenever the process starts.
-7. Connect one broker adapter in demo mode.
-8. Reconcile positions and balances after every cycle.
-9. Add portfolio/correlation limits for multi-pair trading.
-10. Enable `EmergencyStopController` with manual stop, equity, drawdown, position, runtime-error, and reconciliation-failure limits.
-11. Enable `SQLiteTradeLifecycleStore` so every signal, block, submission, fill, failure, and close is auditable.
-12. Add a real economic calendar source such as `TradingEconomicsCalendarSource` and verify event times against your broker/server timezone.
-13. Run `assert_preflight_ready` before every demo/live process start.
-14. Only then consider small live size.
+7. Run lifecycle restart recovery before preflight whenever the process starts.
+8. Connect one broker adapter in demo mode.
+9. Reconcile positions and balances after every cycle.
+10. Add portfolio/correlation limits for multi-pair trading.
+11. Enable `EmergencyStopController` with manual stop, equity, drawdown, position, runtime-error, and reconciliation-failure limits.
+12. Enable `SQLiteTradeLifecycleStore` so every signal, block, submission, fill, failure, and close is auditable.
+13. Add a real economic calendar source such as `TradingEconomicsCalendarSource` and verify event times against your broker/server timezone.
+14. Run `assert_preflight_ready` before every demo/live process start.
+15. Only then consider small live size.
 
 ## Emergency Stop
 
@@ -98,6 +100,8 @@ Use charts for review, alerts, journal snapshots, and debugging. The chart rende
 
 `DemoTradingBot` can write lifecycle records automatically through `trade_lifecycle_store`. This does not replace broker reconciliation or emergency stop controls; it makes their decisions visible and durable.
 
+`recover_lifecycle_after_restart` synchronizes active lifecycle records with broker-open positions after a restart. It can create recovery lifecycle records for broker-only positions, mark missing broker positions closed, fail stale unfilled records, and block duplicate or unsafe lifecycle state. See `docs/LIFECYCLE_RESTART_RECOVERY.md`.
+
 ## Runtime Guardrails
 
 `RuntimeConfig` loads environment, `.env`-style files, or JSON config and validates mode, broker, symbols, timeframes, required credentials, news-filter requirements, lifecycle/journal paths, and live-mode arming.
@@ -115,6 +119,8 @@ Use `assert_preflight_ready` as the final gate before a repeated demo/live loop 
 `sync_broker_state_after_restart` compares broker-open positions with the SQLite expected-position ledger before the bot resumes. It can run report-only, adopt broker positions into the ledger, mark ledger-only positions closed, update mismatched ledger rows from broker truth, save broker transaction checkpoints, and report pending broker orders.
 
 For OANDA, `OandaBroker` exposes account changes and pending orders so the startup report can include transactions and protective or unlinked orders. Run `python examples/broker_restart_sync.py --broker oanda --symbol EURUSD --ledger-path oanda_positions.sqlite` before preflight. See `docs/BROKER_RESTART_SYNC.md`.
+
+Run lifecycle restart recovery immediately after broker restart sync so the lifecycle store is reconciled to the same broker truth.
 
 ## OANDA Practice Hardening
 

@@ -22,6 +22,7 @@ It is ready for:
 - OANDA practice execution validation tooling for guarded minimum-size demo trades
 - Live monitoring snapshot and upgraded local dashboard
 - Broker restart sync with OANDA transaction checkpoints and pending-order reporting
+- Broker-synchronized lifecycle recovery after restart
 - Structured startup safety checks before demo/live loops
 
 It is not yet a turnkey live-money trading system.
@@ -165,6 +166,13 @@ Before real live trading, the selected broker must be demo-tested end to end wit
   - closed
   - failed
   - cancelled
+- Lifecycle restart recovery:
+  - active lifecycle vs broker-position matching
+  - broker-only position lifecycle creation
+  - missing broker-position lifecycle close
+  - stale unfilled lifecycle failure
+  - duplicate lifecycle-position blocking
+  - `DemoTradingBot.recover_lifecycle_after_restart`
 - Preflight readiness checker:
   - runtime config validation
   - candle quality check
@@ -209,6 +217,7 @@ The project does not contain placeholder analysis claims. The implemented instru
 - OANDA adapter uses real OANDA v20 REST endpoints.
 - OANDA restart sync uses account changes, pending orders, and transaction checkpoint IDs from the OANDA v20 REST API.
 - Demo-forward reports exercise the real `DemoTradingBot`, risk manager, paper broker, reconciliation, lifecycle, and journal integration path.
+- Lifecycle recovery synchronizes persisted lifecycle rows against broker-open positions before a restarted bot resumes.
 - MT5 adapter uses the real optional `MetaTrader5` Python package and terminal session.
 - Trading Economics connector maps provider events into the repository's news filter.
 - Preflight probes real runtime objects before a loop starts.
@@ -232,6 +241,7 @@ The toolkit can improve profit potential indirectly by improving process quality
 - Better strategy selection: walk-forward tests help avoid choosing settings that only worked on one historical window.
 - Better execution review: spread, slippage, commission, and broker fills can be compared against backtest assumptions.
 - Better restart recovery: broker sync reduces duplicate entries, stale ledger exposure, and unknown pending orders after crashes or deploys.
+- Better lifecycle recovery: broker-synced lifecycle repair reduces false open/closed state, missed broker fills, and broken incident review after restart.
 - Better demo evidence: forward report artifacts show what the bot actually did cycle by cycle before broker-demo or live deployment.
 
 The main profit path is not "more indicators." The main profit path is controlled testing, selective execution, risk consistency, and fast detection of bad conditions.
@@ -306,6 +316,7 @@ Before live trading:
 - minimum 2-4 weeks of stable demo logs
 - demo-forward report bundles for out-of-sample candle windows
 - restart sync must be run on every process start and reviewed in demo logs
+- lifecycle recovery must be run after restart sync and before preflight
 - real spread/slippage comparison versus backtest assumptions
 - secret manager or deployment-safe credential handling
 - process supervision
@@ -320,7 +331,7 @@ Before live trading:
 1. Run OANDA practice-account execution validation with the user's credentials and save the report artifacts
 2. Run broker restart sync against the same OANDA practice account and save startup reports
 3. Run demo-forward report bundles on recent out-of-sample candles and review setup/session/block performance
-4. Broker-synchronized lifecycle recovery after restart
+4. Run lifecycle restart recovery on the same demo startup sequence and save reports
 5. Deployment runbook and incident procedures
 6. Hosted/authenticated monitoring if deployed off the local machine
 7. Optional MT5 hardening or cTrader/FIX adapter
@@ -336,13 +347,13 @@ The repository test suite currently passes:
 Expected result:
 
 ```text
-96 passed
+102 passed
 ```
 
 ## Final Audit Conclusion
 
 The project is a real Forex SMC/TA analysis, testing, paper execution, and broker-integration framework.
 
-The strongest next engineering move is not adding more indicators. The strongest next move is running OANDA practice-account execution validation, broker restart sync, and demo-forward report bundles with real practice data, then adding broker-synchronized lifecycle recovery.
+The strongest next engineering move is not adding more indicators. The strongest next move is running OANDA practice-account execution validation, broker restart sync, lifecycle recovery, and demo-forward report bundles with real practice data, then adding deployment runbooks and incident procedures.
 
 After that, the project can move toward carefully controlled live micro-size testing.

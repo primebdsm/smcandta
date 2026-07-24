@@ -137,8 +137,11 @@ Recommended production startup:
 3. Build SQLite expected-position ledger.
 4. Build SQLite transaction checkpoint store.
 5. Run restart sync.
-6. Run preflight readiness.
-7. Start live/demo bot loop only when both reports are OK.
+6. Run lifecycle restart recovery.
+7. Run preflight readiness.
+8. Start live/demo bot loop only when all startup reports are OK.
+
+Lifecycle recovery is documented in `docs/LIFECYCLE_RESTART_RECOVERY.md`.
 
 ## Profit Impact
 

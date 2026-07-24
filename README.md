@@ -63,6 +63,7 @@ Live-readiness components:
 - Broker restart sync with transaction checkpoints, position-ledger recovery, and pending-order reporting
 - Emergency stop / kill-switch controller with optional close-all behavior
 - Trade lifecycle state machine with memory and SQLite stores
+- Broker-synchronized lifecycle recovery after restart
 - Runtime configuration and live-mode guardrails with secret redaction
 - Preflight readiness checks for config, data, broker, safety, news, persistence, and lifecycle state
 - Walk-forward optimization for train/test strategy validation
@@ -144,6 +145,14 @@ python examples/broker_restart_sync.py --broker paper --symbol EURUSD --adopt-un
 ```
 
 Use this before a demo/live loop resumes after a restart. OANDA mode can fetch transaction checkpoints and pending orders; generic broker mode can still reconcile and repair open-position ledger state.
+
+## Lifecycle Restart Recovery
+
+```bash
+python examples/lifecycle_restart_recovery.py --broker paper --symbol EURUSD --create-missing-lifecycles
+```
+
+Use this after broker restart sync and before preflight so active lifecycle records match broker-open positions.
 
 ## Live Dashboard
 
@@ -320,7 +329,7 @@ smc_ta/
   risk/portfolio.py Portfolio/correlation risk controls
   reconciliation/ Broker-vs-ledger state safety checks and restart sync
   safety/         Emergency stop / kill-switch controls
-  lifecycle/      Trade lifecycle state machine and stores
+  lifecycle/      Trade lifecycle state machine, stores, and restart recovery
   config/         Runtime config validation and live guardrails
   preflight/      Demo/live startup readiness checks
   walkforward/    Rolling train/test optimization

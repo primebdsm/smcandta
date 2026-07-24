@@ -11,7 +11,14 @@ from smc_ta.broker.base import BrokerAdapter
 from smc_ta.broker.models import OrderFill, OrderRequest
 from smc_ta.engine.confluence import ConfluenceConfig, analyze_forex
 from smc_ta.journal.store import TradeJournal
-from smc_ta.lifecycle import TradeLifecycleRecord, TradeLifecycleStateMachine, TradeLifecycleStore
+from smc_ta.lifecycle import (
+    LifecycleRecoveryConfig,
+    LifecycleRecoveryReport,
+    TradeLifecycleRecord,
+    TradeLifecycleStateMachine,
+    TradeLifecycleStore,
+    recover_lifecycle_after_restart as recover_lifecycle_store_after_restart,
+)
 from smc_ta.news.calendar import NewsFilter
 from smc_ta.reconciliation import (
     BrokerReconciler,
@@ -102,6 +109,24 @@ class DemoTradingBot:
             config=config,
             reconciliation_config=self.reconciler.config,
             checkpoint_store=checkpoint_store,
+        )
+
+    def recover_lifecycle_after_restart(
+        self,
+        *,
+        config: LifecycleRecoveryConfig | None = None,
+        restart_report: RestartSyncReport | None = None,
+    ) -> LifecycleRecoveryReport:
+        """Synchronize lifecycle records with broker state before resuming."""
+
+        if self.trade_lifecycle_store is None:
+            raise ValueError("recover_lifecycle_after_restart requires a trade_lifecycle_store")
+        return recover_lifecycle_store_after_restart(
+            self.broker,
+            self.trade_lifecycle_store,
+            symbol=self.symbol,
+            config=config,
+            restart_report=restart_report,
         )
 
     def run_cycle(self, candles: pd.DataFrame) -> CycleResult:

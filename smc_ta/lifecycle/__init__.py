@@ -7,11 +7,22 @@ from smc_ta.lifecycle.models import (
     TradeLifecycleRecord,
     lifecycle_id,
 )
+from smc_ta.lifecycle.recovery import (
+    LifecycleRecoveryAction,
+    LifecycleRecoveryConfig,
+    LifecycleRecoveryReport,
+    lifecycle_records_frame,
+    recover_lifecycle_after_restart,
+    write_lifecycle_recovery_report,
+)
 from smc_ta.lifecycle.state_machine import ALLOWED_TRANSITIONS, TradeLifecycleError, TradeLifecycleStateMachine
 from smc_ta.lifecycle.store import MemoryTradeLifecycleStore, SQLiteTradeLifecycleStore, TradeLifecycleStore
 
 __all__ = [
     "ALLOWED_TRANSITIONS",
+    "LifecycleRecoveryAction",
+    "LifecycleRecoveryConfig",
+    "LifecycleRecoveryReport",
     "LifecycleEventType",
     "LifecycleState",
     "MemoryTradeLifecycleStore",
@@ -21,5 +32,8 @@ __all__ = [
     "TradeLifecycleRecord",
     "TradeLifecycleStateMachine",
     "TradeLifecycleStore",
+    "lifecycle_records_frame",
     "lifecycle_id",
+    "recover_lifecycle_after_restart",
+    "write_lifecycle_recovery_report",
 ]

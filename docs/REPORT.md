@@ -31,6 +31,7 @@ For the complete post-roadmap audit, see `docs/FINAL_AUDIT_REPORT.md`.
 - Broker restart sync with transaction checkpoint stores, ledger repair modes, pending-order reporting, OANDA account-change hooks, docs, and CLI
 - Emergency stop / kill-switch controller with manual, file, equity, drawdown, position, runtime-error, reconciliation-failure, and optional close-all controls
 - Trade lifecycle state machine with explicit transitions, memory store, SQLite store, and optional `DemoTradingBot` integration
+- Broker-synchronized lifecycle recovery after restart with safe report-only defaults, explicit repair modes, bot helper, docs, CLI, and tests
 - Runtime configuration guardrails for modes, brokers, credentials, live arming, news-filter requirements, lifecycle/journal paths, adapter config builders, and secret redaction
 - Preflight readiness checker for runtime config, candle quality, broker probes, reconciliation, emergency stop, news filter, persistence paths, and lifecycle store
 - Walk-forward optimizer with rolling train/test windows, candidate ranking, out-of-sample reports, combined equity, and combined trade output
@@ -49,7 +50,7 @@ For the complete post-roadmap audit, see `docs/FINAL_AUDIT_REPORT.md`.
 .venv/bin/python -m pytest
 ```
 
-Result: 96 passed.
+Result: 102 passed.
 
 ## What Is Real
 
@@ -66,12 +67,13 @@ The implemented instruments are real in the sense that each one maps to explicit
 - The preflight checker is a real startup gate: it probes configured dependencies and returns blocking/warning/info checks before a bot loop starts.
 - The restart sync layer is a real recovery instrument: it reads broker positions, OANDA transaction checkpoints, and pending orders, then either blocks startup or explicitly repairs the expected-position ledger.
 - The demo-forward report package is a real evidence instrument: it exercises `DemoTradingBot` over closed candles and writes measurable bot-cycle, fill, equity, setup, session, daily, and block artifacts.
+- The lifecycle recovery layer is a real restart instrument: it compares active lifecycle records with broker-open positions and either blocks startup or explicitly repairs lifecycle state.
 
 ## What Still Needs To Be Added Before Live Trading
 
 - cTrader, FIX, Interactive Brokers, or other venue-specific adapters
 - More broker-specific production reconciliation beyond OANDA restart hooks
-- Broker-synchronized recovery of in-flight lifecycle records after process restarts
+- Broker-specific recovery of complex in-flight order states beyond open positions and basic lifecycle rows
 - External secret manager integration for cloud deployment
 - Production alerting and incident response
 - Interactive live chart streaming and broker-synchronized screenshot automation
