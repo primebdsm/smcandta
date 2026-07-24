@@ -38,6 +38,9 @@ For the complete post-roadmap audit, see `docs/FINAL_AUDIT_REPORT.md`.
 - Demo forward-testing bot
 - Demo-forward report package with bot-cycle replay, paper broker SL/TP management, equity/trade/fill/setup/session/daily/block reports, JSON/CSV/HTML artifacts, docs, and CLI
 - Deployment runbook, rollback checklist, incident procedures, and standardized incident evidence bundle writer
+- Process supervision artifact generator for systemd, launchd, and logrotate
+- Runtime logging helper with rotating file support and JSON-line option
+- Secret resolution helper for env, `.env`, JSON, and external command providers with redacted reports
 - CSV and SQLite journals
 - Telegram, Discord, and email alerts
 - Live monitoring snapshot model, upgraded static HTML dashboard, and monitoring metrics
@@ -51,7 +54,7 @@ For the complete post-roadmap audit, see `docs/FINAL_AUDIT_REPORT.md`.
 .venv/bin/python -m pytest
 ```
 
-Result: 103 passed.
+Result: 107 passed.
 
 ## What Is Real
 
@@ -70,14 +73,17 @@ The implemented instruments are real in the sense that each one maps to explicit
 - The demo-forward report package is a real evidence instrument: it exercises `DemoTradingBot` over closed candles and writes measurable bot-cycle, fill, equity, setup, session, daily, and block artifacts.
 - The lifecycle recovery layer is a real restart instrument: it compares active lifecycle records with broker-open positions and either blocks startup or explicitly repairs lifecycle state.
 - The incident bundle helper is a real operations instrument: it serializes runtime, preflight, restart sync, lifecycle recovery, emergency stop, monitoring, account, position, and journal evidence into reviewable artifacts.
+- The process supervision helper is a real deployment instrument: it generates systemd, launchd, and logrotate files from structured config for operator review.
+- The secret resolution helper is a real deployment instrument: it loads required broker secrets from environment, files, JSON, or external commands and writes only redacted reports.
+- The runtime logging helper is a real operations instrument: it writes rotating bot logs with plain text or JSON-line formatting.
 
 ## What Still Needs To Be Added Before Live Trading
 
 - cTrader, FIX, Interactive Brokers, or other venue-specific adapters
 - More broker-specific production reconciliation beyond OANDA restart hooks
 - Broker-specific recovery of complex in-flight order states beyond open positions and basic lifecycle rows
-- External secret manager integration for cloud deployment
-- Process supervision, log rotation, and hosted alert-delivery status
+- Provider-specific secret-manager provisioning on the selected host
+- Supervisor installation and alert-delivery status on the selected host
 - Interactive live chart streaming and broker-synchronized screenshot automation
 - Broker-specific disaster recovery drills for each selected live venue
 - More broker-specific contract metadata

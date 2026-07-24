@@ -30,6 +30,7 @@ This repository now contains the main components needed before connecting a real
 - Monitoring metrics: `smc_ta.monitoring.performance_summary`
 - Static/live dashboard: `smc_ta.dashboard.write_dashboard`, `smc_ta.dashboard.write_live_dashboard`
 - Deployment runbook and incident bundle helper: `write_incident_report_bundle`
+- Runtime logging, secret resolution, and supervisor artifacts: `configure_runtime_logging`, `resolve_runtime_secrets`, `write_supervisor_artifacts`
 - Static chart visualization: `smc_ta.visualization.write_analysis_chart`
 - Alerts: `smc_ta.alerts.TelegramAlert`, `smc_ta.alerts.DiscordWebhookAlert`, `smc_ta.alerts.EmailAlert`
 - Strategy profiles: `smc_ta.strategy.get_strategy_profile`
@@ -65,9 +66,11 @@ Keep broker-specific authentication, order IDs, retry logic, and reconciliation 
 11. Enable `EmergencyStopController` with manual stop, equity, drawdown, position, runtime-error, and reconciliation-failure limits.
 12. Enable `SQLiteTradeLifecycleStore` so every signal, block, submission, fill, failure, and close is auditable.
 13. Add a real economic calendar source such as `TradingEconomicsCalendarSource` and verify event times against your broker/server timezone.
-14. Run `assert_preflight_ready` before every demo/live process start.
-15. Follow `docs/DEPLOYMENT_RUNBOOK.md` and keep `docs/INCIDENT_PROCEDURES.md` ready before any repeated bot process.
-16. Only then consider small live size.
+14. Configure runtime logging and resolve deployment secrets before broker adapters are constructed.
+15. Run `assert_preflight_ready` before every demo/live process start.
+16. Follow `docs/DEPLOYMENT_RUNBOOK.md` and keep `docs/INCIDENT_PROCEDURES.md` ready before any repeated bot process.
+17. Generate and review process supervisor/logrotate artifacts for the target host.
+18. Only then consider small live size.
 
 ## Emergency Stop
 
@@ -153,6 +156,12 @@ Run `python examples/live_dashboard_monitor.py --output live_dashboard.html` for
 `docs/DEPLOYMENT_RUNBOOK.md` defines the safe startup order, promotion gates, rollback process, and post-deploy monitoring checklist.
 
 `write_incident_report_bundle` writes standardized JSON, Markdown, and CSV evidence for blocked startup, emergency stops, restart sync issues, lifecycle recovery issues, spread/slippage incidents, and monitoring failures. Run `python examples/incident_bundle.py --output-dir reports/incidents/sample --severity SEV2` for a paper-mode sample. See `docs/INCIDENT_PROCEDURES.md`.
+
+## Supervision, Secrets, And Logs
+
+`write_supervisor_artifacts` renders systemd, launchd, and logrotate files for review before deployment. `configure_runtime_logging` writes rotating bot logs. `resolve_runtime_secrets` reads environment, `.env`, JSON, or external command secret sources and writes redacted startup reports.
+
+Run `python examples/generate_ops_artifacts.py --service-name smc-ta-demo --env-file .env.demo` and `python examples/check_secrets.py --required OANDA_ACCOUNT_ID,OANDA_TOKEN`. See `docs/PROCESS_SUPERVISION.md` and `docs/SECRETS_AND_LOGGING.md`.
 
 ## Still Broker-Specific
 

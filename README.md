@@ -69,6 +69,8 @@ Live-readiness components:
 - Walk-forward optimization for train/test strategy validation
 - Demo-forward report package with cycle, equity, trade, setup, session, daily, and block reports
 - Deployment runbook, incident procedures, and incident evidence bundle helper
+- Process supervision artifact generator for systemd, launchd, and logrotate
+- Runtime logging and external secret resolution with redacted reports
 - CSV journal and monitoring metrics
 - SQLite journal, Telegram/Discord/email alerts, live monitoring snapshot, and upgraded local dashboard
 - Static SMC/TA chart visualization with candles, zones, liquidity, structure, signals, and risk references
@@ -168,6 +170,15 @@ python examples/incident_bundle.py --output-dir reports/incidents/sample --sever
 ```
 
 Use `docs/DEPLOYMENT_RUNBOOK.md` before paper/demo/live starts and `docs/INCIDENT_PROCEDURES.md` whenever startup, broker state, lifecycle recovery, emergency stop, dashboard, or execution quality becomes unsafe.
+
+## Supervision, Secrets, And Logs
+
+```bash
+python examples/generate_ops_artifacts.py --service-name smc-ta-demo --env-file .env.demo
+python examples/check_secrets.py --required OANDA_ACCOUNT_ID,OANDA_TOKEN
+```
+
+Use `docs/PROCESS_SUPERVISION.md` for systemd/launchd/logrotate artifacts and `docs/SECRETS_AND_LOGGING.md` for external secret command integration and rotating runtime logs.
 
 ## Economic News Filter
 

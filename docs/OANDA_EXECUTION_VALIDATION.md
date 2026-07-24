@@ -147,5 +147,5 @@ Next production steps:
 - run broker restart sync on every OANDA bot process start
 - run lifecycle restart recovery after broker restart sync
 - run demo-forward report bundles on recent out-of-sample candles
-- process supervisor and log rotation
+- generated supervisor/logrotate artifacts installed and tested on the demo host
 - broker-specific incident drills using `docs/DEPLOYMENT_RUNBOOK.md` and `docs/INCIDENT_PROCEDURES.md`

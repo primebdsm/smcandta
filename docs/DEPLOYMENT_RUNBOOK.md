@@ -31,6 +31,9 @@ Keep these files on persistent storage, not a temporary folder:
 - incident report directory
 - dashboard output path
 - manual emergency-stop file path
+- runtime log directory
+- redacted startup secret report
+- generated supervisor artifacts for the target host
 
 Back up SQLite files before deploys that change execution, reconciliation, lifecycle, or broker adapter behavior.
 
@@ -54,15 +57,19 @@ export SMC_TA_OANDA_PRACTICE=true
 
 For live mode, `SMC_TA_ALLOW_LIVE_TRADING=true` and `SMC_TA_LIVE_CONFIRMATION=I_UNDERSTAND_LIVE_FOREX_RISK` are required. Keep `SMC_TA_OANDA_PRACTICE=true` for practice accounts.
 
+For production-style deployment, load credentials through environment variables or an external secret command and save only redacted reports. See `docs/SECRETS_AND_LOGGING.md`.
+
 ## Pre-Deploy Gate
 
 Run these checks before replacing a running process:
 
 ```bash
 python -m pytest
+python examples/check_secrets.py --env-file .env.demo --required OANDA_ACCOUNT_ID,OANDA_TOKEN --output reports/startup/secrets.json
 python examples/check_runtime_config.py --env-file .env.demo
 python examples/validate_data.py --csv EURUSD_M15.csv --symbol EURUSD
 python examples/demo_forward_report.py --csv EURUSD_M15.csv --output-dir reports/demo_forward/latest
+python examples/generate_ops_artifacts.py --service-name smc-ta-demo --env-file .env.demo --log-dir logs
 ```
 
 For OANDA practice:
@@ -81,14 +88,16 @@ Use this order after a deploy, VPS restart, process crash, or manual restart:
 1. Stop the old bot loop cleanly.
 2. Verify the broker account manually in the broker platform.
 3. Back up the SQLite state files.
-4. Load runtime config and credentials.
-5. Build broker, ledger, checkpoint, journal, lifecycle, news, risk, and emergency-stop objects.
-6. Run broker restart sync.
-7. Run lifecycle restart recovery.
-8. Run preflight readiness.
-9. Render or refresh the live dashboard.
-10. Start the bot loop only if every startup report is OK.
-11. Watch the first cycles and broker platform together.
+4. Configure runtime logging.
+5. Resolve secrets and write a redacted secret report.
+6. Load runtime config and credentials.
+7. Build broker, ledger, checkpoint, journal, lifecycle, news, risk, and emergency-stop objects.
+8. Run broker restart sync.
+9. Run lifecycle restart recovery.
+10. Run preflight readiness.
+11. Render or refresh the live dashboard.
+12. Start the bot loop only if every startup report is OK.
+13. Watch the first cycles and broker platform together.
 
 Command shape:
 
@@ -113,6 +122,23 @@ python examples/lifecycle_restart_recovery.py \
 python examples/run_preflight.py --env-file .env.demo --csv EURUSD_M15.csv
 python examples/live_dashboard_monitor.py --output reports/dashboard/live.html
 ```
+
+## Process Supervision
+
+Generate process supervisor artifacts before installing the service:
+
+```bash
+python examples/generate_ops_artifacts.py \
+  --output-dir deployment/supervisor \
+  --service-name smc-ta-demo \
+  --command "python examples/demo_paper_loop.py" \
+  --env-file .env.demo \
+  --log-dir logs
+```
+
+This writes systemd, launchd, and logrotate files for review. Install them only after paths, credentials, command arguments, and startup checks are correct. See `docs/PROCESS_SUPERVISION.md`.
+
+The supervisor may restart the process, but the process must still block itself on unsafe restart sync, lifecycle recovery, preflight, emergency stop, or secret checks.
 
 ## Live Promotion Gates
 
@@ -155,6 +181,8 @@ The operator should watch:
 - blocked trade reasons
 - spread and slippage samples
 - journal writes
+- rotating log writes
+- process supervisor status
 
 For any blocking condition, follow `docs/INCIDENT_PROCEDURES.md`.
 

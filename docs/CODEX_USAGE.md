@@ -141,6 +141,33 @@ bundle = write_incident_report_bundle(
 
 Use `docs/DEPLOYMENT_RUNBOOK.md` for deployment order and `docs/INCIDENT_PROCEDURES.md` when a startup or runtime control blocks trading.
 
+## Supervision, Secrets, And Logs
+
+```python
+from smc_ta import (
+    EnvSecretSource,
+    RuntimeLogConfig,
+    SecretResolutionConfig,
+    SupervisorConfig,
+    configure_runtime_logging,
+    resolve_runtime_secrets,
+    write_supervisor_artifacts,
+)
+
+logger = configure_runtime_logging(RuntimeLogConfig(log_dir="logs", json_lines=True))
+secrets = resolve_runtime_secrets(
+    SecretResolutionConfig(
+        sources=(EnvSecretSource(keys=("OANDA_ACCOUNT_ID", "OANDA_TOKEN")),),
+        required_keys=("OANDA_ACCOUNT_ID", "OANDA_TOKEN"),
+    )
+)
+artifacts = write_supervisor_artifacts(
+    SupervisorConfig(service_name="smc-ta-demo", env_file=".env.demo", log_dir="logs")
+)
+```
+
+Use `docs/PROCESS_SUPERVISION.md` and `docs/SECRETS_AND_LOGGING.md` for deployment-safe process/log/secret handling.
+
 ## Real News Provider
 
 ```python
