@@ -34,6 +34,7 @@ Keep these files on persistent storage, not a temporary folder:
 - runtime log directory
 - redacted startup secret report
 - generated supervisor artifacts for the target host
+- hosted monitoring endpoint and authentication secret when monitoring off-machine
 
 Back up SQLite files before deploys that change execution, reconciliation, lifecycle, or broker adapter behavior.
 
@@ -120,7 +121,9 @@ python examples/lifecycle_restart_recovery.py \
   --output reports/startup/lifecycle_recovery.json
 
 python examples/run_preflight.py --env-file .env.demo --csv EURUSD_M15.csv
-python examples/live_dashboard_monitor.py --output reports/dashboard/live.html
+python examples/live_dashboard_monitor.py \
+  --output reports/dashboard/live.html \
+  --snapshot-output reports/dashboard/snapshot.json
 ```
 
 ## Process Supervision
@@ -139,6 +142,24 @@ python examples/generate_ops_artifacts.py \
 This writes systemd, launchd, and logrotate files for review. Install them only after paths, credentials, command arguments, and startup checks are correct. See `docs/PROCESS_SUPERVISION.md`.
 
 The supervisor may restart the process, but the process must still block itself on unsafe restart sync, lifecycle recovery, preflight, emergency stop, or secret checks.
+
+## Hosted Monitoring
+
+Use hosted monitoring only after the dashboard and snapshot files are being refreshed:
+
+```bash
+export SMC_TA_MONITOR_PASSWORD="change-me"
+
+python examples/serve_monitoring.py \
+  --dashboard reports/dashboard/live.html \
+  --snapshot reports/dashboard/snapshot.json \
+  --artifact-dir reports \
+  --host 127.0.0.1 \
+  --port 8080 \
+  --username admin
+```
+
+Keep the monitor bound to localhost unless HTTPS, VPN, or an SSH tunnel is in front of it. See `docs/HOSTED_MONITORING.md`.
 
 ## Live Promotion Gates
 
@@ -183,6 +204,7 @@ The operator should watch:
 - journal writes
 - rotating log writes
 - process supervisor status
+- hosted monitoring health and authentication
 
 For any blocking condition, follow `docs/INCIDENT_PROCEDURES.md`.
 

@@ -116,10 +116,29 @@ Use this after backtesting/walk-forward and before broker-demo live loops. It ex
 ## Live Dashboard
 
 ```python
-from smc_ta import build_live_monitoring_snapshot, write_live_dashboard
+from smc_ta import build_live_monitoring_snapshot, write_live_dashboard, write_monitoring_snapshot_json
 ```
 
 Use `build_live_monitoring_snapshot` after each bot cycle and `write_live_dashboard` to render the latest local monitoring state. See `docs/LIVE_DASHBOARD_MONITORING.md`.
+
+## Hosted Monitoring
+
+```python
+from smc_ta import HostedMonitoringConfig, MonitoringAuthConfig, create_hosted_monitoring_server
+
+server = create_hosted_monitoring_server(
+    HostedMonitoringConfig(
+        dashboard_path="reports/dashboard/live.html",
+        snapshot_path="reports/dashboard/snapshot.json",
+        host="127.0.0.1",
+        port=8080,
+        auth=MonitoringAuthConfig(username="admin", password="change-me"),
+    )
+)
+server.serve_forever()
+```
+
+Use `docs/HOSTED_MONITORING.md` when the dashboard must be viewed off-machine.
 
 ## Deployment And Incidents
 

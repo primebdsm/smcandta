@@ -40,7 +40,16 @@ from smc_ta.lifecycle import (
     write_lifecycle_recovery_report,
 )
 from smc_ta.live import DemoTradingBot
-from smc_ta.monitoring import LiveMonitoringSnapshot, build_live_monitoring_snapshot
+from smc_ta.monitoring import (
+    HostedMonitoringConfig,
+    HostedMonitoringServer,
+    LiveMonitoringSnapshot,
+    MonitoringAuthConfig,
+    build_hosted_monitoring_status,
+    build_live_monitoring_snapshot,
+    create_hosted_monitoring_server,
+    write_monitoring_snapshot_json,
+)
 from smc_ta.news import TradingEconomicsApiError, TradingEconomicsCalendarSource, TradingEconomicsConfig
 from smc_ta.ops import (
     CommandSecretSource,
@@ -114,6 +123,8 @@ __all__ = [
     "EmergencyStopResult",
     "EnvFileSecretSource",
     "EnvSecretSource",
+    "HostedMonitoringConfig",
+    "HostedMonitoringServer",
     "IncidentReportBundle",
     "JsonSecretSource",
     "LIVE_CONFIRMATION_PHRASE",
@@ -124,6 +135,7 @@ __all__ = [
     "MemoryPositionLedger",
     "MemorySyncCheckpointStore",
     "MemoryTradeLifecycleStore",
+    "MonitoringAuthConfig",
     "MultiTimeframeConfig",
     "MultiTimeframeResult",
     "PaperBroker",
@@ -163,9 +175,11 @@ __all__ = [
     "analyze_multi_timeframe",
     "assert_preflight_ready",
     "assert_runtime_ready",
+    "build_hosted_monitoring_status",
     "build_smc_ta_features",
     "build_live_monitoring_snapshot",
     "configure_runtime_logging",
+    "create_hosted_monitoring_server",
     "generate_confluence_signals",
     "get_strategy_profile",
     "list_strategy_profiles",
@@ -189,6 +203,7 @@ __all__ = [
     "write_live_dashboard",
     "write_lifecycle_recovery_report",
     "write_logrotate_config",
+    "write_monitoring_snapshot_json",
     "write_restart_sync_report",
     "write_secret_resolution_report",
     "write_supervisor_artifacts",

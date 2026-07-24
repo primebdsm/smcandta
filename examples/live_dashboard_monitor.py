@@ -13,6 +13,7 @@ from smc_ta import (
     run_backtest,
     run_preflight,
     write_live_dashboard,
+    write_monitoring_snapshot_json,
 )
 from smc_ta.backtest import BacktestConfig
 from smc_ta.broker import OrderRequest, PaperBroker
@@ -45,6 +46,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--symbol", default="EURUSD")
     parser.add_argument("--output", default="live_dashboard.html")
+    parser.add_argument("--snapshot-output")
     parser.add_argument("--refresh-seconds", type=int)
     args = parser.parse_args()
 
@@ -128,6 +130,9 @@ def main() -> None:
     )
     output = write_live_dashboard(args.output, snapshot, refresh_seconds=args.refresh_seconds)
     print(output)
+    if args.snapshot_output:
+        snapshot_output = write_monitoring_snapshot_json(snapshot, args.snapshot_output)
+        print(snapshot_output)
 
 
 if __name__ == "__main__":

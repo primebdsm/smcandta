@@ -29,6 +29,7 @@ This repository now contains the main components needed before connecting a real
 - CSV and SQLite journals: `smc_ta.journal.TradeJournal`, `smc_ta.journal.SQLiteTradeJournal`
 - Monitoring metrics: `smc_ta.monitoring.performance_summary`
 - Static/live dashboard: `smc_ta.dashboard.write_dashboard`, `smc_ta.dashboard.write_live_dashboard`
+- Hosted authenticated monitoring: `create_hosted_monitoring_server`, `write_monitoring_snapshot_json`
 - Deployment runbook and incident bundle helper: `write_incident_report_bundle`
 - Runtime logging, secret resolution, and supervisor artifacts: `configure_runtime_logging`, `resolve_runtime_secrets`, `write_supervisor_artifacts`
 - Static chart visualization: `smc_ta.visualization.write_analysis_chart`
@@ -70,7 +71,8 @@ Keep broker-specific authentication, order IDs, retry logic, and reconciliation 
 15. Run `assert_preflight_ready` before every demo/live process start.
 16. Follow `docs/DEPLOYMENT_RUNBOOK.md` and keep `docs/INCIDENT_PROCEDURES.md` ready before any repeated bot process.
 17. Generate and review process supervisor/logrotate artifacts for the target host.
-18. Only then consider small live size.
+18. Enable hosted monitoring only behind auth and HTTPS/VPN/tunnel controls when viewed off-machine.
+19. Only then consider small live size.
 
 ## Emergency Stop
 
@@ -150,6 +152,8 @@ Run `python examples/demo_forward_report.py --output-dir reports/demo_forward` f
 `build_live_monitoring_snapshot` and `write_live_dashboard` render account state, signal state, SMC/TA context, equity, preflight checks, emergency-stop state, open positions, lifecycle records, journal rows, blocked events, and execution samples into one local HTML dashboard.
 
 Run `python examples/live_dashboard_monitor.py --output live_dashboard.html` for a paper-mode sample. See `docs/LIVE_DASHBOARD_MONITORING.md`.
+
+`create_hosted_monitoring_server` serves dashboard and snapshot artifacts through Basic or Bearer authentication. Use it behind HTTPS, VPN, or an SSH tunnel before exposing it outside localhost. See `docs/HOSTED_MONITORING.md`.
 
 ## Deployment And Incident Procedures
 

@@ -56,7 +56,8 @@ The supervisor restarts the process. It must not bypass the bot's startup sequen
 4. lifecycle restart recovery
 5. preflight readiness
 6. dashboard refresh
-7. bot loop only when reports are OK
+7. monitoring snapshot refresh
+8. bot loop only when reports are OK
 
 ## launchd Pattern
 
@@ -118,3 +119,5 @@ Do not configure the supervisor to delete state, reset emergency stop, overwrite
 ## Incident Link
 
 If the service enters a crash loop, logs stop updating, or the dashboard becomes stale, treat it as an incident and follow `docs/INCIDENT_PROCEDURES.md`.
+
+If hosted monitoring is running as a separate service, generate and review a separate supervisor unit for `examples/serve_monitoring.py`. Keep it bound to localhost unless HTTPS, VPN, or tunnel controls are in front of it. See `docs/HOSTED_MONITORING.md`.

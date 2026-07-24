@@ -71,6 +71,7 @@ Live-readiness components:
 - Deployment runbook, incident procedures, and incident evidence bundle helper
 - Process supervision artifact generator for systemd, launchd, and logrotate
 - Runtime logging and external secret resolution with redacted reports
+- Hosted authenticated monitoring server for dashboard and snapshot artifacts
 - CSV journal and monitoring metrics
 - SQLite journal, Telegram/Discord/email alerts, live monitoring snapshot, and upgraded local dashboard
 - Static SMC/TA chart visualization with candles, zones, liquidity, structure, signals, and risk references
@@ -160,8 +161,11 @@ Use this after broker restart sync and before preflight so active lifecycle reco
 ## Live Dashboard
 
 ```bash
-python examples/live_dashboard_monitor.py --output live_dashboard.html
+python examples/live_dashboard_monitor.py --output live_dashboard.html --snapshot-output monitoring_snapshot.json
+python examples/serve_monitoring.py --dashboard live_dashboard.html --snapshot monitoring_snapshot.json --username admin
 ```
+
+Use `docs/HOSTED_MONITORING.md` when the dashboard must be viewed off the local machine.
 
 ## Deployment And Incidents
 
@@ -356,10 +360,11 @@ smc_ta/
   forwardtest/    Demo-forward replay and report bundles
   live/           Demo-forward bot orchestration
   journal/        CSV trade journal
-  monitoring/     Equity and strategy health metrics
+  monitoring/     Metrics, live snapshots, hosted authenticated monitor
   strategy/       Strategy presets
   alerts/         Telegram, Discord, and email alerts
   dashboard/      Static/live local dashboard renderer
+  ops/            Incident bundles, supervision, secrets, logging helpers
   visualization/  Static SMC/TA chart renderer
 docs/             Codex, bot, and instrument documentation
 examples/         Working Python examples

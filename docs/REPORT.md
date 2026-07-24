@@ -41,6 +41,7 @@ For the complete post-roadmap audit, see `docs/FINAL_AUDIT_REPORT.md`.
 - Process supervision artifact generator for systemd, launchd, and logrotate
 - Runtime logging helper with rotating file support and JSON-line option
 - Secret resolution helper for env, `.env`, JSON, and external command providers with redacted reports
+- Hosted authenticated monitoring server for dashboard, status, snapshot, health, and read-only artifact routes
 - CSV and SQLite journals
 - Telegram, Discord, and email alerts
 - Live monitoring snapshot model, upgraded static HTML dashboard, and monitoring metrics
@@ -54,7 +55,7 @@ For the complete post-roadmap audit, see `docs/FINAL_AUDIT_REPORT.md`.
 .venv/bin/python -m pytest
 ```
 
-Result: 107 passed.
+Result: 110 passed.
 
 ## What Is Real
 
@@ -76,6 +77,7 @@ The implemented instruments are real in the sense that each one maps to explicit
 - The process supervision helper is a real deployment instrument: it generates systemd, launchd, and logrotate files from structured config for operator review.
 - The secret resolution helper is a real deployment instrument: it loads required broker secrets from environment, files, JSON, or external commands and writes only redacted reports.
 - The runtime logging helper is a real operations instrument: it writes rotating bot logs with plain text or JSON-line formatting.
+- The hosted monitoring server is a real operations instrument: it serves dashboard and snapshot artifacts with Basic or Bearer auth, health/status routes, safe artifact path handling, and security headers.
 
 ## What Still Needs To Be Added Before Live Trading
 
@@ -84,6 +86,7 @@ The implemented instruments are real in the sense that each one maps to explicit
 - Broker-specific recovery of complex in-flight order states beyond open positions and basic lifecycle rows
 - Provider-specific secret-manager provisioning on the selected host
 - Supervisor installation and alert-delivery status on the selected host
+- TLS/reverse-proxy or VPN/tunnel deployment for off-machine hosted monitoring
 - Interactive live chart streaming and broker-synchronized screenshot automation
 - Broker-specific disaster recovery drills for each selected live venue
 - More broker-specific contract metadata

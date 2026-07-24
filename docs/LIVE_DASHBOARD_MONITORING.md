@@ -7,7 +7,7 @@ It is still dependency-free static HTML. The bot can regenerate the file on each
 ## Main APIs
 
 ```python
-from smc_ta import build_live_monitoring_snapshot, write_live_dashboard
+from smc_ta import build_live_monitoring_snapshot, write_live_dashboard, write_monitoring_snapshot_json
 
 snapshot = build_live_monitoring_snapshot(
     symbol="EURUSD",
@@ -27,15 +27,31 @@ snapshot = build_live_monitoring_snapshot(
 )
 
 write_live_dashboard("live_dashboard.html", snapshot, refresh_seconds=30)
+write_monitoring_snapshot_json(snapshot, "monitoring_snapshot.json")
 ```
 
 ## Local Example
 
 ```bash
-python examples/live_dashboard_monitor.py --output live_dashboard.html
+python examples/live_dashboard_monitor.py --output live_dashboard.html --snapshot-output monitoring_snapshot.json
 ```
 
 The example uses deterministic candles and `PaperBroker`; it does not connect to a live broker.
+
+## Hosted Example
+
+```bash
+export SMC_TA_MONITOR_PASSWORD="change-me"
+
+python examples/serve_monitoring.py \
+  --dashboard live_dashboard.html \
+  --snapshot monitoring_snapshot.json \
+  --host 127.0.0.1 \
+  --port 8080 \
+  --username admin
+```
+
+The hosted monitor serves `/dashboard`, `/status.json`, `/snapshot.json`, `/healthz`, and optional `/artifacts/<path>`. Keep auth enabled, and put HTTPS, VPN, or an SSH tunnel in front of it before exposing it outside localhost. See `docs/HOSTED_MONITORING.md`.
 
 ## What The Dashboard Shows
 
@@ -75,7 +91,8 @@ Recommended loop:
 4. Save lifecycle and journal events.
 5. Build a `LiveMonitoringSnapshot`.
 6. Write `live_dashboard.html`.
-7. Continue only if execution gates approve the trade.
+7. Write `monitoring_snapshot.json` if using hosted monitoring.
+8. Continue only if execution gates approve the trade.
 
 For OANDA practice validation, pass `report.execution_frame()` from `run_oanda_practice_execution_validation` into `execution_samples`.
 
