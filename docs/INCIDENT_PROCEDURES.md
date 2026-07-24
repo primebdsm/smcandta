@@ -21,7 +21,7 @@ The repository can help document and reconcile state, but broker truth wins duri
 | --- | --- | --- |
 | SEV1 | Live-money exposure, unexpected position, runaway orders, margin risk, or large drawdown | Stop bot, inspect broker manually, preserve evidence, resolve exposure before restart |
 | SEV2 | Demo/practice execution issue, restart sync blocked, lifecycle recovery blocked, or OANDA practice validation failed | Stop bot, preserve evidence, repair state only after review |
-| SEV3 | Data, news, dashboard, journal, alert, or monitoring degradation while trading is blocked or unaffected | Keep trading blocked if visibility is incomplete |
+| SEV3 | Data, news, dashboard, journal, alert, broker connectivity, or monitoring degradation while trading is blocked or unaffected | Keep trading blocked if visibility is incomplete |
 | SEV4 | Documentation, report formatting, or non-runtime issue | Fix normally after confirming no execution impact |
 
 ## Evidence Bundle
@@ -175,6 +175,8 @@ Symptoms:
 - journal is not updating
 - lifecycle records do not match broker state
 - alerts are not delivered
+- Broker Connectivity panel is blocking or stale
+- Alert Delivery panel shows warning/blocking
 
 Procedure:
 
@@ -182,8 +184,10 @@ Procedure:
 2. Check broker platform manually.
 3. Save an incident bundle if trading was active.
 4. Verify journal and lifecycle paths are writable.
-5. Regenerate the dashboard.
-6. Keep trading blocked until monitoring reflects current broker state.
+5. Rerun read-only broker connectivity checks.
+6. Rerun explicit alert delivery probes if alert channels are required.
+7. Regenerate the dashboard and snapshot.
+8. Keep trading blocked until monitoring reflects current broker state.
 
 ## Return To Trading Checklist
 

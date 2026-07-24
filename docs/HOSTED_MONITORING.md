@@ -121,6 +121,8 @@ Returns server status, dashboard freshness, snapshot status, and snapshot payloa
 
 Serves the latest monitoring snapshot JSON.
 
+Snapshot JSON includes broker connectivity and alert delivery arrays when the bot supplies those status records. See `docs/BROKER_ALERT_STATUS_MONITORING.md`.
+
 `/healthz`
 
 Returns `200` when the dashboard file exists and `503` when it is missing. Keep it authenticated unless your process supervisor requires public health checks.

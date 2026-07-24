@@ -140,6 +140,17 @@ server.serve_forever()
 
 Use `docs/HOSTED_MONITORING.md` when the dashboard must be viewed off-machine.
 
+## Broker And Alert Status
+
+```python
+from smc_ta import check_broker_connectivity, probe_alert_channel
+
+broker_status = check_broker_connectivity(broker, broker_name="oanda", symbol="EURUSD")
+alert_status = probe_alert_channel(alert_channel, channel_name="telegram")
+```
+
+Pass these into `build_live_monitoring_snapshot` as `broker_connectivity` and `alert_delivery`. See `docs/BROKER_ALERT_STATUS_MONITORING.md`.
+
 ## Deployment And Incidents
 
 ```python

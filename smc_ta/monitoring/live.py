@@ -10,6 +10,12 @@ import pandas as pd
 from smc_ta.broker.models import AccountState, Position
 from smc_ta.lifecycle import TradeLifecycleRecord, TradeLifecycleStore
 from smc_ta.monitoring.metrics import health_check, performance_summary
+from smc_ta.monitoring.status import (
+    AlertDeliveryStatus,
+    BrokerConnectivityStatus,
+    alert_delivery_frame,
+    broker_connectivity_frame,
+)
 from smc_ta.preflight import PreflightReport
 from smc_ta.safety import EmergencyStopResult
 
@@ -35,6 +41,8 @@ class LiveMonitoringSnapshot:
     journal_events: pd.DataFrame = field(default_factory=pd.DataFrame)
     blocked_events: pd.DataFrame = field(default_factory=pd.DataFrame)
     execution_samples: pd.DataFrame = field(default_factory=pd.DataFrame)
+    broker_connectivity: tuple[BrokerConnectivityStatus, ...] = ()
+    alert_delivery: tuple[AlertDeliveryStatus, ...] = ()
     equity_curve: pd.DataFrame = field(default_factory=pd.DataFrame)
     trades: pd.DataFrame = field(default_factory=pd.DataFrame)
 
@@ -57,6 +65,8 @@ class LiveMonitoringSnapshot:
             reasons.extend(self.emergency_stop.reasons)
         if not self.health_ok:
             reasons.extend(message for message in self.health_messages if message != "ok")
+        reasons.extend(f"broker:{status.broker_name}:{status.message}" for status in self.broker_connectivity if status.blocking)
+        reasons.extend(f"alert:{status.channel_name}:{status.message}" for status in self.alert_delivery if status.blocking)
         return tuple(dict.fromkeys(str(reason) for reason in reasons if str(reason)))
 
     @property
@@ -66,6 +76,8 @@ class LiveMonitoringSnapshot:
             reasons.extend(f"preflight:{check.code}" for check in self.preflight.warnings)
         if self.blocked_events is not None and not self.blocked_events.empty:
             reasons.append("blocked_events_present")
+        reasons.extend(f"broker:{status.broker_name}:{status.message}" for status in self.broker_connectivity if status.warning)
+        reasons.extend(f"alert:{status.channel_name}:{status.message}" for status in self.alert_delivery if status.warning)
         return tuple(dict.fromkeys(str(reason) for reason in reasons if str(reason)))
 
     @property
@@ -97,6 +109,12 @@ class LiveMonitoringSnapshot:
     def preflight_frame(self) -> pd.DataFrame:
         return self.preflight.to_frame() if self.preflight is not None else pd.DataFrame()
 
+    def broker_connectivity_frame(self) -> pd.DataFrame:
+        return broker_connectivity_frame(self.broker_connectivity)
+
+    def alert_delivery_frame(self) -> pd.DataFrame:
+        return alert_delivery_frame(self.alert_delivery)
+
 
 def build_live_monitoring_snapshot(
     *,
@@ -114,6 +132,8 @@ def build_live_monitoring_snapshot(
     lifecycle_store: TradeLifecycleStore | None = None,
     journal_events: pd.DataFrame | None = None,
     execution_samples: pd.DataFrame | None = None,
+    broker_connectivity: Iterable[BrokerConnectivityStatus] | None = None,
+    alert_delivery: Iterable[AlertDeliveryStatus] | None = None,
     mode: str = "paper",
     broker_name: str = "paper",
     timestamp: pd.Timestamp | None = None,
@@ -155,6 +175,8 @@ def build_live_monitoring_snapshot(
         journal_events=_copy_frame(journal_events),
         blocked_events=_copy_frame(blocked_events),
         execution_samples=_copy_frame(execution_samples),
+        broker_connectivity=tuple(broker_connectivity or ()),
+        alert_delivery=tuple(alert_delivery or ()),
         equity_curve=equity,
         trades=trade_frame,
     )

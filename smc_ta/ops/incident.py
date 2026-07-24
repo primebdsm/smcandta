@@ -197,6 +197,8 @@ def _write_monitoring_frames(
         "monitoring_journal_events": snapshot.journal_events,
         "monitoring_blocked_events": snapshot.blocked_events,
         "monitoring_execution_samples": snapshot.execution_samples,
+        "monitoring_broker_connectivity": snapshot.broker_connectivity_frame(),
+        "monitoring_alert_delivery": snapshot.alert_delivery_frame(),
         "monitoring_equity_curve": snapshot.equity_curve,
         "monitoring_trades": snapshot.trades,
     }

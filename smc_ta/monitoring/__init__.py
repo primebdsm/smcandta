@@ -17,15 +17,28 @@ from smc_ta.monitoring.server import (
     validate_hosted_monitoring_config,
     write_monitoring_snapshot_json,
 )
+from smc_ta.monitoring.status import (
+    AlertDeliveryStatus,
+    BrokerConnectivityStatus,
+    alert_delivery_frame,
+    broker_connectivity_frame,
+    check_broker_connectivity,
+    probe_alert_channel,
+)
 
 __all__ = [
+    "AlertDeliveryStatus",
+    "BrokerConnectivityStatus",
     "HealthCheck",
     "HostedMonitoringConfig",
     "HostedMonitoringServer",
     "LiveMonitoringSnapshot",
     "MonitoringAuthConfig",
+    "alert_delivery_frame",
     "build_hosted_monitoring_status",
     "build_live_monitoring_snapshot",
+    "broker_connectivity_frame",
+    "check_broker_connectivity",
     "create_hosted_monitoring_server",
     "health_check",
     "lifecycle_records_to_frame",
@@ -33,6 +46,7 @@ __all__ = [
     "monitoring_snapshot_to_jsonable",
     "performance_summary",
     "positions_to_frame",
+    "probe_alert_channel",
     "validate_hosted_monitoring_config",
     "write_monitoring_snapshot_json",
 ]

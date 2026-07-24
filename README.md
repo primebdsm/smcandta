@@ -72,6 +72,7 @@ Live-readiness components:
 - Process supervision artifact generator for systemd, launchd, and logrotate
 - Runtime logging and external secret resolution with redacted reports
 - Hosted authenticated monitoring server for dashboard and snapshot artifacts
+- Broker connectivity and alert delivery status panels
 - CSV journal and monitoring metrics
 - SQLite journal, Telegram/Discord/email alerts, live monitoring snapshot, and upgraded local dashboard
 - Static SMC/TA chart visualization with candles, zones, liquidity, structure, signals, and risk references
@@ -165,7 +166,7 @@ python examples/live_dashboard_monitor.py --output live_dashboard.html --snapsho
 python examples/serve_monitoring.py --dashboard live_dashboard.html --snapshot monitoring_snapshot.json --username admin
 ```
 
-Use `docs/HOSTED_MONITORING.md` when the dashboard must be viewed off the local machine.
+Use `docs/HOSTED_MONITORING.md` when the dashboard must be viewed off the local machine. Use `docs/BROKER_ALERT_STATUS_MONITORING.md` for broker connectivity and alert delivery panels.
 
 ## Deployment And Incidents
 

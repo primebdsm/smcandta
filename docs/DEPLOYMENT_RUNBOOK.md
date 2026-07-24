@@ -99,6 +99,7 @@ Use this order after a deploy, VPS restart, process crash, or manual restart:
 11. Render or refresh the live dashboard.
 12. Start the bot loop only if every startup report is OK.
 13. Watch the first cycles and broker platform together.
+14. Confirm Broker Connectivity and Alert Delivery panels are current.
 
 Command shape:
 
@@ -198,6 +199,8 @@ The operator should watch:
 - pending orders
 - emergency-stop status
 - preflight warnings
+- broker connectivity status
+- alert delivery status
 - lifecycle active records
 - blocked trade reasons
 - spread and slippage samples

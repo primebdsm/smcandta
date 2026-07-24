@@ -10,6 +10,8 @@ import pandas as pd
 from smc_ta import (
     RuntimeConfig,
     build_live_monitoring_snapshot,
+    check_broker_connectivity,
+    probe_alert_channel,
     run_backtest,
     run_preflight,
     write_live_dashboard,
@@ -112,6 +114,8 @@ def main() -> None:
             }
         ]
     )
+    broker_status = check_broker_connectivity(broker, broker_name="paper", symbol=args.symbol)
+    alert_status = probe_alert_channel(_MemoryAlert(), channel_name="memory", message="dashboard sample alert probe")
     snapshot = build_live_monitoring_snapshot(
         symbol=args.symbol,
         signals=backtest.signals,
@@ -125,6 +129,8 @@ def main() -> None:
         emergency_stop=preflight.emergency_stop_result,
         lifecycle_store=lifecycle_store,
         execution_samples=execution_samples,
+        broker_connectivity=(broker_status,),
+        alert_delivery=(alert_status,),
         mode="paper",
         broker_name="paper",
     )
@@ -133,6 +139,14 @@ def main() -> None:
     if args.snapshot_output:
         snapshot_output = write_monitoring_snapshot_json(snapshot, args.snapshot_output)
         print(snapshot_output)
+
+
+class _MemoryAlert:
+    def __init__(self) -> None:
+        self.messages: list[str] = []
+
+    def send(self, message: str) -> None:
+        self.messages.append(message)
 
 
 if __name__ == "__main__":

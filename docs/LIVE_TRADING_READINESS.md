@@ -30,6 +30,7 @@ This repository now contains the main components needed before connecting a real
 - Monitoring metrics: `smc_ta.monitoring.performance_summary`
 - Static/live dashboard: `smc_ta.dashboard.write_dashboard`, `smc_ta.dashboard.write_live_dashboard`
 - Hosted authenticated monitoring: `create_hosted_monitoring_server`, `write_monitoring_snapshot_json`
+- Broker connectivity and alert delivery status: `check_broker_connectivity`, `probe_alert_channel`
 - Deployment runbook and incident bundle helper: `write_incident_report_bundle`
 - Runtime logging, secret resolution, and supervisor artifacts: `configure_runtime_logging`, `resolve_runtime_secrets`, `write_supervisor_artifacts`
 - Static chart visualization: `smc_ta.visualization.write_analysis_chart`
@@ -72,7 +73,8 @@ Keep broker-specific authentication, order IDs, retry logic, and reconciliation 
 16. Follow `docs/DEPLOYMENT_RUNBOOK.md` and keep `docs/INCIDENT_PROCEDURES.md` ready before any repeated bot process.
 17. Generate and review process supervisor/logrotate artifacts for the target host.
 18. Enable hosted monitoring only behind auth and HTTPS/VPN/tunnel controls when viewed off-machine.
-19. Only then consider small live size.
+19. Add broker connectivity and alert delivery status records to every dashboard snapshot.
+20. Only then consider small live size.
 
 ## Emergency Stop
 
@@ -154,6 +156,8 @@ Run `python examples/demo_forward_report.py --output-dir reports/demo_forward` f
 Run `python examples/live_dashboard_monitor.py --output live_dashboard.html` for a paper-mode sample. See `docs/LIVE_DASHBOARD_MONITORING.md`.
 
 `create_hosted_monitoring_server` serves dashboard and snapshot artifacts through Basic or Bearer authentication. Use it behind HTTPS, VPN, or an SSH tunnel before exposing it outside localhost. See `docs/HOSTED_MONITORING.md`.
+
+`check_broker_connectivity` and `probe_alert_channel` add Broker Connectivity and Alert Delivery panels to local and hosted monitoring. Broker account/position failures are blocking; alert failures are warnings by default unless configured as blocking. See `docs/BROKER_ALERT_STATUS_MONITORING.md`.
 
 ## Deployment And Incident Procedures
 

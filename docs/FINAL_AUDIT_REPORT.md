@@ -26,6 +26,7 @@ It is ready for:
 - Structured startup safety checks before demo/live loops
 - Runtime logging, secret resolution, log rotation, and supervisor artifact generation
 - Hosted dashboard/status/snapshot server with Basic or Bearer authentication
+- Broker connectivity and alert delivery status panels
 
 It is not yet a turnkey live-money trading system.
 
@@ -205,6 +206,7 @@ Before real live trading, the selected broker must be demo-tested end to end wit
 - Static local dashboard
 - Live monitoring dashboard with account, positions, preflight, emergency stop, lifecycle, journal, blocks, and execution samples
 - Hosted authenticated monitoring server for dashboard, status, snapshot, health, and read-only artifact routes
+- Broker connectivity and alert delivery status probes for local dashboards, hosted JSON, and incident bundles
 - Static SMC/TA chart visualization
 - Deployment runbook and incident procedures
 - Incident evidence bundle helper for JSON, Markdown, and CSV startup/runtime artifacts
@@ -236,6 +238,8 @@ The project does not contain placeholder analysis claims. The implemented instru
 - Secret resolution can load broker credentials from environment, local protected files, JSON, or external secret commands without committing secrets.
 - Supervisor artifacts give operators reviewable systemd, launchd, and logrotate files for the target host.
 - Hosted monitoring serves dashboard and snapshot artifacts through authenticated read-only routes with security headers and safe artifact path handling.
+- Broker connectivity probes call read-only account/position APIs and surface broker failures before operators trust the bot state.
+- Alert delivery probes verify notification channels explicitly and surface failed delivery as warning or blocking status.
 
 ## What Is Not Guaranteed
 
@@ -259,6 +263,7 @@ The toolkit can improve profit potential indirectly by improving process quality
 - Better demo evidence: forward report artifacts show what the bot actually did cycle by cycle before broker-demo or live deployment.
 - Better operations: runbooks and incident bundles reduce downtime and help prevent unsafe restarts after broker or state mismatches.
 - Better deployment hygiene: supervised restarts, rotating logs, and secret redaction reduce avoidable operational failures.
+- Better visibility: broker connectivity and alert delivery panels make it easier to detect blind spots before continuing a demo/live loop.
 
 The main profit path is not "more indicators." The main profit path is controlled testing, selective execution, risk consistency, and fast detection of bad conditions.
 
@@ -318,8 +323,8 @@ The repository has a static/live dashboard, hosted monitor, snapshot JSON, and h
 For production-style monitoring, still add:
 
 - periodic dashboard writer process for live broker loops
-- alert delivery status
-- broker connectivity status
+- alert delivery probes wired to the selected production alert channels
+- broker connectivity probes wired to the selected live broker adapter
 - TLS reverse-proxy, VPN, or tunnel deployment for off-machine dashboard access
 - live broker transaction stream panel
 - installed process supervisor status
@@ -337,6 +342,7 @@ Before live trading:
 - selected secret-manager backend provisioned on the target host
 - generated supervisor/logrotate artifacts installed and tested on the target host
 - hosted monitor installed behind HTTPS, VPN, or tunnel controls when viewed off-machine
+- broker connectivity and alert delivery panels reviewed in every startup/demo drill
 - manual kill-switch procedure
 - post-trade review workflow
 - broker outage procedure
@@ -350,7 +356,7 @@ Before live trading:
 5. Run deployment and incident drills in OANDA practice using the new runbook and incident bundle helper
 6. Install and test generated supervisor/logrotate artifacts on the chosen demo host
 7. Install hosted monitoring behind HTTPS, VPN, or tunnel controls on the chosen demo host
-8. Add broker connectivity/alert delivery status panels
+8. Run broker connectivity/alert delivery panels in OANDA practice and save incident-ready snapshots
 9. Optional MT5 hardening or cTrader/FIX adapter
 
 ## Current Verification
@@ -364,13 +370,13 @@ The repository test suite currently passes:
 Expected result:
 
 ```text
-110 passed
+114 passed
 ```
 
 ## Final Audit Conclusion
 
 The project is a real Forex SMC/TA analysis, testing, paper execution, and broker-integration framework.
 
-The strongest next engineering move is not adding more indicators. The strongest next move is running OANDA practice-account execution validation, broker restart sync, lifecycle recovery, demo-forward report bundles, deployment/incident drills, supervisor/logrotate installation tests, and hosted-monitor installation tests with real practice data.
+The strongest next engineering move is not adding more indicators. The strongest next move is running OANDA practice-account execution validation, broker restart sync, lifecycle recovery, demo-forward report bundles, deployment/incident drills, supervisor/logrotate installation tests, hosted-monitor installation tests, and broker/alert status checks with real practice data.
 
 After that, the project can move toward carefully controlled live micro-size testing.

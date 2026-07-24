@@ -41,13 +41,17 @@ from smc_ta.lifecycle import (
 )
 from smc_ta.live import DemoTradingBot
 from smc_ta.monitoring import (
+    AlertDeliveryStatus,
+    BrokerConnectivityStatus,
     HostedMonitoringConfig,
     HostedMonitoringServer,
     LiveMonitoringSnapshot,
     MonitoringAuthConfig,
     build_hosted_monitoring_status,
     build_live_monitoring_snapshot,
+    check_broker_connectivity,
     create_hosted_monitoring_server,
+    probe_alert_channel,
     write_monitoring_snapshot_json,
 )
 from smc_ta.news import TradingEconomicsApiError, TradingEconomicsCalendarSource, TradingEconomicsConfig
@@ -103,8 +107,10 @@ from smc_ta.walkforward import (
 
 __all__ = [
     "AnalysisResult",
+    "AlertDeliveryStatus",
     "BacktestConfig",
     "BacktestResult",
+    "BrokerConnectivityStatus",
     "BrokerOrder",
     "BrokerReconciler",
     "ChartConfig",
@@ -178,11 +184,13 @@ __all__ = [
     "build_hosted_monitoring_status",
     "build_smc_ta_features",
     "build_live_monitoring_snapshot",
+    "check_broker_connectivity",
     "configure_runtime_logging",
     "create_hosted_monitoring_server",
     "generate_confluence_signals",
     "get_strategy_profile",
     "list_strategy_profiles",
+    "probe_alert_channel",
     "run_backtest",
     "run_demo_forward_test",
     "run_preflight",

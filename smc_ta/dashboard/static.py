@@ -11,6 +11,7 @@ import pandas as pd
 from smc_ta.broker.models import AccountState, Position
 from smc_ta.lifecycle import TradeLifecycleRecord
 from smc_ta.monitoring.live import LiveMonitoringSnapshot, build_live_monitoring_snapshot
+from smc_ta.monitoring.status import AlertDeliveryStatus, BrokerConnectivityStatus
 from smc_ta.preflight import PreflightReport
 from smc_ta.safety import EmergencyStopResult
 
@@ -30,6 +31,8 @@ def render_dashboard_html(
     lifecycle_records: Iterable[TradeLifecycleRecord] | None = None,
     journal_events: pd.DataFrame | None = None,
     execution_samples: pd.DataFrame | None = None,
+    broker_connectivity: Iterable[BrokerConnectivityStatus] | None = None,
+    alert_delivery: Iterable[AlertDeliveryStatus] | None = None,
     mode: str = "paper",
     broker_name: str = "paper",
     refresh_seconds: int | None = None,
@@ -50,6 +53,8 @@ def render_dashboard_html(
         lifecycle_records=lifecycle_records,
         journal_events=journal_events,
         execution_samples=execution_samples,
+        broker_connectivity=broker_connectivity,
+        alert_delivery=alert_delivery,
         mode=mode,
         broker_name=broker_name,
     )
@@ -74,6 +79,8 @@ def render_live_dashboard_html(
     journal = snapshot.journal_events.tail(20) if not snapshot.journal_events.empty else pd.DataFrame()
     blocks = snapshot.blocked_events.tail(20) if not snapshot.blocked_events.empty else pd.DataFrame()
     executions = snapshot.execution_samples.tail(20) if not snapshot.execution_samples.empty else pd.DataFrame()
+    connectivity = snapshot.broker_connectivity_frame()
+    alerts = snapshot.alert_delivery_frame()
     preflight = snapshot.preflight_frame()
     return f"""<!doctype html>
 <html lang="en">
@@ -174,7 +181,7 @@ def render_live_dashboard_html(
     </section>
     <section class="span-4">
       <h2>Safety State</h2>
-      {_dict_table({"preflight": snapshot.preflight.summary() if snapshot.preflight else None, "emergency_stop": snapshot.emergency_stop.summary() if snapshot.emergency_stop else "not_provided", "health": ";".join(snapshot.health_messages), "blocked_events": len(blocks), "journal_events": len(journal)})}
+      {_dict_table({"preflight": snapshot.preflight.summary() if snapshot.preflight else None, "emergency_stop": snapshot.emergency_stop.summary() if snapshot.emergency_stop else "not_provided", "health": ";".join(snapshot.health_messages), "broker_connectivity": _status_summary(connectivity), "alert_delivery": _status_summary(alerts), "blocked_events": len(blocks), "journal_events": len(journal)})}
     </section>
     <section class="span-8 chart">
       <h2>Equity Curve</h2>
@@ -191,6 +198,14 @@ def render_live_dashboard_html(
     <section class="span-6">
       <h2>Preflight Checks</h2>
       {_frame_table(_tail(preflight, 16))}
+    </section>
+    <section class="span-6">
+      <h2>Broker Connectivity</h2>
+      {_frame_table(_tail(connectivity, 12))}
+    </section>
+    <section class="span-6">
+      <h2>Alert Delivery</h2>
+      {_frame_table(_tail(alerts, 12))}
     </section>
     <section class="span-6">
       <h2>Lifecycle</h2>
@@ -286,6 +301,13 @@ def _frame_table(frame: pd.DataFrame) -> str:
 
 def _tail(frame: pd.DataFrame, rows: int) -> pd.DataFrame:
     return frame.tail(rows) if frame is not None and not frame.empty else pd.DataFrame()
+
+
+def _status_summary(frame: pd.DataFrame) -> str:
+    if frame is None or frame.empty or "status" not in frame.columns:
+        return "not_provided"
+    counts = frame["status"].astype(str).value_counts().to_dict()
+    return ";".join(f"{key}:{counts[key]}" for key in sorted(counts))
 
 
 def _equity_svg(equity_curve: pd.DataFrame) -> str:

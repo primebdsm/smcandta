@@ -22,6 +22,8 @@ snapshot = build_live_monitoring_snapshot(
     lifecycle_store=lifecycle_store,
     blocked_events=blocked_events,
     execution_samples=oanda_execution_report.execution_frame(),
+    broker_connectivity=(broker_status,),
+    alert_delivery=(alert_status,),
     mode="demo",
     broker_name="oanda",
 )
@@ -68,13 +70,15 @@ The hosted monitor serves `/dashboard`, `/status.json`, `/snapshot.json`, `/heal
 - journal events
 - blocked events and reasons
 - spread/slippage execution samples
+- broker connectivity status
+- alert delivery status
 
 ## Status Logic
 
 Dashboard status is derived from real project state:
 
-- `blocking`: preflight has blocking checks, emergency stop is active, or health check fails
-- `warning`: preflight warnings exist or blocked events are present
+- `blocking`: preflight has blocking checks, emergency stop is active, health check fails, broker connectivity blocks, or an alert probe is configured as blocking
+- `warning`: preflight warnings exist, blocked events are present, optional broker probes fail, or alert delivery fails with default warning policy
 - `ok`: no blocking or warning state is present
 
 The dashboard does not place orders and does not change bot decisions. It only renders the state passed into the snapshot.
@@ -97,3 +101,5 @@ Recommended loop:
 For OANDA practice validation, pass `report.execution_frame()` from `run_oanda_practice_execution_validation` into `execution_samples`.
 
 For deployment order, see `docs/DEPLOYMENT_RUNBOOK.md`.
+
+For broker connectivity and alert delivery panels, see `docs/BROKER_ALERT_STATUS_MONITORING.md`.

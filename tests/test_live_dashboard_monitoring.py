@@ -6,6 +6,8 @@ import pandas as pd
 from smc_ta import (
     RuntimeConfig,
     build_live_monitoring_snapshot,
+    check_broker_connectivity,
+    probe_alert_channel,
     run_backtest,
     run_preflight,
     write_dashboard,
@@ -73,6 +75,8 @@ def build_sample_snapshot():
     execution_samples = pd.DataFrame(
         [{"label": "paper_open", "side": "buy", "units": 1000, "spread_pips": 1.0, "slippage_pips": 0.1}]
     )
+    broker_status = check_broker_connectivity(broker, broker_name="paper", symbol="EURUSD")
+    alert_status = probe_alert_channel(_MemoryAlert(), channel_name="memory")
     return build_live_monitoring_snapshot(
         symbol="EURUSD",
         signals=backtest.signals,
@@ -86,6 +90,8 @@ def build_sample_snapshot():
         lifecycle_store=lifecycle_store,
         blocked_events=blocked_events,
         execution_samples=execution_samples,
+        broker_connectivity=(broker_status,),
+        alert_delivery=(alert_status,),
         mode="paper",
         broker_name="paper",
     )
@@ -102,6 +108,8 @@ def test_live_monitoring_snapshot_collects_operational_state() -> None:
     assert not snapshot.positions_frame().empty
     assert not snapshot.lifecycle_frame().empty
     assert not snapshot.preflight_frame().empty
+    assert not snapshot.broker_connectivity_frame().empty
+    assert not snapshot.alert_delivery_frame().empty
     assert "blocked_events_present" in snapshot.warning_reasons
 
 
@@ -114,6 +122,8 @@ def test_live_dashboard_html_contains_core_sections() -> None:
     assert "Current Signal" in html
     assert "Open Positions" in html
     assert "Preflight Checks" in html
+    assert "Broker Connectivity" in html
+    assert "Alert Delivery" in html
     assert "Execution Samples" in html
     assert 'http-equiv="refresh"' in html
     assert "paper_open" in html
@@ -143,3 +153,8 @@ def test_write_live_dashboard_and_legacy_write_dashboard(tmp_path) -> None:
     assert legacy_path.exists()
     assert "Safety State" in live_path.read_text(encoding="utf-8")
     assert "Safety State" in legacy_path.read_text(encoding="utf-8")
+
+
+class _MemoryAlert:
+    def send(self, message: str) -> None:
+        self.message = message
