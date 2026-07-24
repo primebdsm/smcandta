@@ -68,6 +68,7 @@ Live-readiness components:
 - Preflight readiness checks for config, data, broker, safety, news, persistence, and lifecycle state
 - Walk-forward optimization for train/test strategy validation
 - Demo-forward report package with cycle, equity, trade, setup, session, daily, and block reports
+- Deployment runbook, incident procedures, and incident evidence bundle helper
 - CSV journal and monitoring metrics
 - SQLite journal, Telegram/Discord/email alerts, live monitoring snapshot, and upgraded local dashboard
 - Static SMC/TA chart visualization with candles, zones, liquidity, structure, signals, and risk references
@@ -159,6 +160,14 @@ Use this after broker restart sync and before preflight so active lifecycle reco
 ```bash
 python examples/live_dashboard_monitor.py --output live_dashboard.html
 ```
+
+## Deployment And Incidents
+
+```bash
+python examples/incident_bundle.py --output-dir reports/incidents/sample --severity SEV2
+```
+
+Use `docs/DEPLOYMENT_RUNBOOK.md` before paper/demo/live starts and `docs/INCIDENT_PROCEDURES.md` whenever startup, broker state, lifecycle recovery, emergency stop, dashboard, or execution quality becomes unsafe.
 
 ## Economic News Filter
 

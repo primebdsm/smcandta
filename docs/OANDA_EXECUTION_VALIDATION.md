@@ -135,6 +135,8 @@ It helps answer:
 - Are live practice spreads and slippage close to backtest assumptions?
 - Are rejected orders handled without crashing the bot loop?
 
+If validation fails while execution mode is enabled, keep the bot stopped, inspect the practice account manually, and capture an incident bundle. See `docs/INCIDENT_PROCEDURES.md`.
+
 ## What Still Remains
 
 After this validation passes, still collect at least several weeks of demo-forward results before live-money trading.
@@ -146,4 +148,4 @@ Next production steps:
 - run lifecycle restart recovery after broker restart sync
 - run demo-forward report bundles on recent out-of-sample candles
 - process supervisor and log rotation
-- incident/kill-switch runbook
+- broker-specific incident drills using `docs/DEPLOYMENT_RUNBOOK.md` and `docs/INCIDENT_PROCEDURES.md`

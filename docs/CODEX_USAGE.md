@@ -121,6 +121,26 @@ from smc_ta import build_live_monitoring_snapshot, write_live_dashboard
 
 Use `build_live_monitoring_snapshot` after each bot cycle and `write_live_dashboard` to render the latest local monitoring state. See `docs/LIVE_DASHBOARD_MONITORING.md`.
 
+## Deployment And Incidents
+
+```python
+from smc_ta import write_incident_report_bundle
+
+bundle = write_incident_report_bundle(
+    "reports/incidents/incident-001",
+    title="startup blocked by lifecycle recovery",
+    severity="SEV2",
+    symbol="EURUSD",
+    runtime_config=config,
+    preflight_report=preflight,
+    restart_sync_report=restart_sync,
+    lifecycle_recovery_report=lifecycle_recovery,
+    monitoring_snapshot=snapshot,
+)
+```
+
+Use `docs/DEPLOYMENT_RUNBOOK.md` for deployment order and `docs/INCIDENT_PROCEDURES.md` when a startup or runtime control blocks trading.
+
 ## Real News Provider
 
 ```python

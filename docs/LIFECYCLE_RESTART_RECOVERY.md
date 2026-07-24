@@ -110,6 +110,8 @@ python examples/lifecycle_restart_recovery.py \
 
 The command exits with `0` when recovery is safe and `2` when startup should remain blocked.
 
+When it exits with `2`, keep the bot stopped, review broker positions and lifecycle records manually, and capture an incident bundle. See `docs/INCIDENT_PROCEDURES.md`.
+
 ## Recommended Startup Order
 
 1. Load runtime config.
@@ -118,6 +120,8 @@ The command exits with `0` when recovery is safe and `2` when startup should rem
 4. Run lifecycle restart recovery against the lifecycle store.
 5. Run preflight readiness.
 6. Start the bot loop only when all startup reports are OK.
+
+The full deployment sequence is documented in `docs/DEPLOYMENT_RUNBOOK.md`.
 
 ## Profit Impact
 

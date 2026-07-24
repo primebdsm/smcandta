@@ -29,6 +29,7 @@ This repository now contains the main components needed before connecting a real
 - CSV and SQLite journals: `smc_ta.journal.TradeJournal`, `smc_ta.journal.SQLiteTradeJournal`
 - Monitoring metrics: `smc_ta.monitoring.performance_summary`
 - Static/live dashboard: `smc_ta.dashboard.write_dashboard`, `smc_ta.dashboard.write_live_dashboard`
+- Deployment runbook and incident bundle helper: `write_incident_report_bundle`
 - Static chart visualization: `smc_ta.visualization.write_analysis_chart`
 - Alerts: `smc_ta.alerts.TelegramAlert`, `smc_ta.alerts.DiscordWebhookAlert`, `smc_ta.alerts.EmailAlert`
 - Strategy profiles: `smc_ta.strategy.get_strategy_profile`
@@ -65,7 +66,8 @@ Keep broker-specific authentication, order IDs, retry logic, and reconciliation 
 12. Enable `SQLiteTradeLifecycleStore` so every signal, block, submission, fill, failure, and close is auditable.
 13. Add a real economic calendar source such as `TradingEconomicsCalendarSource` and verify event times against your broker/server timezone.
 14. Run `assert_preflight_ready` before every demo/live process start.
-15. Only then consider small live size.
+15. Follow `docs/DEPLOYMENT_RUNBOOK.md` and keep `docs/INCIDENT_PROCEDURES.md` ready before any repeated bot process.
+16. Only then consider small live size.
 
 ## Emergency Stop
 
@@ -145,6 +147,12 @@ Run `python examples/demo_forward_report.py --output-dir reports/demo_forward` f
 `build_live_monitoring_snapshot` and `write_live_dashboard` render account state, signal state, SMC/TA context, equity, preflight checks, emergency-stop state, open positions, lifecycle records, journal rows, blocked events, and execution samples into one local HTML dashboard.
 
 Run `python examples/live_dashboard_monitor.py --output live_dashboard.html` for a paper-mode sample. See `docs/LIVE_DASHBOARD_MONITORING.md`.
+
+## Deployment And Incident Procedures
+
+`docs/DEPLOYMENT_RUNBOOK.md` defines the safe startup order, promotion gates, rollback process, and post-deploy monitoring checklist.
+
+`write_incident_report_bundle` writes standardized JSON, Markdown, and CSV evidence for blocked startup, emergency stops, restart sync issues, lifecycle recovery issues, spread/slippage incidents, and monitoring failures. Run `python examples/incident_bundle.py --output-dir reports/incidents/sample --severity SEV2` for a paper-mode sample. See `docs/INCIDENT_PROCEDURES.md`.
 
 ## Still Broker-Specific
 

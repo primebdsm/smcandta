@@ -128,6 +128,8 @@ python examples/broker_restart_sync.py \
 
 The command exits with `0` when restart sync is safe and `2` when startup should remain blocked.
 
+When it exits with `2`, keep the bot stopped, review broker positions and pending orders manually, and capture an incident bundle. See `docs/INCIDENT_PROCEDURES.md`.
+
 ## Live Startup Order
 
 Recommended production startup:
@@ -142,6 +144,8 @@ Recommended production startup:
 8. Start live/demo bot loop only when all startup reports are OK.
 
 Lifecycle recovery is documented in `docs/LIFECYCLE_RESTART_RECOVERY.md`.
+
+The full deployment sequence is documented in `docs/DEPLOYMENT_RUNBOOK.md`.
 
 ## Profit Impact
 

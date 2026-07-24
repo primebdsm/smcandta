@@ -42,6 +42,7 @@ from smc_ta.lifecycle import (
 from smc_ta.live import DemoTradingBot
 from smc_ta.monitoring import LiveMonitoringSnapshot, build_live_monitoring_snapshot
 from smc_ta.news import TradingEconomicsApiError, TradingEconomicsCalendarSource, TradingEconomicsConfig
+from smc_ta.ops import IncidentReportBundle, write_incident_report_bundle
 from smc_ta.preflight import (
     PreflightCheck,
     PreflightConfig,
@@ -93,6 +94,7 @@ __all__ = [
     "EmergencyStopConfig",
     "EmergencyStopController",
     "EmergencyStopResult",
+    "IncidentReportBundle",
     "LIVE_CONFIRMATION_PHRASE",
     "LifecycleRecoveryConfig",
     "LifecycleRecoveryReport",
@@ -155,6 +157,7 @@ __all__ = [
     "write_analysis_chart",
     "write_dashboard",
     "write_demo_forward_report_bundle",
+    "write_incident_report_bundle",
     "write_live_dashboard",
     "write_lifecycle_recovery_report",
     "write_restart_sync_report",

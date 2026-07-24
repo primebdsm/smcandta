@@ -27,7 +27,7 @@ It is ready for:
 
 It is not yet a turnkey live-money trading system.
 
-Before real live trading, the selected broker must be demo-tested end to end with real credentials, real instrument metadata, reconnect handling, execution validation, broker-side reconciliation, monitoring, and incident procedures.
+Before real live trading, the selected broker must be demo-tested end to end with real credentials, real instrument metadata, reconnect handling, execution validation, broker-side reconciliation, monitoring, deployment procedures, and incident drills.
 
 ## What Is Implemented
 
@@ -203,6 +203,8 @@ Before real live trading, the selected broker must be demo-tested end to end wit
 - Static local dashboard
 - Live monitoring dashboard with account, positions, preflight, emergency stop, lifecycle, journal, blocks, and execution samples
 - Static SMC/TA chart visualization
+- Deployment runbook and incident procedures
+- Incident evidence bundle helper for JSON, Markdown, and CSV startup/runtime artifacts
 
 ## What Is Real
 
@@ -222,6 +224,8 @@ The project does not contain placeholder analysis claims. The implemented instru
 - Trading Economics connector maps provider events into the repository's news filter.
 - Preflight probes real runtime objects before a loop starts.
 - Emergency stop and reconciliation can block the bot before new orders are sent.
+- Deployment and incident procedures give operators a concrete startup, rollback, and recovery path.
+- Incident bundles serialize real runtime reports and broker/account snapshots into durable review artifacts.
 
 ## What Is Not Guaranteed
 
@@ -243,6 +247,7 @@ The toolkit can improve profit potential indirectly by improving process quality
 - Better restart recovery: broker sync reduces duplicate entries, stale ledger exposure, and unknown pending orders after crashes or deploys.
 - Better lifecycle recovery: broker-synced lifecycle repair reduces false open/closed state, missed broker fills, and broken incident review after restart.
 - Better demo evidence: forward report artifacts show what the bot actually did cycle by cycle before broker-demo or live deployment.
+- Better operations: runbooks and incident bundles reduce downtime and help prevent unsafe restarts after broker or state mismatches.
 
 The main profit path is not "more indicators." The main profit path is controlled testing, selective execution, risk consistency, and fast detection of bad conditions.
 
@@ -280,7 +285,7 @@ OANDA still needs before live:
 - more exhaustive order-rejection mapping
 - reconnect and timeout policy for long-running bot loops
 - streaming-price support if the bot moves beyond polling
-- live runbook for manual intervention
+- broker-specific manual intervention drills on the actual account platform
 
 MT5 is also implemented, but it depends on a local terminal session. MT5 still needs:
 
@@ -321,7 +326,6 @@ Before live trading:
 - secret manager or deployment-safe credential handling
 - process supervision
 - log rotation
-- incident response checklist
 - manual kill-switch procedure
 - post-trade review workflow
 - broker outage procedure
@@ -332,9 +336,10 @@ Before live trading:
 2. Run broker restart sync against the same OANDA practice account and save startup reports
 3. Run demo-forward report bundles on recent out-of-sample candles and review setup/session/block performance
 4. Run lifecycle restart recovery on the same demo startup sequence and save reports
-5. Deployment runbook and incident procedures
+5. Run deployment and incident drills in OANDA practice using the new runbook and incident bundle helper
 6. Hosted/authenticated monitoring if deployed off the local machine
-7. Optional MT5 hardening or cTrader/FIX adapter
+7. Process supervision, log rotation, and secret-manager integration
+8. Optional MT5 hardening or cTrader/FIX adapter
 
 ## Current Verification
 
@@ -347,13 +352,13 @@ The repository test suite currently passes:
 Expected result:
 
 ```text
-102 passed
+103 passed
 ```
 
 ## Final Audit Conclusion
 
 The project is a real Forex SMC/TA analysis, testing, paper execution, and broker-integration framework.
 
-The strongest next engineering move is not adding more indicators. The strongest next move is running OANDA practice-account execution validation, broker restart sync, lifecycle recovery, and demo-forward report bundles with real practice data, then adding deployment runbooks and incident procedures.
+The strongest next engineering move is not adding more indicators. The strongest next move is running OANDA practice-account execution validation, broker restart sync, lifecycle recovery, demo-forward report bundles, and deployment/incident drills with real practice data.
 
 After that, the project can move toward carefully controlled live micro-size testing.

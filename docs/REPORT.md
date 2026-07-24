@@ -37,6 +37,7 @@ For the complete post-roadmap audit, see `docs/FINAL_AUDIT_REPORT.md`.
 - Walk-forward optimizer with rolling train/test windows, candidate ranking, out-of-sample reports, combined equity, and combined trade output
 - Demo forward-testing bot
 - Demo-forward report package with bot-cycle replay, paper broker SL/TP management, equity/trade/fill/setup/session/daily/block reports, JSON/CSV/HTML artifacts, docs, and CLI
+- Deployment runbook, rollback checklist, incident procedures, and standardized incident evidence bundle writer
 - CSV and SQLite journals
 - Telegram, Discord, and email alerts
 - Live monitoring snapshot model, upgraded static HTML dashboard, and monitoring metrics
@@ -50,7 +51,7 @@ For the complete post-roadmap audit, see `docs/FINAL_AUDIT_REPORT.md`.
 .venv/bin/python -m pytest
 ```
 
-Result: 102 passed.
+Result: 103 passed.
 
 ## What Is Real
 
@@ -68,6 +69,7 @@ The implemented instruments are real in the sense that each one maps to explicit
 - The restart sync layer is a real recovery instrument: it reads broker positions, OANDA transaction checkpoints, and pending orders, then either blocks startup or explicitly repairs the expected-position ledger.
 - The demo-forward report package is a real evidence instrument: it exercises `DemoTradingBot` over closed candles and writes measurable bot-cycle, fill, equity, setup, session, daily, and block artifacts.
 - The lifecycle recovery layer is a real restart instrument: it compares active lifecycle records with broker-open positions and either blocks startup or explicitly repairs lifecycle state.
+- The incident bundle helper is a real operations instrument: it serializes runtime, preflight, restart sync, lifecycle recovery, emergency stop, monitoring, account, position, and journal evidence into reviewable artifacts.
 
 ## What Still Needs To Be Added Before Live Trading
 
@@ -75,9 +77,9 @@ The implemented instruments are real in the sense that each one maps to explicit
 - More broker-specific production reconciliation beyond OANDA restart hooks
 - Broker-specific recovery of complex in-flight order states beyond open positions and basic lifecycle rows
 - External secret manager integration for cloud deployment
-- Production alerting and incident response
+- Process supervision, log rotation, and hosted alert-delivery status
 - Interactive live chart streaming and broker-synchronized screenshot automation
-- Broker-specific disaster recovery runbook
+- Broker-specific disaster recovery drills for each selected live venue
 - More broker-specific contract metadata
 
 ## Final Note

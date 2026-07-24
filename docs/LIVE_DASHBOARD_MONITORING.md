@@ -63,6 +63,8 @@ Dashboard status is derived from real project state:
 
 The dashboard does not place orders and does not change bot decisions. It only renders the state passed into the snapshot.
 
+If the dashboard is stale or shows `blocking`, treat it as an operations incident until broker state is checked manually. See `docs/INCIDENT_PROCEDURES.md`.
+
 ## Integration Pattern
 
 Recommended loop:
@@ -76,3 +78,5 @@ Recommended loop:
 7. Continue only if execution gates approve the trade.
 
 For OANDA practice validation, pass `report.execution_frame()` from `run_oanda_practice_execution_validation` into `execution_samples`.
+
+For deployment order, see `docs/DEPLOYMENT_RUNBOOK.md`.

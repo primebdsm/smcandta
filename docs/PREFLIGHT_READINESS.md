@@ -80,6 +80,8 @@ python examples/run_preflight.py --env-file .env.local --csv EURUSD_M15.csv
 
 The command exits with `0` when there are no blocking checks and `2` when startup should be blocked.
 
+When it exits with `2`, keep the bot stopped, preserve the report, and follow `docs/INCIDENT_PROCEDURES.md`.
+
 ## Report Shape
 
 Each check has:
@@ -109,3 +111,5 @@ Recommended startup flow:
 5. Start the bot loop only if preflight passes.
 
 This creates one final gate before execution, using the real modules already in the project.
+
+For the full deploy sequence, see `docs/DEPLOYMENT_RUNBOOK.md`.
