@@ -64,11 +64,14 @@ report = bot.sync_after_restart(
     config=RestartSyncConfig(
         adopt_unmanaged_broker_positions=True,
         mark_missing_expected_positions_closed=True,
+        block_on_rejected_transactions=True,
     ),
 )
+
+transaction_events = report.transaction_events_frame()
 ```
 
-Use restart sync before preflight when the process resumes after a crash, deploy, or VPS restart. See `docs/BROKER_RESTART_SYNC.md`.
+Use restart sync before preflight when the process resumes after a crash, deploy, or VPS restart. With OANDA, the report includes direct transaction-history reconciliation events for fills, closes, reductions, rejections, cancellations, financing, funding, and margin changes. See `docs/BROKER_RESTART_SYNC.md`.
 
 ## Lifecycle Restart Recovery
 

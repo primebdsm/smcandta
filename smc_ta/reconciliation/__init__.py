@@ -14,6 +14,7 @@ from smc_ta.reconciliation.sync import (
     RestartSyncReport,
     SQLiteSyncCheckpointStore,
     SyncCheckpointStore,
+    TransactionReconciliationEvent,
     sync_broker_state_after_restart,
     write_restart_sync_report,
 )
@@ -32,6 +33,7 @@ __all__ = [
     "SQLitePositionLedger",
     "SQLiteSyncCheckpointStore",
     "SyncCheckpointStore",
+    "TransactionReconciliationEvent",
     "sync_broker_state_after_restart",
     "write_restart_sync_report",
 ]

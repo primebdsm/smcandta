@@ -126,7 +126,7 @@ python examples/oanda_practice_startup_monitor.py \
   --output-dir reports/practice_startup/oanda
 ```
 
-This single command writes restart sync, lifecycle recovery, preflight, broker connectivity, alert delivery, alert validation, dashboard, snapshot, and summary artifacts. Use repair flags such as `--adopt-unmanaged` only after broker-side exposure has been manually reviewed.
+This single command writes restart sync, OANDA transaction events, lifecycle recovery, preflight, broker connectivity, alert delivery, alert validation, dashboard, snapshot, and summary artifacts. Use repair flags such as `--adopt-unmanaged` only after broker-side exposure has been manually reviewed.
 
 Individual command shape:
 

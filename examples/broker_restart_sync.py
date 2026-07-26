@@ -35,6 +35,9 @@ def main() -> int:
     parser.add_argument("--update-mismatches", action="store_true")
     parser.add_argument("--allow-unlinked-pending-orders", action="store_true")
     parser.add_argument("--no-transactions", action="store_true")
+    parser.add_argument("--no-transaction-reconciliation", action="store_true")
+    parser.add_argument("--allow-rejected-transactions", action="store_true")
+    parser.add_argument("--block-cancelled-transactions", action="store_true")
     parser.add_argument("--no-pending-orders", action="store_true")
     parser.add_argument("--output", default=None, help="Optional JSON report path")
     args = parser.parse_args()
@@ -55,6 +58,9 @@ def main() -> int:
             mark_missing_expected_positions_closed=args.mark_missing_closed,
             update_mismatched_expected_positions=args.update_mismatches,
             fetch_broker_transactions=not args.no_transactions,
+            reconcile_broker_transactions=not args.no_transaction_reconciliation,
+            block_on_rejected_transactions=not args.allow_rejected_transactions,
+            block_on_cancelled_transactions=args.block_cancelled_transactions,
             fetch_pending_orders=not args.no_pending_orders,
             block_on_unlinked_pending_orders=not args.allow_unlinked_pending_orders,
         ),
@@ -68,6 +74,7 @@ def main() -> int:
     _print_frame("actions", report.to_frame())
     _print_frame("pending_orders", report.orders_frame())
     _print_frame("transactions", report.transactions_frame())
+    _print_frame("transaction_events", report.transaction_events_frame())
 
     if args.output:
         output = write_restart_sync_report(report, args.output)

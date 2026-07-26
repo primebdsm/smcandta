@@ -124,6 +124,7 @@ from smc_ta.reconciliation import (
     RestartSyncReport,
     SQLitePositionLedger,
     SQLiteSyncCheckpointStore,
+    TransactionReconciliationEvent,
     sync_broker_state_after_restart,
     write_restart_sync_report,
 )
@@ -237,6 +238,7 @@ __all__ = [
     "TradingEconomicsApiError",
     "TradingEconomicsCalendarSource",
     "TradingEconomicsConfig",
+    "TransactionReconciliationEvent",
     "TradeLifecycleError",
     "TradeLifecycleRecord",
     "TradeLifecycleStateMachine",

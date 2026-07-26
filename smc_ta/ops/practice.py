@@ -267,6 +267,10 @@ def run_practice_startup_monitoring(
     artifacts["restart_sync_actions"] = _write_csv(restart_sync.to_frame(), startup_dir / "restart_sync_actions.csv")
     artifacts["pending_orders"] = _write_csv(restart_sync.orders_frame(), startup_dir / "pending_orders.csv")
     artifacts["transactions"] = _write_csv(restart_sync.transactions_frame(), startup_dir / "transactions.csv")
+    artifacts["transaction_events"] = _write_csv(
+        restart_sync.transaction_events_frame(),
+        startup_dir / "transaction_events.csv",
+    )
 
     try:
         lifecycle_report = recover_lifecycle_after_restart(

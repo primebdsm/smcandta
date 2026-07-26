@@ -135,9 +135,9 @@ Use `assert_preflight_ready` as the final gate before a repeated demo/live loop 
 
 ## Broker Restart Sync
 
-`sync_broker_state_after_restart` compares broker-open positions with the SQLite expected-position ledger before the bot resumes. It can run report-only, adopt broker positions into the ledger, mark ledger-only positions closed, update mismatched ledger rows from broker truth, save broker transaction checkpoints, and report pending broker orders.
+`sync_broker_state_after_restart` compares broker-open positions with the SQLite expected-position ledger before the bot resumes. It can run report-only, adopt broker positions into the ledger, mark ledger-only positions closed, update mismatched ledger rows from broker truth, save broker transaction checkpoints, reconcile OANDA transaction events, and report pending broker orders.
 
-For OANDA, `OandaBroker` exposes account changes and pending orders so the startup report can include transactions and protective or unlinked orders. Run `python examples/broker_restart_sync.py --broker oanda --symbol EURUSD --ledger-path oanda_positions.sqlite` before preflight. See `docs/BROKER_RESTART_SYNC.md`.
+For OANDA, `OandaBroker` exposes account changes, direct transaction history since the previous checkpoint, and pending orders so the startup report can include raw transactions, normalized transaction reconciliation events, and protective or unlinked orders. Run `python examples/broker_restart_sync.py --broker oanda --symbol EURUSD --ledger-path oanda_positions.sqlite` before preflight. See `docs/BROKER_RESTART_SYNC.md`.
 
 Run lifecycle restart recovery immediately after broker restart sync so the lifecycle store is reconciled to the same broker truth.
 

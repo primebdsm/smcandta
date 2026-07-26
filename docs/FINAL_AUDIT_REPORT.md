@@ -174,6 +174,7 @@ Before real live trading, the selected broker must be demo-tested end to end wit
   - optional stale ledger position closure
   - optional mismatch update from broker state
   - SQLite transaction checkpoint store
+  - OANDA direct transaction-history reconciliation events
   - pending-order report with unlinked-order blocking
   - `DemoTradingBot.sync_after_restart`
 - Emergency stop / kill switch:
@@ -274,7 +275,7 @@ The project does not contain placeholder analysis claims. The implemented instru
 - Data quality checks inspect actual candle rows before the engine uses them.
 - Broker adapters implement the shared broker protocol.
 - OANDA adapter uses real OANDA v20 REST endpoints.
-- OANDA restart sync uses account changes, pending orders, and transaction checkpoint IDs from the OANDA v20 REST API.
+- OANDA restart sync uses account changes, direct transaction history, pending orders, and transaction checkpoint IDs from the OANDA v20 REST API.
 - Demo-forward reports exercise the real `DemoTradingBot`, risk manager, paper broker, reconciliation, lifecycle, and journal integration path.
 - Demo-forward scheduling repeats that same report path on an interval and records whether each run produced evidence, skipped unchanged candles, warned, or failed.
 - Performance analytics loads those saved artifacts and renders review evidence without changing strategy or broker state.
@@ -292,7 +293,7 @@ The project does not contain placeholder analysis claims. The implemented instru
 - Supervisor artifacts give operators reviewable systemd, launchd, and logrotate files for the target host.
 - Hosted monitoring serves dashboard and snapshot artifacts through authenticated read-only routes with security headers and safe artifact path handling.
 - Broker connectivity probes call read-only account/position APIs and surface broker failures before operators trust the bot state.
-- Broker transaction stream normalization turns broker-side fills, closes, cancels, financing, and account-change rows into auditable monitoring tables.
+- Broker transaction stream normalization turns broker-side fills, closes, cancels, financing, and account-change rows into auditable monitoring tables; restart sync separately classifies OANDA transactions into recovery events used for startup safety.
 - Alert delivery probes verify notification channels explicitly and surface failed delivery as warning or blocking status.
 - The integrated practice startup drill runs the real startup controls together and writes reviewable reports before a demo/live loop is allowed to start.
 
@@ -434,7 +435,7 @@ The repository test suite currently passes:
 Expected result:
 
 ```text
-137 passed
+141 passed
 ```
 
 ## Final Audit Conclusion

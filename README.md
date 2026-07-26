@@ -60,7 +60,7 @@ Live-readiness components:
 - Risk manager for position sizing and exposure limits
 - Portfolio/correlation risk manager for currency exposure and correlated-position limits
 - Broker reconciliation layer with in-memory and SQLite expected-position ledgers
-- Broker restart sync with transaction checkpoints, position-ledger recovery, and pending-order reporting
+- Broker restart sync with OANDA transaction reconciliation, checkpoints, position-ledger recovery, and pending-order reporting
 - Emergency stop / kill-switch controller with optional close-all behavior
 - Trade lifecycle state machine with memory and SQLite stores
 - Broker-synchronized lifecycle recovery after restart
@@ -166,7 +166,7 @@ This runs secret checks, real alert validation, OANDA readiness, restart sync, l
 python examples/broker_restart_sync.py --broker paper --symbol EURUSD --adopt-unmanaged
 ```
 
-Use this before a demo/live loop resumes after a restart. OANDA mode can fetch transaction checkpoints and pending orders; generic broker mode can still reconcile and repair open-position ledger state.
+Use this before a demo/live loop resumes after a restart. OANDA mode can fetch account changes, direct transaction history since the previous checkpoint, normalized transaction reconciliation events, and pending orders; generic broker mode can still reconcile and repair open-position ledger state.
 
 ## Lifecycle Restart Recovery
 

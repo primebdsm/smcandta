@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pandas as pd
 
-from smc_ta.broker import BrokerOrder, OrderRequest, PaperBroker, Position
+from smc_ta.broker import BrokerOrder, OandaBroker, OandaConfig, OrderRequest, PaperBroker, Position
 from smc_ta.live import DemoTradingBot
 from smc_ta.reconciliation import (
     BrokerReconciler,
@@ -173,6 +173,147 @@ def test_restart_sync_persists_transaction_checkpoint_and_blocks_unlinked_pendin
     assert not report.to_frame().empty
     assert not report.orders_frame().empty
     assert not report.transactions_frame().empty
+
+
+class OandaTransactionCloseBroker:
+    def get_open_positions(self, symbol: str | None = None) -> list[Position]:
+        return []
+
+    def get_account_changes(self, since_transaction_id: str) -> dict:
+        assert since_transaction_id == "120"
+        return {
+            "lastTransactionID": "121",
+            "changes": {
+                "transactions": [
+                    {
+                        "id": "121",
+                        "time": "2024-01-02T12:00:00Z",
+                        "type": "ORDER_FILL",
+                        "instrument": "EUR_USD",
+                        "orderID": "close_order_1",
+                        "price": "1.09000",
+                        "pl": "-100.0",
+                        "commission": "-0.5",
+                        "tradesClosed": [{"tradeID": "broker_trade_1", "units": "1000", "realizedPL": "-100.0"}],
+                    }
+                ]
+            },
+        }
+
+
+def test_restart_sync_uses_oanda_close_transaction_to_close_expected_position() -> None:
+    broker = OandaTransactionCloseBroker()
+    ledger = MemoryPositionLedger([position("broker_trade_1")])
+    checkpoints = MemorySyncCheckpointStore({"broker_transaction_id": "120"})
+
+    report = sync_broker_state_after_restart(
+        broker,
+        ledger,
+        symbol="EURUSD",
+        checkpoint_store=checkpoints,
+        config=RestartSyncConfig(
+            mark_missing_expected_positions_closed=True,
+            fetch_pending_orders=False,
+        ),
+    )
+
+    assert report.ok
+    assert checkpoints.get_checkpoint("broker_transaction_id") == "121"
+    assert ledger.open_positions("EURUSD") == []
+    assert ledger.positions["broker_trade_1"].exit_price == 1.09
+    assert ledger.positions["broker_trade_1"].closed_at == pd.Timestamp("2024-01-02T12:00:00Z").to_pydatetime()
+    assert ledger.positions["broker_trade_1"].metadata == {}
+    assert report.transaction_events[0].event == "oanda_trade_closed"
+    assert report.transaction_events[0].position_id == "broker_trade_1"
+    assert "mark_expected_position_closed" in {action.action for action in report.actions}
+    close_action = [action for action in report.actions if action.action == "mark_expected_position_closed"][0]
+    assert close_action.details["oanda_transaction_id"] == "121"
+    assert close_action.details["exit_price"] == 1.09
+
+
+class OandaRejectedTransactionBroker:
+    def get_open_positions(self, symbol: str | None = None) -> list[Position]:
+        return [position("broker_trade_1")]
+
+    def get_account_changes(self, since_transaction_id: str) -> dict:
+        return {
+            "lastTransactionID": "131",
+            "changes": {
+                "transactions": [
+                    {
+                        "id": "131",
+                        "time": "2024-01-02T12:01:00Z",
+                        "type": "MARKET_ORDER_REJECT",
+                        "instrument": "EUR_USD",
+                        "rejectReason": "STOP_LOSS_ON_FILL_PRICE_DISTANCE_MAXIMUM_EXCEEDED",
+                    }
+                ]
+            },
+        }
+
+
+def test_restart_sync_blocks_oanda_rejected_transactions_by_default() -> None:
+    broker = OandaRejectedTransactionBroker()
+    ledger = MemoryPositionLedger([position("broker_trade_1")])
+
+    report = sync_broker_state_after_restart(
+        broker,
+        ledger,
+        symbol="EURUSD",
+        checkpoint_store=MemorySyncCheckpointStore({"broker_transaction_id": "130"}),
+        config=RestartSyncConfig(fetch_pending_orders=False),
+    )
+
+    assert not report.ok
+    assert "oanda_order_rejected" in report.blocking_reasons
+    assert report.transaction_events[0].event == "oanda_order_rejected"
+    assert report.transaction_events[0].severity == "blocking"
+    assert "STOP_LOSS_ON_FILL" in report.transaction_events[0].message
+
+
+def test_restart_sync_can_warn_for_oanda_rejected_transactions() -> None:
+    broker = OandaRejectedTransactionBroker()
+    ledger = MemoryPositionLedger([position("broker_trade_1")])
+
+    report = sync_broker_state_after_restart(
+        broker,
+        ledger,
+        symbol="EURUSD",
+        checkpoint_store=MemorySyncCheckpointStore({"broker_transaction_id": "130"}),
+        config=RestartSyncConfig(
+            block_on_rejected_transactions=False,
+            fetch_pending_orders=False,
+        ),
+    )
+
+    assert report.ok
+    assert report.transaction_events[0].severity == "warning"
+
+
+class FakeOandaClient:
+    def __init__(self) -> None:
+        self.calls: list[tuple[str, str, dict | None]] = []
+
+    def request(self, method: str, path: str, *, params=None, payload=None) -> dict:
+        self.calls.append((method, path, params))
+        return {"lastTransactionID": "201", "transactions": [{"id": "201", "type": "DAILY_FINANCING"}]}
+
+
+def test_oanda_broker_exposes_transactions_sinceid_endpoint() -> None:
+    broker = OandaBroker(OandaConfig(account_id="acct", token="token"))
+    fake_client = FakeOandaClient()
+    broker.client = fake_client  # type: ignore[assignment]
+
+    response = broker.get_transactions_since("200", transaction_types=("ORDER_FILL",))
+
+    assert response["lastTransactionID"] == "201"
+    assert fake_client.calls == [
+        (
+            "GET",
+            "/accounts/acct/transactions/sinceid",
+            {"id": "200", "type": "ORDER_FILL"},
+        )
+    ]
 
 
 def test_sqlite_checkpoint_store_persists_values(tmp_path) -> None:

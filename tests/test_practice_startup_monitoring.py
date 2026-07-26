@@ -40,6 +40,7 @@ def test_practice_startup_monitoring_paper_writes_startup_and_dashboard_artifact
         "restart_sync_actions",
         "snapshot",
         "summary",
+        "transaction_events",
         "transactions",
     }
     assert expected_artifacts.issubset(result.artifacts)

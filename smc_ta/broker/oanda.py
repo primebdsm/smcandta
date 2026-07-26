@@ -373,6 +373,23 @@ class OandaBroker:
             params={"sinceTransactionID": str(since_transaction_id)},
         )
 
+    def get_transactions_since(
+        self,
+        since_transaction_id: str,
+        *,
+        transaction_types: list[str] | tuple[str, ...] | None = None,
+    ) -> dict[str, Any]:
+        """Return OANDA account transactions newer than a checkpoint."""
+
+        params: dict[str, Any] = {"id": str(since_transaction_id)}
+        if transaction_types:
+            params["type"] = ",".join(str(item) for item in transaction_types)
+        return self.client.request(
+            "GET",
+            f"/accounts/{self.config.account_id}/transactions/sinceid",
+            params=params,
+        )
+
     def get_open_positions(self, symbol: str | None = None) -> list[Position]:
         response = self.client.request("GET", f"/accounts/{self.config.account_id}/openPositions")
         positions: list[Position] = []

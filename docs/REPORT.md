@@ -28,7 +28,7 @@ For the complete post-roadmap audit, see `docs/FINAL_AUDIT_REPORT.md`.
 - Risk manager for position sizing, daily loss, open-position, and confidence/RR checks
 - Portfolio/correlation risk manager for symbol concentration, gross/net currency exposure, same-currency direction counts, opposite same-symbol exposure, and return-correlation limits
 - Broker reconciliation service with in-memory and SQLite expected-position ledgers
-- Broker restart sync with transaction checkpoint stores, ledger repair modes, pending-order reporting, OANDA account-change hooks, docs, and CLI
+- Broker restart sync with OANDA transaction reconciliation, transaction checkpoint stores, ledger repair modes, pending-order reporting, direct transaction-history/account-change hooks, docs, and CLI
 - Emergency stop / kill-switch controller with manual, file, equity, drawdown, position, runtime-error, reconciliation-failure, and optional close-all controls
 - Trade lifecycle state machine with explicit transitions, memory store, SQLite store, and optional `DemoTradingBot` integration
 - Broker-synchronized lifecycle recovery after restart with safe report-only defaults, explicit repair modes, bot helper, docs, CLI, and tests
@@ -63,7 +63,7 @@ For the complete post-roadmap audit, see `docs/FINAL_AUDIT_REPORT.md`.
 .venv/bin/python -m pytest
 ```
 
-Result: 137 passed.
+Result: 141 passed.
 
 ## What Is Real
 
@@ -78,7 +78,7 @@ The implemented instruments are real in the sense that each one maps to explicit
 - The lifecycle state machine is a real audit instrument: it enforces valid trade states and persists signal, block, submit, fill, close, fail, and cancel history.
 - The runtime config layer is a real safety instrument: it validates selected mode, broker, credentials, and explicit live arming before adapter setup.
 - The preflight checker is a real startup gate: it probes configured dependencies and returns blocking/warning/info checks before a bot loop starts.
-- The restart sync layer is a real recovery instrument: it reads broker positions, OANDA transaction checkpoints, and pending orders, then either blocks startup or explicitly repairs the expected-position ledger.
+- The restart sync layer is a real recovery instrument: it reads broker positions, OANDA transaction checkpoints, direct transaction history, account changes, and pending orders, then either blocks startup or explicitly repairs the expected-position ledger.
 - The demo-forward report package is a real evidence instrument: it exercises `DemoTradingBot` over closed candles and writes measurable bot-cycle, fill, equity, setup, session, daily, and block artifacts.
 - The demo-forward scheduler is a real operations instrument: it repeats the same demo-forward report path on a configured interval, avoids duplicate closed-candle reports, and writes schedule history for review.
 - The performance analytics dashboard is a real review instrument: it loads existing report artifacts, computes visual review surfaces, and makes setup/session/daily/block behavior easier to inspect before promotion.

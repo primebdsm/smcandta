@@ -102,3 +102,5 @@ Useful reviews:
 - Does the lifecycle store match the broker transaction trail?
 
 The stream is not a replacement for broker restart sync or lifecycle recovery. It is a visibility layer that helps the operator understand broker-side truth.
+
+For recovery decisions, use `RestartSyncReport.transaction_events_frame()` from broker restart sync. That table classifies OANDA transaction history into reconciliation events such as trade opened, trade closed, trade reduced, order rejected, and order cancelled, while this monitoring panel remains a read-only dashboard stream.

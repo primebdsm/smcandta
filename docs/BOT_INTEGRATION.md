@@ -104,7 +104,7 @@ def on_new_closed_candle(candles):
 - `TradingEconomicsCalendarSource` for real Trading Economics calendar events
 - `SQLiteTradeJournal` for persistent local journals
 - `BrokerReconciler` for blocking when broker positions differ from bot ledger state
-- `sync_broker_state_after_restart` for transaction checkpoints, pending-order reporting, and explicit ledger repair before startup
+- `sync_broker_state_after_restart` for OANDA transaction reconciliation, transaction checkpoints, pending-order reporting, and explicit ledger repair before startup
 - `EmergencyStopController` for hard stop, manual stop file, drawdown, equity, runtime-error, and optional close-all controls
 - `TradeLifecycleStateMachine` and `SQLiteTradeLifecycleStore` for deterministic trade state tracking
 - `recover_lifecycle_after_restart` for synchronizing active lifecycle records with broker-open positions after restart

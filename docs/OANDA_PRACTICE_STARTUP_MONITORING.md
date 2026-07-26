@@ -11,7 +11,7 @@ It is a monitoring and readiness drill. It does not place orders. Use `docs/OAND
 - redacted OANDA secret resolution
 - OANDA practice readiness checks
 - candle download or CSV candle loading
-- broker restart sync with transaction checkpoint and pending-order reports
+- broker restart sync with OANDA transaction reconciliation, transaction checkpoint, and pending-order reports
 - broker-synchronized lifecycle recovery
 - preflight readiness
 - broker connectivity probe
@@ -112,6 +112,7 @@ The output directory can include:
 - `startup/restart_sync_actions.csv`: repair actions or blocking findings
 - `startup/pending_orders.csv`: broker pending orders
 - `startup/transactions.csv`: OANDA transaction rows since the last checkpoint
+- `startup/transaction_events.csv`: normalized OANDA open, close, reduce, reject, cancel, financing, funding, and margin events used by restart reconciliation
 - `startup/lifecycle_recovery.json`: lifecycle-vs-broker recovery report
 - `startup/lifecycle_records.csv`: recovered lifecycle state
 - `startup/preflight.csv`: final startup gate checks
@@ -125,7 +126,7 @@ The output directory can include:
 
 The default CLI probes only an in-memory alert channel. Use `--validate-alerts` to build real alert channels from env, or pass channels directly into `run_practice_startup_monitoring(..., alert_channels=(("telegram", channel),))`.
 
-OANDA transaction rows from restart sync are also normalized into the dashboard's Broker Transaction Stream panel. See `docs/BROKER_TRANSACTION_STREAM_PANEL.md`.
+OANDA transaction rows from restart sync are also normalized into the dashboard's Broker Transaction Stream panel. Restart sync separately writes transaction reconciliation events so operators can see which OANDA transactions affected startup safety. See `docs/BROKER_TRANSACTION_STREAM_PANEL.md` and `docs/BROKER_RESTART_SYNC.md`.
 
 ## Python Integration
 
