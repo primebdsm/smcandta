@@ -31,6 +31,13 @@ from smc_ta.monitoring import (
     probe_alert_channel,
     write_monitoring_snapshot_json,
 )
+from smc_ta.ops.alert_validation import (
+    AlertChannelValidationConfig,
+    AlertChannelValidationResult,
+    SUPPORTED_ALERT_CHANNELS,
+    validate_alert_channels,
+    write_alert_validation_report,
+)
 from smc_ta.ops.credentials import OandaCredentialOnboardingConfig, oanda_secret_sources
 from smc_ta.ops.incident import write_incident_report_bundle
 from smc_ta.ops.secrets import SecretResolutionConfig, resolve_runtime_secrets, write_secret_resolution_report
@@ -75,6 +82,10 @@ class PracticeStartupRunConfig:
     match_lifecycle_symbol_side: bool = False
     probe_memory_alert: bool = True
     alert_probe_message: str = "SMC TA practice startup alert probe"
+    validate_real_alerts: bool = False
+    require_real_alert_channel: bool = False
+    real_alert_channels: tuple[str, ...] = SUPPORTED_ALERT_CHANNELS
+    alert_blocking_on_failure: bool = False
     write_incident_on_failure: bool = True
 
 
@@ -320,12 +331,17 @@ def run_practice_startup_monitoring(
         include_transactions=cfg.broker == "oanda",
         include_pending_orders=cfg.broker == "oanda",
     )
-    alert_statuses = _probe_alerts(cfg, alert_channels)
+    alert_statuses, alert_validation = _probe_alerts(cfg, alert_channels, env=runtime_env)
     artifacts["broker_connectivity"] = _write_csv(
         broker_connectivity_frame((broker_status,)),
         startup_dir / "broker_connectivity.csv",
     )
     artifacts["alert_delivery"] = _write_csv(alert_delivery_frame(alert_statuses), startup_dir / "alert_delivery.csv")
+    if alert_validation is not None:
+        artifacts["alert_validation"] = write_alert_validation_report(
+            alert_validation,
+            startup_dir / "alert_validation.json",
+        )
 
     try:
         analysis = analyze_forex(active_candles, symbol=symbol)
@@ -499,13 +515,43 @@ def _startup_error(stage: str, exc: Exception) -> str:
 def _probe_alerts(
     cfg: PracticeStartupRunConfig,
     channels: Iterable[tuple[str, AlertChannel]] | None,
-) -> tuple[AlertDeliveryStatus, ...]:
-    statuses = []
+    *,
+    env: Mapping[str, str],
+) -> tuple[tuple[AlertDeliveryStatus, ...], AlertChannelValidationResult | None]:
+    statuses: list[AlertDeliveryStatus] = []
+    alert_validation: AlertChannelValidationResult | None = None
+    if cfg.validate_real_alerts:
+        alert_validation = validate_alert_channels(
+            AlertChannelValidationConfig(
+                channel_names=cfg.real_alert_channels,
+                probe_message=cfg.alert_probe_message,
+                include_memory=False,
+                require_configured=cfg.require_real_alert_channel,
+                blocking_on_failure=cfg.alert_blocking_on_failure,
+                timeout=cfg.timeout,
+            ),
+            env=env,
+        )
+        statuses.extend(alert_validation.statuses)
     for name, channel in channels or ():
-        statuses.append(probe_alert_channel(channel, channel_name=name, message=cfg.alert_probe_message))
+        statuses.append(
+            probe_alert_channel(
+                channel,
+                channel_name=name,
+                message=cfg.alert_probe_message,
+                blocking_on_failure=cfg.alert_blocking_on_failure,
+            )
+        )
     if cfg.probe_memory_alert:
-        statuses.append(probe_alert_channel(_MemoryAlert(), channel_name="memory", message=cfg.alert_probe_message))
-    return tuple(statuses)
+        statuses.append(
+            probe_alert_channel(
+                _MemoryAlert(),
+                channel_name="memory",
+                message=cfg.alert_probe_message,
+                blocking_on_failure=cfg.alert_blocking_on_failure,
+            )
+        )
+    return tuple(statuses), alert_validation
 
 
 def _write_summary(result: PracticeStartupRunResult, path: str | Path) -> Path:

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import argparse
 
-from smc_ta import PracticeStartupRunConfig, run_practice_startup_monitoring
+from smc_ta import PracticeStartupRunConfig, parse_alert_channel_names, run_practice_startup_monitoring
 
 
 def main() -> int:
@@ -31,6 +31,10 @@ def main() -> int:
     parser.add_argument("--fail-unfilled-lifecycles", action="store_true")
     parser.add_argument("--match-lifecycle-symbol-side", action="store_true")
     parser.add_argument("--no-memory-alert-probe", action="store_true")
+    parser.add_argument("--validate-alerts", action="store_true")
+    parser.add_argument("--require-real-alert", action="store_true")
+    parser.add_argument("--alert-channels", default="telegram,discord,email")
+    parser.add_argument("--alert-blocking", action="store_true")
     parser.add_argument("--no-incident-on-failure", action="store_true")
     args = parser.parse_args()
 
@@ -58,6 +62,10 @@ def main() -> int:
             fail_unfilled_lifecycles=args.fail_unfilled_lifecycles,
             match_lifecycle_symbol_side=args.match_lifecycle_symbol_side,
             probe_memory_alert=not args.no_memory_alert_probe,
+            validate_real_alerts=args.validate_alerts,
+            require_real_alert_channel=args.require_real_alert,
+            real_alert_channels=parse_alert_channel_names(args.alert_channels),
+            alert_blocking_on_failure=args.alert_blocking,
             write_incident_on_failure=not args.no_incident_on_failure,
         )
     )

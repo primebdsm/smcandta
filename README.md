@@ -150,11 +150,12 @@ The execution validator opens and closes minimum-size OANDA practice trades only
 
 ```bash
 python examples/onboard_oanda_credentials.py --env-file .env.demo --output reports/startup/oanda_credentials.json
+python examples/validate_alert_channels.py --env-file .env.demo --output reports/startup/alert_validation.json
 python examples/oanda_practice_startup_monitor.py --broker paper --output-dir reports/practice_startup/paper
 python examples/oanda_practice_startup_monitor.py --broker oanda --symbol EURUSD --max-spread-pips 2 --output-dir reports/practice_startup/oanda
 ```
 
-This runs secret checks, OANDA readiness, restart sync, lifecycle recovery, preflight, broker/alert status probes, SMC/TA analysis, dashboard generation, and summary reports without placing orders. See `docs/OANDA_PRACTICE_STARTUP_MONITORING.md`.
+This runs secret checks, real alert validation, OANDA readiness, restart sync, lifecycle recovery, preflight, broker/alert status probes, SMC/TA analysis, dashboard generation, and summary reports without placing orders. See `docs/OANDA_PRACTICE_STARTUP_MONITORING.md` and `docs/REAL_ALERT_CHANNEL_VALIDATION.md`.
 
 ## Broker Restart Sync
 

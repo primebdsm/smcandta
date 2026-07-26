@@ -49,6 +49,32 @@ This sends one explicit test message through the supplied channel.
 
 By default, alert failures are `warning` because they affect operator visibility but do not prove broker state is unsafe. Use `blocking_on_failure=True` if your deployment policy requires alerts to work before trading.
 
+## Real Channel Validation
+
+Use the validation CLI before demo/live-style loops:
+
+```bash
+python examples/validate_alert_channels.py \
+  --env-file .env.demo \
+  --channels telegram,discord,email \
+  --output reports/startup/alert_validation.json
+```
+
+The CLI discovers Telegram, Discord, and SMTP email settings from bare or `SMC_TA_`-prefixed env keys, sends one real probe per configured channel, treats placeholder values as missing, and writes a redaction-safe JSON report.
+
+To include the same validation in the integrated startup drill:
+
+```bash
+python examples/oanda_practice_startup_monitor.py \
+  --broker oanda \
+  --env-file .env.demo \
+  --validate-alerts \
+  --require-real-alert \
+  --alert-blocking
+```
+
+See `docs/REAL_ALERT_CHANNEL_VALIDATION.md`.
+
 ## Dashboard Integration
 
 ```python

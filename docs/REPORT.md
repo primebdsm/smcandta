@@ -42,6 +42,7 @@ For the complete post-roadmap audit, see `docs/FINAL_AUDIT_REPORT.md`.
 - Runtime logging helper with rotating file support and JSON-line option
 - Secret resolution helper for env, `.env`, JSON, and external command providers with redacted reports
 - OANDA credential onboarding package with `.env.demo.example`, placeholder detection, redacted reports, CLI, Python API, docs, and tests
+- Real alert channel validation for Telegram, Discord, and SMTP email with env discovery, placeholder detection, redacted reports, startup drill integration, CLI, docs, and tests
 - Hosted authenticated monitoring server for dashboard, status, snapshot, health, and read-only artifact routes
 - Broker connectivity and alert delivery status probes for monitoring panels and incident evidence
 - Broker transaction stream panel with OANDA/account-change normalization, dashboard table, hosted JSON, incident bundle artifact, docs, and tests
@@ -59,7 +60,7 @@ For the complete post-roadmap audit, see `docs/FINAL_AUDIT_REPORT.md`.
 .venv/bin/python -m pytest
 ```
 
-Result: 122 passed.
+Result: 126 passed.
 
 ## What Is Real
 
@@ -81,6 +82,7 @@ The implemented instruments are real in the sense that each one maps to explicit
 - The process supervision helper is a real deployment instrument: it generates systemd, launchd, and logrotate files from structured config for operator review.
 - The secret resolution helper is a real deployment instrument: it loads required broker secrets from environment, files, JSON, or external commands and writes only redacted reports.
 - The OANDA credential onboarding package is a real safety gate: it accepts both supported OANDA env naming styles, detects unfilled placeholder values, writes redacted reports, and prints the next startup command only when credentials are usable.
+- The real alert channel validator is a real visibility gate: it builds Telegram, Discord, and SMTP channels from env, sends explicit probes, sanitizes failure text, writes safe reports, and can block startup when operator alerts are required.
 - The runtime logging helper is a real operations instrument: it writes rotating bot logs with plain text or JSON-line formatting.
 - The hosted monitoring server is a real operations instrument: it serves dashboard and snapshot artifacts with Basic or Bearer auth, health/status routes, safe artifact path handling, and security headers.
 - The broker connectivity probe is a real operations instrument: it calls read-only broker APIs and blocks monitoring status when account or position probes fail.
@@ -96,6 +98,7 @@ The implemented instruments are real in the sense that each one maps to explicit
 - Broker-specific recovery of complex in-flight order states beyond open positions and basic lifecycle rows
 - Provider-specific secret-manager provisioning on the selected host
 - Supervisor installation and alert-delivery status on the selected host
+- Real Telegram/Discord/SMTP validation runs with the user's production alert destinations
 - TLS/reverse-proxy or VPN/tunnel deployment for off-machine hosted monitoring
 - Interactive live chart streaming and broker-synchronized screenshot automation
 - Broker-specific disaster recovery drills for each selected live venue

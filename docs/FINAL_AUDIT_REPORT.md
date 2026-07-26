@@ -29,6 +29,7 @@ It is ready for:
 - Hosted dashboard/status/snapshot server with Basic or Bearer authentication
 - Broker connectivity and alert delivery status panels
 - Broker transaction stream panel for broker-side transaction evidence
+- Real alert channel validation with redaction-safe probe reports
 - Integrated paper/OANDA practice startup monitoring drill with dashboard and artifact bundle
 
 It is not yet a turnkey live-money trading system.
@@ -200,6 +201,12 @@ Before real live trading, the selected broker must be demo-tested end to end wit
 - Telegram alerts
 - Discord webhook alerts
 - Email alerts
+- Real alert channel validation:
+  - builds Telegram, Discord, and SMTP channels from bare or `SMC_TA_` env keys
+  - treats placeholder values as missing
+  - sends explicit probe messages
+  - sanitizes known secret values from failures and reports
+  - can block startup when required alerts are absent or failing
 - Monitoring metrics:
   - equity
   - drawdown
@@ -346,10 +353,10 @@ cTrader, FIX, Interactive Brokers, and other venues are not implemented yet.
 
 The repository has a static/live dashboard, hosted monitor, snapshot JSON, and health metrics. Current dashboard support includes account state, open positions, signal state, SMC/TA context, equity curve, performance metrics, preflight checks, emergency-stop state, lifecycle records, journal rows, blocked events, execution samples, broker connectivity, alert delivery, and broker transaction stream evidence.
 
-For production-style monitoring, still add:
+For production-style monitoring, still run and operate:
 
 - periodic dashboard writer process for live broker loops
-- alert delivery probes wired to the selected production alert channels
+- alert delivery probes against the selected production alert channels
 - broker connectivity probes wired to the selected live broker adapter
 - TLS reverse-proxy, VPN, or tunnel deployment for off-machine dashboard access
 - installed process supervisor status
@@ -366,6 +373,7 @@ Before live trading:
 - real spread/slippage comparison versus backtest assumptions
 - selected secret-manager backend provisioned on the target host
 - OANDA credential onboarding run against the actual demo host environment or local `.env.demo`
+- real alert validation run against the actual operator destinations and saved to startup artifacts
 - generated supervisor/logrotate artifacts installed and tested on the target host
 - hosted monitor installed behind HTTPS, VPN, or tunnel controls when viewed off-machine
 - broker connectivity and alert delivery panels reviewed in every startup/demo drill
@@ -383,7 +391,7 @@ Before live trading:
 5. Run deployment and incident drills in OANDA practice using the runbook and incident bundle helper
 6. Install and test generated supervisor/logrotate artifacts on the chosen demo host
 7. Install hosted monitoring behind HTTPS, VPN, or tunnel controls on the chosen demo host
-8. Run real Telegram/Discord/email alert delivery probes in OANDA practice and save incident-ready snapshots
+8. Run real Telegram/Discord/email alert delivery probes with the validator in OANDA practice and save incident-ready snapshots
 9. Optional MT5 hardening or cTrader/FIX adapter
 
 ## Current Verification
@@ -397,7 +405,7 @@ The repository test suite currently passes:
 Expected result:
 
 ```text
-122 passed
+126 passed
 ```
 
 ## Final Audit Conclusion

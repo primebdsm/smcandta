@@ -1,5 +1,15 @@
 """Deployment and incident operations helpers."""
 
+from smc_ta.ops.alert_validation import (
+    AlertChannelBuildResult,
+    AlertChannelValidationConfig,
+    AlertChannelValidationResult,
+    configured_alert_channels_from_env,
+    parse_alert_channel_names,
+    redact_alert_status,
+    validate_alert_channels,
+    write_alert_validation_report,
+)
 from smc_ta.ops.incident import IncidentReportBundle, write_incident_report_bundle
 from smc_ta.ops.credentials import (
     OandaCredentialOnboardingConfig,
@@ -39,6 +49,9 @@ from smc_ta.ops.supervision import (
 )
 
 __all__ = [
+    "AlertChannelBuildResult",
+    "AlertChannelValidationConfig",
+    "AlertChannelValidationResult",
     "CommandSecretSource",
     "EnvFileSecretSource",
     "EnvSecretSource",
@@ -56,13 +69,18 @@ __all__ = [
     "SupervisorArtifactBundle",
     "SupervisorConfig",
     "check_oanda_credential_onboarding",
+    "configured_alert_channels_from_env",
     "configure_runtime_logging",
     "oanda_secret_sources",
+    "parse_alert_channel_names",
+    "redact_alert_status",
     "render_launchd_plist",
     "render_logrotate_config",
     "render_systemd_unit",
     "resolve_runtime_secrets",
     "run_practice_startup_monitoring",
+    "validate_alert_channels",
+    "write_alert_validation_report",
     "write_incident_report_bundle",
     "write_logrotate_config",
     "write_secret_resolution_report",

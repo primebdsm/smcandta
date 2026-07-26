@@ -143,13 +143,14 @@ Use `docs/HOSTED_MONITORING.md` when the dashboard must be viewed off-machine.
 ## Broker And Alert Status
 
 ```python
-from smc_ta import check_broker_connectivity, probe_alert_channel
+from smc_ta import AlertChannelValidationConfig, check_broker_connectivity, probe_alert_channel, validate_alert_channels
 
 broker_status = check_broker_connectivity(broker, broker_name="oanda", symbol="EURUSD")
 alert_status = probe_alert_channel(alert_channel, channel_name="telegram")
+alert_validation = validate_alert_channels(AlertChannelValidationConfig(env_file=".env.demo"))
 ```
 
-Pass these into `build_live_monitoring_snapshot` as `broker_connectivity` and `alert_delivery`. See `docs/BROKER_ALERT_STATUS_MONITORING.md`.
+Pass broker and alert statuses into `build_live_monitoring_snapshot` as `broker_connectivity` and `alert_delivery`. Use `validate_alert_channels` before demo/live-style startup to prove at least one real channel is reachable. See `docs/BROKER_ALERT_STATUS_MONITORING.md` and `docs/REAL_ALERT_CHANNEL_VALIDATION.md`.
 
 ## Broker Transaction Stream
 
@@ -184,6 +185,8 @@ if not result.ok:
 ```
 
 Use paper mode for local smoke tests and OANDA mode with practice credentials before a repeated demo/live process starts. See `docs/OANDA_PRACTICE_STARTUP_MONITORING.md`.
+
+Add `validate_real_alerts=True`, `require_real_alert_channel=True`, and `alert_blocking_on_failure=True` to make the startup drill block when real operator alerts are missing or failing.
 
 ## OANDA Credential Onboarding
 

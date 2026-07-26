@@ -83,6 +83,23 @@ python examples/oanda_practice_startup_monitor.py \
 
 Use repair flags only after the operator has reviewed broker-side exposure. Without repair flags, restart sync and lifecycle recovery stay report-only and block on mismatches.
 
+To validate real operator alerts during the same drill, configure at least one Telegram, Discord, or SMTP email channel in `.env.demo`, then add:
+
+```bash
+python examples/oanda_practice_startup_monitor.py \
+  --broker oanda \
+  --symbol EURUSD \
+  --timeframe M15 \
+  --max-spread-pips 2 \
+  --env-file .env.demo \
+  --output-dir reports/practice_startup/oanda \
+  --validate-alerts \
+  --require-real-alert \
+  --alert-blocking
+```
+
+This sends a real alert probe, writes `startup/alert_validation.json`, and blocks startup when no real channel is configured or when delivery fails under `--alert-blocking`.
+
 ## Artifact Bundle
 
 The output directory can include:
@@ -100,12 +117,13 @@ The output directory can include:
 - `startup/preflight.csv`: final startup gate checks
 - `startup/broker_connectivity.csv`: read-only account and position probe
 - `startup/alert_delivery.csv`: alert probe status
+- `startup/alert_validation.json`: real alert channel discovery and redaction-safe probe report when `--validate-alerts` is enabled
 - `dashboard/live.html`: local monitoring dashboard
 - `dashboard/snapshot.json`: machine-readable monitor snapshot
 - `incident/`: incident evidence when a post-snapshot startup gate blocks
 - `state/`: SQLite ledger, checkpoint, and lifecycle state when default paths are used
 
-The default CLI probes only an in-memory alert channel. In a bot integration, pass real alert channels into `run_practice_startup_monitoring(..., alert_channels=(("telegram", channel),))`.
+The default CLI probes only an in-memory alert channel. Use `--validate-alerts` to build real alert channels from env, or pass channels directly into `run_practice_startup_monitoring(..., alert_channels=(("telegram", channel),))`.
 
 OANDA transaction rows from restart sync are also normalized into the dashboard's Broker Transaction Stream panel. See `docs/BROKER_TRANSACTION_STREAM_PANEL.md`.
 

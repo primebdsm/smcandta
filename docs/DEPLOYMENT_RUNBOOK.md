@@ -70,6 +70,7 @@ python -m pytest
 python examples/onboard_oanda_credentials.py --env-file .env.demo --output reports/startup/oanda_credentials.json
 python examples/check_secrets.py --env-file .env.demo --required OANDA_ACCOUNT_ID,OANDA_TOKEN --output reports/startup/secrets.json
 python examples/check_runtime_config.py --env-file .env.demo
+python examples/validate_alert_channels.py --env-file .env.demo --output reports/startup/alert_validation.json
 python examples/validate_data.py --csv EURUSD_M15.csv --symbol EURUSD
 python examples/demo_forward_report.py --csv EURUSD_M15.csv --output-dir reports/demo_forward/latest
 python examples/generate_ops_artifacts.py --service-name smc-ta-demo --env-file .env.demo --log-dir logs
@@ -116,10 +117,13 @@ python examples/oanda_practice_startup_monitor.py \
   --ledger-path state/positions.sqlite \
   --checkpoint-path state/positions.sqlite \
   --lifecycle-path state/trade_lifecycle.sqlite \
+  --validate-alerts \
+  --require-real-alert \
+  --alert-blocking \
   --output-dir reports/practice_startup/oanda
 ```
 
-This single command writes restart sync, lifecycle recovery, preflight, broker connectivity, alert delivery, dashboard, snapshot, and summary artifacts. Use repair flags such as `--adopt-unmanaged` only after broker-side exposure has been manually reviewed.
+This single command writes restart sync, lifecycle recovery, preflight, broker connectivity, alert delivery, alert validation, dashboard, snapshot, and summary artifacts. Use repair flags such as `--adopt-unmanaged` only after broker-side exposure has been manually reviewed.
 
 Individual command shape:
 
