@@ -9,13 +9,30 @@ from smc_ta.engine.confluence import (
 )
 from smc_ta.engine.multitimeframe import MultiTimeframeConfig, MultiTimeframeResult, analyze_multi_timeframe
 from smc_ta.backtest import BacktestConfig, BacktestResult, run_backtest
-from smc_ta.broker import BrokerOrder, PaperBroker
+from smc_ta.broker import (
+    BrokerOrder,
+    MetaTrader5Broker,
+    MetaTrader5CandleDataSource,
+    Mt5Config,
+    Mt5InitializationError,
+    Mt5OrderRejected,
+    Mt5PriceValidationError,
+    Mt5ReadinessCheck,
+    Mt5ReadinessReport,
+    Mt5SymbolSpec,
+    Mt5SymbolValidationError,
+    Mt5TerminalValidationError,
+    Mt5TickSnapshot,
+    Mt5UnavailableError,
+    PaperBroker,
+)
 from smc_ta.config import (
     LIVE_CONFIRMATION_PHRASE,
     ConfigValidationError,
     ConfigValidationReport,
     RuntimeConfig,
     assert_runtime_ready,
+    build_mt5_config,
     validate_runtime_config,
 )
 from smc_ta.data import DataQualityConfig, DataQualityReport, validate_candle_quality
@@ -195,9 +212,22 @@ __all__ = [
     "MemoryPositionLedger",
     "MemorySyncCheckpointStore",
     "MemoryTradeLifecycleStore",
+    "MetaTrader5Broker",
+    "MetaTrader5CandleDataSource",
     "MonitoringAuthConfig",
     "MultiTimeframeConfig",
     "MultiTimeframeResult",
+    "Mt5Config",
+    "Mt5InitializationError",
+    "Mt5OrderRejected",
+    "Mt5PriceValidationError",
+    "Mt5ReadinessCheck",
+    "Mt5ReadinessReport",
+    "Mt5SymbolSpec",
+    "Mt5SymbolValidationError",
+    "Mt5TerminalValidationError",
+    "Mt5TickSnapshot",
+    "Mt5UnavailableError",
     "OandaCredentialOnboardingConfig",
     "OandaCredentialOnboardingResult",
     "PaperBroker",
@@ -250,6 +280,7 @@ __all__ = [
     "assert_preflight_ready",
     "assert_runtime_ready",
     "build_hosted_monitoring_status",
+    "build_mt5_config",
     "build_smc_ta_features",
     "build_live_monitoring_snapshot",
     "broker_transaction_stream_frame",

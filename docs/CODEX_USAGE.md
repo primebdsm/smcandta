@@ -107,6 +107,14 @@ python examples/oanda_practice_check.py --symbols EURUSD --max-spread-pips 2
 
 Use this before OANDA demo forward testing. It probes account, instrument metadata, and current pricing without placing an order. See `docs/OANDA_PRACTICE_HARDENING.md`.
 
+## MT5 Practice Check
+
+```bash
+python examples/mt5_practice_check.py --symbols EURUSD --symbol-alias EURUSD=EURUSD.m --max-spread-points 25
+```
+
+Use this before MT5 demo forward testing. It probes the local terminal, account, symbol metadata, and current tick without placing an order. See `docs/MT5_HARDENING.md`.
+
 ## OANDA Execution Validation
 
 ```bash

@@ -100,7 +100,7 @@ def on_new_closed_candle(candles):
 - `OandaBroker` and `OandaCandleDataSource` for OANDA v20 REST demo/live accounts
 - `RuntimeConfig` and `assert_runtime_ready` for mode, broker, credential, and live guardrail validation
 - `run_preflight` and `assert_preflight_ready` for startup readiness checks
-- `MetaTrader5Broker` and `MetaTrader5CandleDataSource` for local MT5 terminal workflows
+- `MetaTrader5Broker`, `Mt5Config`, and `MetaTrader5CandleDataSource` for hardened local MT5 terminal workflows
 - `JsonEconomicCalendarSource` for provider-specific calendar APIs
 - `TradingEconomicsCalendarSource` for real Trading Economics calendar events
 - `SQLiteTradeJournal` for persistent local journals

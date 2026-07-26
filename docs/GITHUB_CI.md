@@ -21,6 +21,8 @@ It also performs a public API smoke import for the core bot-integration exports,
 - `run_risk_stress_test`
 - `sync_broker_state_after_restart`
 - `TransactionReconciliationEvent`
+- `Mt5Config`
+- `build_mt5_config`
 
 The `package` job builds the source distribution and wheel:
 

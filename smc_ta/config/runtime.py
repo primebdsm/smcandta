@@ -8,7 +8,7 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Literal, Mapping
 
-from smc_ta.broker import OandaConfig
+from smc_ta.broker import Mt5Config, OandaConfig
 from smc_ta.news import TradingEconomicsConfig
 
 RuntimeMode = Literal["research", "backtest", "paper", "demo", "live"]
@@ -98,6 +98,10 @@ class RuntimeConfig:
     mt5_password: str | None = None
     mt5_server: str | None = None
     mt5_path: str | None = None
+    mt5_max_spread_points: float | None = None
+    mt5_max_tick_age_seconds: float = 15.0
+    mt5_check_order_before_send: bool = True
+    mt5_allow_real_account: bool = False
     trading_economics_api_key: str | None = None
     journal_path: str | None = None
     lifecycle_db_path: str | None = None
@@ -135,6 +139,12 @@ class RuntimeConfig:
             mt5_password=_env_get_optional(source, prefix, "MT5_PASSWORD"),
             mt5_server=_env_get_optional(source, prefix, "MT5_SERVER"),
             mt5_path=_env_get_optional(source, prefix, "MT5_PATH"),
+            mt5_max_spread_points=_optional_float(_env_get_optional(source, prefix, "MT5_MAX_SPREAD_POINTS")),
+            mt5_max_tick_age_seconds=float(_env_get(source, prefix, "MT5_MAX_TICK_AGE_SECONDS", default="15.0")),
+            mt5_check_order_before_send=_to_bool(
+                _env_get(source, prefix, "MT5_CHECK_ORDER_BEFORE_SEND", default="true")
+            ),
+            mt5_allow_real_account=_to_bool(_env_get(source, prefix, "MT5_ALLOW_REAL_ACCOUNT", default="false")),
             trading_economics_api_key=_env_get_optional(source, prefix, "TRADING_ECONOMICS_API_KEY"),
             journal_path=_env_get_optional(source, prefix, "JOURNAL_PATH"),
             lifecycle_db_path=_env_get_optional(source, prefix, "LIFECYCLE_DB_PATH"),
@@ -176,13 +186,19 @@ class RuntimeConfig:
             data["timeframes"] = tuple(item.upper() for item in _split_any(data["timeframes"]))
         if "account_currency" in data:
             data["account_currency"] = str(data["account_currency"]).upper()
-        for key in ("allow_live_trading", "require_news_filter", "oanda_practice"):
+        for key in (
+            "allow_live_trading",
+            "require_news_filter",
+            "oanda_practice",
+            "mt5_check_order_before_send",
+            "mt5_allow_real_account",
+        ):
             if key in data:
                 data[key] = _to_bool(data[key])
-        for key in ("max_trade_risk_percent", "oanda_max_price_age_seconds"):
+        for key in ("max_trade_risk_percent", "oanda_max_price_age_seconds", "mt5_max_tick_age_seconds"):
             if key in data:
                 data[key] = float(data[key])
-        for key in ("oanda_max_spread_pips", "oanda_max_order_slippage_pips"):
+        for key in ("oanda_max_spread_pips", "oanda_max_order_slippage_pips", "mt5_max_spread_points"):
             if key in data:
                 data[key] = _optional_float(data[key])
         if "mt5_login" in data:
@@ -269,8 +285,21 @@ def validate_runtime_config(config: RuntimeConfig) -> ConfigValidationReport:
                 _error("invalid_oanda_max_order_slippage_pips", "OANDA max order slippage must be >= 0 when set")
             )
 
-    if config.broker == "mt5" and config.mode == "live" and not any((config.mt5_login, config.mt5_server, config.mt5_path)):
-        issues.append(_warning("mt5_terminal_session_unverified", "MT5 live mode relies on the currently initialized terminal session"))
+    if config.broker == "mt5":
+        if config.mt5_max_spread_points is not None and config.mt5_max_spread_points <= 0:
+            issues.append(_error("invalid_mt5_max_spread_points", "MT5 max spread points must be positive when set"))
+        if config.mt5_max_tick_age_seconds < 0:
+            issues.append(_error("invalid_mt5_max_tick_age_seconds", "MT5 max tick age must be >= 0"))
+        if config.mode == "live":
+            if not any((config.mt5_login, config.mt5_server, config.mt5_path)):
+                issues.append(
+                    _warning(
+                        "mt5_terminal_session_unverified",
+                        "MT5 live mode relies on the currently initialized terminal session",
+                    )
+                )
+            if not config.mt5_allow_real_account:
+                issues.append(_error("mt5_real_account_not_allowed", "MT5 live mode requires mt5_allow_real_account=True"))
 
     if config.require_news_filter and not config.trading_economics_api_key:
         issues.append(_error("missing_news_api_key", "required news filter needs TRADING_ECONOMICS_API_KEY"))
@@ -315,6 +344,28 @@ def build_oanda_config(config: RuntimeConfig) -> OandaConfig:
         max_spread_pips=config.oanda_max_spread_pips,
         max_price_age_seconds=config.oanda_max_price_age_seconds,
         max_order_slippage_pips=config.oanda_max_order_slippage_pips,
+    )
+
+
+def build_mt5_config(config: RuntimeConfig) -> Mt5Config:
+    """Create an `Mt5Config` after runtime validation."""
+
+    if config.broker != "mt5":
+        raise ConfigValidationError(
+            ConfigValidationReport((_error("broker_is_not_mt5", "runtime broker must be 'mt5'"),))
+        )
+    report = validate_runtime_config(config)
+    if report.errors:
+        raise ConfigValidationError(ConfigValidationReport(report.errors))
+    return Mt5Config(
+        path=config.mt5_path,
+        login=config.mt5_login,
+        password=config.mt5_password,
+        server=config.mt5_server,
+        max_spread_points=config.mt5_max_spread_points,
+        max_tick_age_seconds=config.mt5_max_tick_age_seconds,
+        check_order_before_send=config.mt5_check_order_before_send,
+        allow_real_account=config.mt5_allow_real_account,
     )
 
 

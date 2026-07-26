@@ -87,9 +87,15 @@ MT5_LOGIN=...
 MT5_PASSWORD=...
 MT5_SERVER=...
 MT5_PATH=...
+SMC_TA_MT5_MAX_SPREAD_POINTS=25
+SMC_TA_MT5_MAX_TICK_AGE_SECONDS=15
+SMC_TA_MT5_CHECK_ORDER_BEFORE_SEND=true
+SMC_TA_MT5_ALLOW_REAL_ACCOUNT=false
 ```
 
 The OANDA safety settings are optional. When set, `build_oanda_config` passes them into `OandaConfig` so the adapter can block stale prices, wide spreads, or market orders without a configured price bound.
+
+The MT5 safety settings are optional for demo mode. When set, `build_mt5_config` passes them into `Mt5Config` so the adapter can block stale ticks, wide spreads, invalid lot steps, unsafe real-account use, or failed MT5 `order_check()` responses.
 
 ## Validation
 
@@ -108,14 +114,14 @@ assert_runtime_ready(config)
 ## Adapter Config Builders
 
 ```python
-from smc_ta.config import RuntimeConfig, build_oanda_config, build_tradingeconomics_config
+from smc_ta.config import RuntimeConfig, build_mt5_config, build_oanda_config, build_tradingeconomics_config
 
 runtime = RuntimeConfig.from_env().assert_ready()
-oanda_config = build_oanda_config(runtime)
+broker_config = build_oanda_config(runtime) if runtime.broker == "oanda" else build_mt5_config(runtime)
 news_config = build_tradingeconomics_config(runtime, importance=(3,))
 ```
 
-`build_oanda_config` refuses to build from an unsafe live config.
+`build_oanda_config` and `build_mt5_config` refuse to build from unsafe live configs.
 
 ## Redacted Reporting
 

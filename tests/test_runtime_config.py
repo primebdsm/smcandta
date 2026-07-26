@@ -9,6 +9,7 @@ from smc_ta.config import (
     ConfigValidationError,
     RuntimeConfig,
     assert_runtime_ready,
+    build_mt5_config,
     build_oanda_config,
     build_tradingeconomics_config,
     load_env_file,
@@ -183,3 +184,64 @@ def test_invalid_oanda_safety_values_are_errors() -> None:
         "invalid_oanda_max_price_age_seconds",
         "invalid_oanda_max_order_slippage_pips",
     }.issubset(codes)
+
+
+def test_mt5_runtime_config_builds_hardened_adapter_config() -> None:
+    config = RuntimeConfig(
+        mode="demo",
+        broker="mt5",
+        mt5_login=123456,
+        mt5_password="mt5-secret",
+        mt5_server="Broker-Demo",
+        mt5_path="/opt/metatrader/terminal64.exe",
+        mt5_max_spread_points=25,
+        mt5_max_tick_age_seconds=10,
+        mt5_check_order_before_send=False,
+        journal_path="journal.csv",
+        lifecycle_db_path="lifecycle.sqlite",
+    )
+
+    report = config.validate()
+    mt5 = build_mt5_config(config)
+    safe = config.to_safe_dict()
+
+    assert report.ok
+    assert mt5.login == 123456
+    assert mt5.password == "mt5-secret"
+    assert mt5.server == "Broker-Demo"
+    assert mt5.path == "/opt/metatrader/terminal64.exe"
+    assert mt5.max_spread_points == 25
+    assert mt5.max_tick_age_seconds == 10
+    assert mt5.check_order_before_send is False
+    assert mt5.allow_real_account is False
+    assert safe["mt5_password"].endswith("cret")
+    assert "mt5-secret" not in json.dumps(safe)
+
+
+def test_live_mt5_requires_real_account_allow_flag() -> None:
+    config = RuntimeConfig(
+        mode="live",
+        broker="mt5",
+        allow_live_trading=True,
+        live_confirmation=LIVE_CONFIRMATION_PHRASE,
+        mt5_login=123456,
+        mt5_server="Broker-Live",
+        journal_path="journal.csv",
+        lifecycle_db_path="lifecycle.sqlite",
+    )
+
+    codes = issue_codes(config)
+
+    assert "mt5_real_account_not_allowed" in codes
+    with pytest.raises(ConfigValidationError):
+        build_mt5_config(config)
+
+
+def test_invalid_mt5_safety_values_are_errors() -> None:
+    config = RuntimeConfig(
+        broker="mt5",
+        mt5_max_spread_points=0,
+        mt5_max_tick_age_seconds=-1,
+    )
+
+    assert {"invalid_mt5_max_spread_points", "invalid_mt5_max_tick_age_seconds"}.issubset(issue_codes(config))

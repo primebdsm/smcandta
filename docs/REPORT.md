@@ -15,7 +15,7 @@ For the complete post-roadmap audit, see `docs/FINAL_AUDIT_REPORT.md`.
 - OANDA REST broker adapter and OANDA candle downloader
 - OANDA practice-mode hardening with account instrument metadata checks, price freshness/spread gates, conservative REST retries, order-rejection classification, and a non-trading readiness CLI
 - OANDA practice execution validator for minimum-size order open/close, SL/TP order open/close, rejected-order probe, restart reconciliation, and spread/slippage reports
-- Optional MetaTrader 5 terminal adapter and candle downloader
+- Optional hardened MetaTrader 5 terminal adapter and candle downloader with terminal/account/symbol/tick readiness, symbol aliases, spread/freshness gates, lot-step validation, stop checks, pending-order snapshots, and order-check support
 - CSV historical data source
 - Data quality validator for required columns, NaNs, invalid OHLC, duplicate/non-monotonic timestamps, missing candles, weekend candles, spread anomalies, and range spikes
 - Multi-timeframe analysis engine
@@ -64,7 +64,7 @@ For the complete post-roadmap audit, see `docs/FINAL_AUDIT_REPORT.md`.
 .venv/bin/python -m pytest
 ```
 
-Result: 144 passed.
+Result: 152 passed.
 
 ## What Is Real
 
@@ -85,6 +85,7 @@ The implemented instruments are real in the sense that each one maps to explicit
 - The performance analytics dashboard is a real review instrument: it loads existing report artifacts, computes visual review surfaces, and makes setup/session/daily/block behavior easier to inspect before promotion.
 - The risk stress tester is a real robustness instrument: it reruns the demo-forward bot path under worse spread, slippage, commission, volatility-range, and sizing assumptions, then compares every scenario to baseline.
 - The GitHub CI workflow is a real repository safety gate: it installs the package, runs the full pytest suite across supported Python versions, checks public imports, and builds installable distributions before changes land on `main`.
+- The MT5 hardening layer is a real broker-safety instrument: it probes the local terminal and account, validates broker symbol metadata, blocks stale/wide ticks, converts bot units into broker-valid lots, checks SL/TP distance, and can run MT5 `order_check()` before order submission.
 - The lifecycle recovery layer is a real restart instrument: it compares active lifecycle records with broker-open positions and either blocks startup or explicitly repairs lifecycle state.
 - The incident bundle helper is a real operations instrument: it serializes runtime, preflight, restart sync, lifecycle recovery, emergency stop, monitoring, account, position, and journal evidence into reviewable artifacts.
 - The process supervision helper is a real deployment instrument: it generates systemd, launchd, and logrotate files from structured config for operator review.

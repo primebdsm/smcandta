@@ -21,7 +21,7 @@ It is ready for:
 - Performance analytics dashboard for demo-forward evidence review
 - Risk stress testing for execution and volatility assumptions
 - GitHub CI for push/PR test matrix, public API import smoke, and package build checks
-- OANDA and MT5 demo integration work
+- OANDA and hardened MT5 demo integration work
 - OANDA practice readiness checks with account instruments and live pricing probes
 - OANDA practice execution validation tooling for guarded minimum-size demo trades
 - Live monitoring snapshot, upgraded local dashboard, and hosted authenticated monitor
@@ -89,7 +89,7 @@ Before real live trading, the selected broker must be demo-tested end to end wit
 
 - CSV candle loading
 - OANDA candle downloader
-- MT5 candle downloader
+- Hardened MT5 adapter and candle downloader
 - OHLCV normalization
 - Data quality validator for:
   - missing columns
@@ -148,7 +148,18 @@ Before real live trading, the selected broker must be demo-tested end to end wit
 - OANDA practice-mode hardening for instrument metadata, pricing, spread/freshness checks, conservative retries, and order rejection handling
 - OANDA practice execution validator for minimum-unit open/close, SL/TP open/close, rejected-order probe, restart reconciliation, and spread/slippage reporting
 - OANDA restart-sync support for account-change checkpoints and pending orders
-- Optional MetaTrader 5 terminal adapter
+- Optional hardened MetaTrader 5 terminal adapter:
+  - terminal connection checks
+  - terminal trade-allowed checks
+  - account mode checks with real-account block by default
+  - symbol alias mapping
+  - symbol visibility/selection
+  - symbol trade-mode validation
+  - tick freshness and spread checks
+  - min/max/step lot validation
+  - SL/TP direction and stop-distance checks
+  - optional `order_check()` before `order_send()`
+  - pending-order snapshots
 - Broker-neutral order, fill, account, pending-order, and position models
 
 ### Safety And Live-Readiness
@@ -289,7 +300,7 @@ The project does not contain placeholder analysis claims. The implemented instru
 - Risk stress testing uses saved candle data and the real demo-forward path to test whether execution-cost or volatility assumptions are fragile.
 - GitHub CI installs the package, runs the test suite on supported Python versions, checks public exports, and builds installable distributions without requiring broker credentials.
 - Lifecycle recovery synchronizes persisted lifecycle rows against broker-open positions before a restarted bot resumes.
-- MT5 adapter uses the real optional `MetaTrader5` Python package and terminal session.
+- MT5 adapter uses the real optional `MetaTrader5` Python package and terminal session, with readiness checks, broker symbol metadata validation, tick freshness/spread gates, lot-step validation, stop-distance checks, pending-order snapshots, and optional `order_check()` before `order_send()`.
 - Trading Economics connector maps provider events into the repository's news filter.
 - Preflight probes real runtime objects before a loop starts.
 - Emergency stop and reconciliation can block the bot before new orders are sent.
@@ -370,15 +381,11 @@ OANDA still needs before live:
 - streaming-price support if the bot moves beyond polling
 - broker-specific manual intervention drills on the actual account platform
 
-MT5 is also implemented, but it depends on a local terminal session. MT5 still needs:
+MT5 is hardened in code, but it still depends on a local terminal session. MT5 still needs real-terminal evidence before live:
 
-- broker symbol suffix/prefix mapping
-- symbol contract metadata validation
-- lot-step/min-lot/max-lot checks
-- fill-mode negotiation by broker
-- terminal session health checks
-- reconnect/shutdown handling
-- retcode-specific error handling
+- broker-specific fill-mode confirmation
+- reconnect/shutdown drills on the selected host
+- broker-specific retcode review from actual demo failures
 - demo account forward test evidence
 
 cTrader, FIX, Interactive Brokers, and other venues are not implemented yet.
@@ -430,7 +437,7 @@ Before live trading:
 7. Install and test generated supervisor/logrotate artifacts on the chosen demo host
 8. Install hosted monitoring behind HTTPS, VPN, or tunnel controls on the chosen demo host
 9. Run real Telegram/Discord/email alert delivery probes with the validator in OANDA practice and save incident-ready snapshots
-10. Optional MT5 hardening or cTrader/FIX adapter
+10. Optional cTrader/FIX adapter or deeper MT5 real-terminal recovery drills
 
 ## Current Verification
 
@@ -443,7 +450,7 @@ The repository test suite currently passes:
 Expected result:
 
 ```text
-144 passed
+152 passed
 ```
 
 ## Final Audit Conclusion

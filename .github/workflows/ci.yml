@@ -59,6 +59,8 @@ jobs:
               "run_risk_stress_test",
               "sync_broker_state_after_restart",
               "TransactionReconciliationEvent",
+              "Mt5Config",
+              "build_mt5_config",
           ]
           missing = [name for name in required if not hasattr(smc_ta, name)]
           if missing:

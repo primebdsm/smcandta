@@ -10,7 +10,7 @@ This repository now contains the main components needed before connecting a real
 - OANDA REST adapter: `smc_ta.broker.OandaBroker`
 - OANDA candle downloader: `smc_ta.broker.OandaCandleDataSource`
 - OANDA practice hardening: `OandaBroker.practice_readiness`, instrument metadata checks, price freshness, spread checks, and order rejection classification
-- Optional MetaTrader 5 adapter: `smc_ta.broker.MetaTrader5Broker`
+- Optional hardened MetaTrader 5 adapter: `smc_ta.broker.MetaTrader5Broker`, `Mt5Config`
 - Paper/demo execution: `smc_ta.broker.PaperBroker`
 - Historical CSV source: `smc_ta.data.CsvCandleDataSource`
 - Data quality validator: `smc_ta.data.validate_candle_quality`
@@ -37,6 +37,7 @@ This repository now contains the main components needed before connecting a real
 - Broker connectivity and alert delivery status: `check_broker_connectivity`, `probe_alert_channel`
 - Real alert channel validation: `validate_alert_channels`, `configured_alert_channels_from_env`
 - Broker transaction stream: `broker_transaction_stream_frame`
+- MT5 readiness: `MetaTrader5Broker.practice_readiness`
 - Integrated practice startup monitoring: `run_practice_startup_monitoring`
 - OANDA credential onboarding: `check_oanda_credential_onboarding`
 - Deployment runbook and incident bundle helper: `write_incident_report_bundle`
@@ -199,10 +200,12 @@ Run `python examples/generate_ops_artifacts.py --service-name smc-ta-demo --env-
 
 ## Still Broker-Specific
 
-The repository ships OANDA REST and optional MetaTrader 5 adapter implementations. cTrader/FIX and any broker-specific production controls still need to be implemented for the selected venue. Credentials are never stored in the repository.
+The repository ships OANDA REST and optional hardened MetaTrader 5 adapter implementations. cTrader/FIX and any broker-specific production controls still need to be implemented for the selected venue. Credentials are never stored in the repository.
+
+MT5 hardening covers local terminal/account/symbol/tick readiness, real-account blocking unless explicitly allowed, symbol alias mapping, spread/freshness gates, lot-step validation, stop-distance checks, optional `order_check()`, pending-order snapshots, and normalized candle download. Run `python examples/mt5_practice_check.py --symbols EURUSD --symbol-alias EURUSD=EURUSD.m --max-spread-points 25` against the selected demo terminal before MT5 demo-forward testing. See `docs/MT5_HARDENING.md`.
 
 ## API References
 
 - OANDA v20 REST documents candle granularities and the `/v3/accounts/{accountID}/orders` order endpoint.
-- MetaTrader 5 Python integration documents `initialize`, `positions_get`, and `order_send`.
+- MetaTrader 5 Python integration documents `initialize`, `positions_get`, `order_check`, and `order_send`.
 - Trading Economics documents calendar country/date endpoints and event response fields.

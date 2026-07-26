@@ -52,6 +52,7 @@ Live-readiness components:
 - OANDA v20 REST adapter and candle downloader
 - OANDA practice hardening for instrument metadata, pricing checks, retries, and non-trading readiness probes
 - Optional MetaTrader 5 terminal adapter and candle downloader
+- MT5 hardening for terminal/account/symbol/tick readiness, lot-step validation, spread/freshness gates, symbol aliases, and order checks
 - Paper broker for demo forward testing
 - CSV historical data source
 - Data quality validator for missing candles, duplicates, invalid OHLC, spread spikes, weekend candles, and range spikes
@@ -143,6 +144,14 @@ candles = source.get_candles("EURUSD", "M15", limit=500)
 ```bash
 python examples/oanda_practice_check.py --symbols EURUSD,GBPUSD --max-spread-pips 2
 ```
+
+## MT5 Practice Readiness
+
+```bash
+python examples/mt5_practice_check.py --symbols EURUSD --symbol-alias EURUSD=EURUSD.m --max-spread-points 25
+```
+
+Use this with a local MetaTrader 5 terminal already logged into a demo account. See `docs/MT5_HARDENING.md`.
 
 ## OANDA Practice Execution Validation
 
@@ -398,6 +407,6 @@ tests/            Deterministic pytest coverage
 
 ## Status
 
-This is a real, usable analysis library for Forex research, backtesting, paper execution, and broker-adapter integration. It includes OANDA and optional MT5 adapter foundations, but it is not a certified turnkey live deployment and does not store broker credentials. Before live use, harden and demo-test the broker-specific path for your venue.
+This is a real, usable analysis library for Forex research, backtesting, paper execution, and broker-adapter integration. It includes OANDA and optional hardened MT5 adapter foundations, but it is not a certified turnkey live deployment and does not store broker credentials. Before live use, demo-test the broker-specific path for your venue.
 
 For the final post-roadmap audit and recommended next build order, see `docs/FINAL_AUDIT_REPORT.md`.

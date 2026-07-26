@@ -25,6 +25,8 @@ def test_github_ci_runs_tests_import_smoke_and_package_build() -> None:
     assert "python -m build" in text
     assert "python -m pip install -e \".[dev]\"" in text
     assert "TransactionReconciliationEvent" in text
+    assert "Mt5Config" in text
+    assert "build_mt5_config" in text
 
 
 def test_github_ci_does_not_require_live_broker_secrets() -> None:
