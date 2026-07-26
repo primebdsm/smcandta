@@ -62,6 +62,18 @@ It writes timestamped report bundles under `runs/`, plus `history.csv` and `sche
 
 See `docs/DEMO_FORWARD_SCHEDULER.md`.
 
+## Performance Analytics Dashboard
+
+Render a dashboard from a report bundle or scheduler root:
+
+```bash
+python examples/performance_analytics_dashboard.py \
+  reports/demo_forward_scheduler/eurusd_m15 \
+  --output reports/performance_analytics/eurusd_m15.html
+```
+
+The dashboard summarizes KPIs, equity, drawdown, setup/session/daily performance, blocked reasons, recent trades, scheduler history, and run metrics. See `docs/PERFORMANCE_ANALYTICS_DASHBOARD.md`.
+
 ## Report Artifacts
 
 The report bundle writes:

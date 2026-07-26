@@ -19,7 +19,17 @@ from smc_ta.config import (
     validate_runtime_config,
 )
 from smc_ta.data import DataQualityConfig, DataQualityReport, validate_candle_quality
-from smc_ta.dashboard import render_live_dashboard_html, write_dashboard, write_live_dashboard
+from smc_ta.dashboard import (
+    PerformanceAnalyticsDashboardConfig,
+    PerformanceAnalyticsData,
+    load_performance_analytics_data,
+    render_dashboard_html,
+    render_live_dashboard_html,
+    render_performance_analytics_dashboard,
+    write_dashboard,
+    write_live_dashboard,
+    write_performance_analytics_dashboard,
+)
 from smc_ta.forwardtest import (
     DemoForwardConfig,
     DemoForwardReportBundle,
@@ -177,6 +187,8 @@ __all__ = [
     "OandaCredentialOnboardingConfig",
     "OandaCredentialOnboardingResult",
     "PaperBroker",
+    "PerformanceAnalyticsDashboardConfig",
+    "PerformanceAnalyticsData",
     "PortfolioRiskConfig",
     "PortfolioRiskDecision",
     "PortfolioRiskManager",
@@ -228,6 +240,7 @@ __all__ = [
     "generate_confluence_signals",
     "get_strategy_profile",
     "list_strategy_profiles",
+    "load_performance_analytics_data",
     "oanda_secret_sources",
     "parse_alert_channel_names",
     "probe_alert_channel",
@@ -246,6 +259,7 @@ __all__ = [
     "render_analysis_chart_svg",
     "render_demo_forward_html_report",
     "render_live_dashboard_html",
+    "render_performance_analytics_dashboard",
     "validate_candle_quality",
     "validate_runtime_config",
     "write_analysis_chart",
@@ -258,6 +272,7 @@ __all__ = [
     "write_lifecycle_recovery_report",
     "write_logrotate_config",
     "write_monitoring_snapshot_json",
+    "write_performance_analytics_dashboard",
     "write_restart_sync_report",
     "write_secret_resolution_report",
     "write_supervisor_artifacts",

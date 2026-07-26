@@ -27,6 +27,7 @@ This repository now contains the main components needed before connecting a real
 - Demo forward bot: `smc_ta.live.DemoTradingBot`
 - Demo-forward report package: `run_demo_forward_test`, `write_demo_forward_report_bundle`
 - Demo-forward scheduler: `run_demo_forward_schedule`, `DemoForwardScheduleConfig`
+- Performance analytics dashboard: `write_performance_analytics_dashboard`
 - CSV and SQLite journals: `smc_ta.journal.TradeJournal`, `smc_ta.journal.SQLiteTradeJournal`
 - Monitoring metrics: `smc_ta.monitoring.performance_summary`
 - Static/live dashboard: `smc_ta.dashboard.write_dashboard`, `smc_ta.dashboard.write_live_dashboard`
@@ -62,7 +63,7 @@ Keep broker-specific authentication, order IDs, retry logic, and reconciliation 
 
 1. Backtest with spread, slippage, and commission.
 2. Review the trade journal and monitoring metrics.
-3. Generate demo-forward reports through `run_demo_forward_test`, then schedule repeated report runs through `run_demo_forward_schedule`.
+3. Generate demo-forward reports through `run_demo_forward_test`, schedule repeated report runs through `run_demo_forward_schedule`, and review `write_performance_analytics_dashboard`.
 4. Validate `RuntimeConfig` and keep live mode blocked unless explicitly armed.
 5. Add `BrokerReconciler` with a persistent expected-position ledger.
 6. Run broker restart sync before preflight whenever the process starts.
@@ -163,7 +164,7 @@ Run `python examples/onboard_oanda_credentials.py --env-file .env.demo` before O
 
 `run_demo_forward_test` replays closed candles through the `DemoTradingBot` path and writes cycle, equity, trade, fill, setup, session, daily, blocked-reason, and paper-position-event reports.
 
-Run `python examples/demo_forward_report.py --output-dir reports/demo_forward` for a deterministic sample, or pass a Forex CSV path for recent out-of-sample candles. Use `python examples/demo_forward_scheduler.py EURUSD_M15.csv --runs 4 --interval-seconds 900` to collect repeated scheduled report bundles and run history. See `docs/DEMO_FORWARD_REPORTS.md` and `docs/DEMO_FORWARD_SCHEDULER.md`.
+Run `python examples/demo_forward_report.py --output-dir reports/demo_forward` for a deterministic sample, or pass a Forex CSV path for recent out-of-sample candles. Use `python examples/demo_forward_scheduler.py EURUSD_M15.csv --runs 4 --interval-seconds 900` to collect repeated scheduled report bundles and run history. Then run `python examples/performance_analytics_dashboard.py reports/demo_forward_scheduler/latest --output reports/performance_analytics/latest.html` to review KPIs, equity, drawdown, setups, sessions, blocks, trades, and scheduler history. See `docs/DEMO_FORWARD_REPORTS.md`, `docs/DEMO_FORWARD_SCHEDULER.md`, and `docs/PERFORMANCE_ANALYTICS_DASHBOARD.md`.
 
 ## Live Dashboard Monitoring
 

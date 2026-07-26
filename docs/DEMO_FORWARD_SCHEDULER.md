@@ -42,6 +42,18 @@ The default behavior skips duplicate candle windows. If the CSV has not received
 
 On restart, the scheduler reads existing `history.csv` and uses the last successful or warning run's final candle timestamp for the same duplicate-candle check.
 
+## Analytics Dashboard
+
+After a scheduler cycle, render a performance analytics page:
+
+```bash
+python examples/performance_analytics_dashboard.py \
+  reports/demo_forward_scheduler/eurusd_m15 \
+  --output reports/performance_analytics/eurusd_m15.html
+```
+
+See `docs/PERFORMANCE_ANALYTICS_DASHBOARD.md`.
+
 ## Continuous Loop
 
 ```bash

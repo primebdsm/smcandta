@@ -105,7 +105,14 @@ Use this only with an OANDA practice account. It validates minimum-size order op
 ## Demo-Forward Reports
 
 ```python
-from smc_ta import DemoForwardConfig, DemoForwardScheduleConfig, run_demo_forward_schedule, run_demo_forward_test, write_demo_forward_report_bundle
+from smc_ta import (
+    DemoForwardConfig,
+    DemoForwardScheduleConfig,
+    run_demo_forward_schedule,
+    run_demo_forward_test,
+    write_demo_forward_report_bundle,
+    write_performance_analytics_dashboard,
+)
 
 result = run_demo_forward_test(candles, config=DemoForwardConfig(symbol="EURUSD"))
 write_demo_forward_report_bundle(result, "reports/demo_forward")
@@ -113,9 +120,10 @@ write_demo_forward_report_bundle(result, "reports/demo_forward")
 schedule = run_demo_forward_schedule(
     DemoForwardScheduleConfig(csv_path="EURUSD_M15.csv", output_dir="reports/demo_forward_scheduler", max_runs=1)
 )
+write_performance_analytics_dashboard(schedule.output_dir, "reports/performance_analytics/dashboard.html")
 ```
 
-Use this after backtesting/walk-forward and before broker-demo live loops. It exercises the bot path and writes cycle, equity, fill, trade, setup, session, daily, and blocked-reason reports. The scheduler repeats that report generation and saves run history for operator review. See `docs/DEMO_FORWARD_REPORTS.md` and `docs/DEMO_FORWARD_SCHEDULER.md`.
+Use this after backtesting/walk-forward and before broker-demo live loops. It exercises the bot path and writes cycle, equity, fill, trade, setup, session, daily, and blocked-reason reports. The scheduler repeats report generation and the analytics dashboard summarizes performance artifacts for operator review. See `docs/DEMO_FORWARD_REPORTS.md`, `docs/DEMO_FORWARD_SCHEDULER.md`, and `docs/PERFORMANCE_ANALYTICS_DASHBOARD.md`.
 
 ## Live Dashboard
 
