@@ -25,6 +25,8 @@ flowchart LR
   L --> P["Deployment Runbook / Incident Bundle"]
   Q["Secrets / Logs / Supervisor"] --> K
   Q --> P
+  U["Credential Onboarding"] --> Q
+  U --> H
   R["Hosted Auth Monitor"] --> I
   R --> P
   S["Broker / Alert Status"] --> R
@@ -78,6 +80,7 @@ def on_new_closed_candle(candles):
 - Demo-forward report bundles for cycle, equity, trade, setup, session, daily, and block review
 - Deployment runbook, rollback procedure, and incident evidence capture
 - Runtime logging, secret resolution, process supervision, and log rotation
+- OANDA credential onboarding before broker construction
 - Authenticated hosted dashboard/snapshot server for off-machine monitoring
 - Broker connectivity and alert delivery status panels
 - Integrated paper/OANDA practice startup monitoring drill with saved artifact bundle
@@ -104,6 +107,7 @@ def on_new_closed_candle(candles):
 - `run_demo_forward_test` and `write_demo_forward_report_bundle` for bot-path replay evidence before broker-demo operation
 - `write_incident_report_bundle` for standardized JSON, Markdown, and CSV incident evidence
 - `resolve_runtime_secrets`, `configure_runtime_logging`, and `write_supervisor_artifacts` for deployment operations
+- `check_oanda_credential_onboarding` for redaction-safe OANDA practice credential readiness
 - `create_hosted_monitoring_server` and `write_monitoring_snapshot_json` for authenticated dashboard hosting
 - `check_broker_connectivity` and `probe_alert_channel` for operational status panels
 - `run_practice_startup_monitoring` for integrated restart sync, lifecycle recovery, preflight, dashboard, and status reports before a practice startup

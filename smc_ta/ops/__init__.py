@@ -1,6 +1,12 @@
 """Deployment and incident operations helpers."""
 
 from smc_ta.ops.incident import IncidentReportBundle, write_incident_report_bundle
+from smc_ta.ops.credentials import (
+    OandaCredentialOnboardingConfig,
+    OandaCredentialOnboardingResult,
+    check_oanda_credential_onboarding,
+    oanda_secret_sources,
+)
 from smc_ta.ops.logging import (
     LogrotateConfig,
     RuntimeLogConfig,
@@ -39,6 +45,8 @@ __all__ = [
     "IncidentReportBundle",
     "JsonSecretSource",
     "LogrotateConfig",
+    "OandaCredentialOnboardingConfig",
+    "OandaCredentialOnboardingResult",
     "PracticeStartupRunConfig",
     "PracticeStartupRunResult",
     "RuntimeLogConfig",
@@ -47,7 +55,9 @@ __all__ = [
     "SecretResolutionReport",
     "SupervisorArtifactBundle",
     "SupervisorConfig",
+    "check_oanda_credential_onboarding",
     "configure_runtime_logging",
+    "oanda_secret_sources",
     "render_launchd_plist",
     "render_logrotate_config",
     "render_systemd_unit",

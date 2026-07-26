@@ -31,8 +31,9 @@ from smc_ta.monitoring import (
     probe_alert_channel,
     write_monitoring_snapshot_json,
 )
+from smc_ta.ops.credentials import OandaCredentialOnboardingConfig, oanda_secret_sources
 from smc_ta.ops.incident import write_incident_report_bundle
-from smc_ta.ops.secrets import EnvFileSecretSource, EnvSecretSource, SecretResolutionConfig, resolve_runtime_secrets, write_secret_resolution_report
+from smc_ta.ops.secrets import SecretResolutionConfig, resolve_runtime_secrets, write_secret_resolution_report
 from smc_ta.preflight import PreflightConfig, PreflightReport, run_preflight
 from smc_ta.reconciliation import (
     RestartSyncConfig,
@@ -421,14 +422,7 @@ def _finalize_partial_result(
 
 
 def _secret_sources(cfg: PracticeStartupRunConfig):
-    keys = ("OANDA_ACCOUNT_ID", "OANDA_TOKEN")
-    sources: list[Any] = [
-        EnvSecretSource(keys=keys),
-        EnvSecretSource(keys=keys, prefix="SMC_TA_", name="env_smc_ta"),
-    ]
-    if cfg.env_file is not None:
-        sources.append(EnvFileSecretSource(cfg.env_file))
-    return tuple(sources)
+    return oanda_secret_sources(OandaCredentialOnboardingConfig(env_file=cfg.env_file))
 
 
 def _merged_env(env: Mapping[str, str] | None, env_file: str | Path | None) -> dict[str, str]:

@@ -67,6 +67,7 @@ Run these checks before replacing a running process:
 
 ```bash
 python -m pytest
+python examples/onboard_oanda_credentials.py --env-file .env.demo --output reports/startup/oanda_credentials.json
 python examples/check_secrets.py --env-file .env.demo --required OANDA_ACCOUNT_ID,OANDA_TOKEN --output reports/startup/secrets.json
 python examples/check_runtime_config.py --env-file .env.demo
 python examples/validate_data.py --csv EURUSD_M15.csv --symbol EURUSD
@@ -111,6 +112,7 @@ python examples/oanda_practice_startup_monitor.py \
   --symbol EURUSD \
   --timeframe M15 \
   --max-spread-pips 2 \
+  --env-file .env.demo \
   --ledger-path state/positions.sqlite \
   --checkpoint-path state/positions.sqlite \
   --lifecycle-path state/trade_lifecycle.sqlite \

@@ -4,10 +4,26 @@ This document covers deployment-safe secret loading and bot runtime logging.
 
 The repository never needs broker credentials committed to Git. Secrets should come from environment variables, local protected files, or external secret-manager commands.
 
+## OANDA Credential Onboarding
+
+For OANDA practice, start with the dedicated onboarding command:
+
+```bash
+cp .env.demo.example .env.demo
+python examples/onboard_oanda_credentials.py \
+  --env-file .env.demo \
+  --output reports/startup/oanda_credentials.json
+```
+
+It accepts both `OANDA_ACCOUNT_ID`/`OANDA_TOKEN` and `SMC_TA_OANDA_ACCOUNT_ID`/`SMC_TA_OANDA_TOKEN`, writes only a redacted report, and prints the next safe startup command when credentials are present.
+
+See `docs/OANDA_CREDENTIAL_ONBOARDING.md`.
+
 ## Secret Resolution APIs
 
 ```python
 from smc_ta import (
+    OandaCredentialOnboardingConfig,
     CommandSecretSource,
     EnvFileSecretSource,
     EnvSecretSource,
@@ -15,6 +31,7 @@ from smc_ta import (
     SecretResolutionConfig,
     resolve_runtime_secrets,
     write_secret_resolution_report,
+    check_oanda_credential_onboarding,
 )
 ```
 

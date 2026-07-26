@@ -64,6 +64,7 @@ Live-readiness components:
 - Emergency stop / kill-switch controller with optional close-all behavior
 - Trade lifecycle state machine with memory and SQLite stores
 - Broker-synchronized lifecycle recovery after restart
+- OANDA credential onboarding with `.env.demo.example`, redacted report, and exact next startup command
 - Runtime configuration and live-mode guardrails with secret redaction
 - Preflight readiness checks for config, data, broker, safety, news, persistence, and lifecycle state
 - Walk-forward optimization for train/test strategy validation
@@ -147,6 +148,7 @@ The execution validator opens and closes minimum-size OANDA practice trades only
 ## OANDA Practice Startup Monitoring
 
 ```bash
+python examples/onboard_oanda_credentials.py --env-file .env.demo --output reports/startup/oanda_credentials.json
 python examples/oanda_practice_startup_monitor.py --broker paper --output-dir reports/practice_startup/paper
 python examples/oanda_practice_startup_monitor.py --broker oanda --symbol EURUSD --max-spread-pips 2 --output-dir reports/practice_startup/oanda
 ```
@@ -190,10 +192,11 @@ Use `docs/DEPLOYMENT_RUNBOOK.md` before paper/demo/live starts and `docs/INCIDEN
 
 ```bash
 python examples/generate_ops_artifacts.py --service-name smc-ta-demo --env-file .env.demo
+python examples/onboard_oanda_credentials.py --env-file .env.demo
 python examples/check_secrets.py --required OANDA_ACCOUNT_ID,OANDA_TOKEN
 ```
 
-Use `docs/PROCESS_SUPERVISION.md` for systemd/launchd/logrotate artifacts and `docs/SECRETS_AND_LOGGING.md` for external secret command integration and rotating runtime logs.
+Use `docs/OANDA_CREDENTIAL_ONBOARDING.md` for OANDA practice credentials, `docs/PROCESS_SUPERVISION.md` for systemd/launchd/logrotate artifacts, and `docs/SECRETS_AND_LOGGING.md` for external secret command integration and rotating runtime logs.
 
 ## Economic News Filter
 

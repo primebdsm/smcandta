@@ -1,16 +1,21 @@
 from __future__ import annotations
 
 import json
+import os
+import subprocess
 import sys
+from pathlib import Path
 
 from smc_ta import (
     CommandSecretSource,
     EnvSecretSource,
     JsonSecretSource,
     LogrotateConfig,
+    OandaCredentialOnboardingConfig,
     RuntimeLogConfig,
     SecretResolutionConfig,
     SupervisorConfig,
+    check_oanda_credential_onboarding,
     configure_runtime_logging,
     resolve_runtime_secrets,
     write_secret_resolution_report,
@@ -61,6 +66,87 @@ def test_secret_resolution_blocks_missing_required_secret() -> None:
     assert not report.ok
     assert "missing_required_secret" in report.blocking_reasons
     assert report.missing_keys == ("OANDA_TOKEN",)
+
+
+def test_oanda_credential_onboarding_accepts_prefixed_env_and_redacts_report(tmp_path) -> None:
+    result = check_oanda_credential_onboarding(
+        OandaCredentialOnboardingConfig(output_report=tmp_path / "oanda_credentials.json"),
+        env={
+            "SMC_TA_OANDA_ACCOUNT_ID": "practice-account-id",
+            "SMC_TA_OANDA_TOKEN": "practice-token",
+        },
+    )
+    report_text = result.output_report.read_text(encoding="utf-8")
+
+    assert result.ok
+    assert result.summary() == "oanda_credentials_ok"
+    assert result.accepted_keys == ("SMC_TA_OANDA_ACCOUNT_ID", "SMC_TA_OANDA_TOKEN")
+    assert result.secret_report.used_sources["SMC_TA_OANDA_TOKEN"] == "env_smc_ta"
+    assert "practice-token" not in report_text
+    assert "practice-account-id" not in report_text
+    assert "--broker oanda" in result.startup_command()
+
+
+def test_oanda_credential_onboarding_reports_missing_keys_and_export_templates(tmp_path) -> None:
+    env_file = tmp_path / ".env.demo"
+    env_file.write_text("", encoding="utf-8")
+
+    result = check_oanda_credential_onboarding(
+        OandaCredentialOnboardingConfig(
+            env_file=env_file,
+            startup_output_dir=tmp_path / "startup",
+        ),
+        env={},
+    )
+
+    assert not result.ok
+    assert result.summary() == "oanda_credentials_blocked:missing_required_secret"
+    assert result.missing_keys == ("OANDA_ACCOUNT_ID", "OANDA_TOKEN")
+    assert "export SMC_TA_OANDA_ACCOUNT_ID=..." in result.export_templates()
+    assert f"--env-file {env_file}" in result.startup_command()
+
+
+def test_oanda_credential_onboarding_blocks_example_placeholders() -> None:
+    result = check_oanda_credential_onboarding(
+        OandaCredentialOnboardingConfig(env_file=".env.demo.example"),
+        env={},
+    )
+
+    assert not result.ok
+    assert result.summary() == "oanda_credentials_blocked:placeholder_secret_value"
+    assert set(result.accepted_keys) == {"SMC_TA_OANDA_ACCOUNT_ID", "SMC_TA_OANDA_TOKEN"}
+    assert {
+        issue.key
+        for issue in result.secret_report.blocking_issues
+        if issue.code == "placeholder_secret_value"
+    } == {"SMC_TA_OANDA_ACCOUNT_ID", "SMC_TA_OANDA_TOKEN"}
+
+
+def test_oanda_credential_onboarding_cli_blocks_without_printing_secrets(tmp_path) -> None:
+    env = {
+        key: value
+        for key, value in os.environ.items()
+        if key not in {"OANDA_ACCOUNT_ID", "OANDA_TOKEN", "SMC_TA_OANDA_ACCOUNT_ID", "SMC_TA_OANDA_TOKEN"}
+    }
+    completed = subprocess.run(
+        [
+            sys.executable,
+            "examples/onboard_oanda_credentials.py",
+            "--output",
+            str(tmp_path / "credentials.json"),
+        ],
+        cwd=Path(__file__).resolve().parents[1],
+        env=env,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+    assert completed.returncode == 2
+    assert "oanda_credentials_blocked:missing_required_secret" in completed.stdout
+    assert "missing_keys=OANDA_ACCOUNT_ID,OANDA_TOKEN" in completed.stdout
+    assert "export SMC_TA_OANDA_TOKEN=..." in completed.stdout
+    assert "OANDA_TOKEN=" not in completed.stdout.replace("export SMC_TA_OANDA_TOKEN=...", "")
 
 
 def test_supervisor_artifacts_include_service_and_rotation_files(tmp_path) -> None:

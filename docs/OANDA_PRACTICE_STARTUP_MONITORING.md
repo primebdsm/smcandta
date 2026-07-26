@@ -41,7 +41,16 @@ practice_startup_monitoring_ok
 
 ## OANDA Practice Drill
 
-Set credentials through the environment or an `.env` file:
+Run credential onboarding first:
+
+```bash
+cp .env.demo.example .env.demo
+python examples/onboard_oanda_credentials.py \
+  --env-file .env.demo \
+  --output reports/startup/oanda_credentials.json
+```
+
+Set credentials through the environment or the copied `.env.demo` file:
 
 ```bash
 export OANDA_ACCOUNT_ID="..."
@@ -63,6 +72,7 @@ python examples/oanda_practice_startup_monitor.py \
   --symbol EURUSD \
   --timeframe M15 \
   --max-spread-pips 2 \
+  --env-file .env.demo \
   --output-dir reports/practice_startup/oanda \
   --adopt-unmanaged \
   --mark-missing-positions-closed \

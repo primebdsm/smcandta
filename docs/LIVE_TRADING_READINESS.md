@@ -32,6 +32,7 @@ This repository now contains the main components needed before connecting a real
 - Hosted authenticated monitoring: `create_hosted_monitoring_server`, `write_monitoring_snapshot_json`
 - Broker connectivity and alert delivery status: `check_broker_connectivity`, `probe_alert_channel`
 - Integrated practice startup monitoring: `run_practice_startup_monitoring`
+- OANDA credential onboarding: `check_oanda_credential_onboarding`
 - Deployment runbook and incident bundle helper: `write_incident_report_bundle`
 - Runtime logging, secret resolution, and supervisor artifacts: `configure_runtime_logging`, `resolve_runtime_secrets`, `write_supervisor_artifacts`
 - Static chart visualization: `smc_ta.visualization.write_analysis_chart`
@@ -70,13 +71,14 @@ Keep broker-specific authentication, order IDs, retry logic, and reconciliation 
 12. Enable `SQLiteTradeLifecycleStore` so every signal, block, submission, fill, failure, and close is auditable.
 13. Add a real economic calendar source such as `TradingEconomicsCalendarSource` and verify event times against your broker/server timezone.
 14. Configure runtime logging and resolve deployment secrets before broker adapters are constructed.
-15. Run `assert_preflight_ready` before every demo/live process start.
-16. Follow `docs/DEPLOYMENT_RUNBOOK.md` and keep `docs/INCIDENT_PROCEDURES.md` ready before any repeated bot process.
-17. Generate and review process supervisor/logrotate artifacts for the target host.
-18. Enable hosted monitoring only behind auth and HTTPS/VPN/tunnel controls when viewed off-machine.
-19. Add broker connectivity and alert delivery status records to every dashboard snapshot.
-20. Run the integrated paper/OANDA practice startup monitoring drill and save the artifacts.
-21. Only then consider small live size.
+15. Run OANDA credential onboarding before OANDA broker construction.
+16. Run `assert_preflight_ready` before every demo/live process start.
+17. Follow `docs/DEPLOYMENT_RUNBOOK.md` and keep `docs/INCIDENT_PROCEDURES.md` ready before any repeated bot process.
+18. Generate and review process supervisor/logrotate artifacts for the target host.
+19. Enable hosted monitoring only behind auth and HTTPS/VPN/tunnel controls when viewed off-machine.
+20. Add broker connectivity and alert delivery status records to every dashboard snapshot.
+21. Run the integrated paper/OANDA practice startup monitoring drill and save the artifacts.
+22. Only then consider small live size.
 
 ## Emergency Stop
 
@@ -150,6 +152,8 @@ Run `python examples/oanda_execution_validate.py --symbol EURUSD --max-spread-pi
 `run_practice_startup_monitoring` rehearses the real startup path without placing orders. It resolves OANDA secrets into a redacted report, checks practice account readiness, downloads or loads candles, runs restart sync, lifecycle recovery, preflight, broker connectivity, alert probes, SMC/TA analysis, dashboard rendering, snapshot JSON, and incident evidence when a post-snapshot gate blocks.
 
 Run `python examples/oanda_practice_startup_monitor.py --broker paper --output-dir reports/practice_startup/paper` for a local smoke test. Run OANDA mode only with practice credentials. See `docs/OANDA_PRACTICE_STARTUP_MONITORING.md`.
+
+Run `python examples/onboard_oanda_credentials.py --env-file .env.demo` before OANDA mode. See `docs/OANDA_CREDENTIAL_ONBOARDING.md`.
 
 ## Demo-Forward Reports
 

@@ -25,6 +25,7 @@ It is ready for:
 - Broker-synchronized lifecycle recovery after restart
 - Structured startup safety checks before demo/live loops
 - Runtime logging, secret resolution, log rotation, and supervisor artifact generation
+- OANDA credential onboarding with placeholder detection and redacted reports
 - Hosted dashboard/status/snapshot server with Basic or Bearer authentication
 - Broker connectivity and alert delivery status panels
 - Integrated paper/OANDA practice startup monitoring drill with dashboard and artifact bundle
@@ -223,6 +224,7 @@ Before real live trading, the selected broker must be demo-tested end to end wit
 - Incident evidence bundle helper for JSON, Markdown, and CSV startup/runtime artifacts
 - Runtime logging helper with rotating file support and JSON-line option
 - Secret resolution helper for environment, `.env`, JSON, and external command providers with redacted reports
+- OANDA credential onboarding package with `.env.demo.example`, placeholder detection, CLI, Python API, and redacted readiness reports
 - Process supervision artifact generator for systemd, launchd, and logrotate
 
 ## What Is Real
@@ -247,6 +249,7 @@ The project does not contain placeholder analysis claims. The implemented instru
 - Incident bundles serialize real runtime reports and broker/account snapshots into durable review artifacts.
 - Runtime logging writes rotating bot logs for startup, cycle, execution, and incident review.
 - Secret resolution can load broker credentials from environment, local protected files, JSON, or external secret commands without committing secrets.
+- OANDA credential onboarding blocks missing or placeholder credentials before broker construction and gives the operator the exact next startup command only after credential readiness is real.
 - Supervisor artifacts give operators reviewable systemd, launchd, and logrotate files for the target host.
 - Hosted monitoring serves dashboard and snapshot artifacts through authenticated read-only routes with security headers and safe artifact path handling.
 - Broker connectivity probes call read-only account/position APIs and surface broker failures before operators trust the bot state.
@@ -275,6 +278,7 @@ The toolkit can improve profit potential indirectly by improving process quality
 - Better demo evidence: forward report artifacts show what the bot actually did cycle by cycle before broker-demo or live deployment.
 - Better operations: runbooks and incident bundles reduce downtime and help prevent unsafe restarts after broker or state mismatches.
 - Better deployment hygiene: supervised restarts, rotating logs, and secret redaction reduce avoidable operational failures.
+- Better credential hygiene: onboarding prevents invisible or placeholder OANDA credentials from reaching broker startup.
 - Better visibility: broker connectivity and alert delivery panels make it easier to detect blind spots before continuing a demo/live loop.
 - Better startup discipline: the integrated practice drill catches missing credentials, broker-state mismatches, lifecycle drift, preflight blocks, and monitoring gaps in one repeatable rehearsal.
 
@@ -353,6 +357,7 @@ Before live trading:
 - lifecycle recovery must be run after restart sync and before preflight
 - real spread/slippage comparison versus backtest assumptions
 - selected secret-manager backend provisioned on the target host
+- OANDA credential onboarding run against the actual demo host environment or local `.env.demo`
 - generated supervisor/logrotate artifacts installed and tested on the target host
 - hosted monitor installed behind HTTPS, VPN, or tunnel controls when viewed off-machine
 - broker connectivity and alert delivery panels reviewed in every startup/demo drill
@@ -384,7 +389,7 @@ The repository test suite currently passes:
 Expected result:
 
 ```text
-117 passed
+121 passed
 ```
 
 ## Final Audit Conclusion

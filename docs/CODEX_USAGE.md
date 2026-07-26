@@ -172,6 +172,24 @@ if not result.ok:
 
 Use paper mode for local smoke tests and OANDA mode with practice credentials before a repeated demo/live process starts. See `docs/OANDA_PRACTICE_STARTUP_MONITORING.md`.
 
+## OANDA Credential Onboarding
+
+```python
+from smc_ta import OandaCredentialOnboardingConfig, check_oanda_credential_onboarding
+
+credentials = check_oanda_credential_onboarding(
+    OandaCredentialOnboardingConfig(
+        env_file=".env.demo",
+        output_report="reports/startup/oanda_credentials.json",
+    )
+)
+
+if not credentials.ok:
+    raise RuntimeError(credentials.summary())
+```
+
+Run this before constructing `OandaBroker` or running the OANDA startup monitor. See `docs/OANDA_CREDENTIAL_ONBOARDING.md`.
+
 ## Deployment And Incidents
 
 ```python
