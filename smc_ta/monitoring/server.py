@@ -144,6 +144,7 @@ def monitoring_snapshot_to_jsonable(snapshot: LiveMonitoringSnapshot) -> dict[st
         "journal_events": _frame_records(snapshot.journal_events),
         "blocked_events": _frame_records(snapshot.blocked_events),
         "execution_samples": _frame_records(snapshot.execution_samples),
+        "broker_transactions": _frame_records(snapshot.broker_transactions_frame()),
         "broker_connectivity": _frame_records(snapshot.broker_connectivity_frame()),
         "alert_delivery": _frame_records(snapshot.alert_delivery_frame()),
     }

@@ -197,6 +197,7 @@ def _write_monitoring_frames(
         "monitoring_journal_events": snapshot.journal_events,
         "monitoring_blocked_events": snapshot.blocked_events,
         "monitoring_execution_samples": snapshot.execution_samples,
+        "monitoring_broker_transactions": snapshot.broker_transactions_frame(),
         "monitoring_broker_connectivity": snapshot.broker_connectivity_frame(),
         "monitoring_alert_delivery": snapshot.alert_delivery_frame(),
         "monitoring_equity_curve": snapshot.equity_curve,
@@ -259,6 +260,7 @@ def _monitoring_status(snapshot: LiveMonitoringSnapshot | None) -> dict[str, Any
         "warning_reasons": list(snapshot.warning_reasons),
         "open_position_count": snapshot.open_position_count,
         "active_lifecycle_count": snapshot.active_lifecycle_count,
+        "broker_transaction_count": len(snapshot.broker_transactions_frame()),
     }
 
 

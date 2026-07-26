@@ -22,6 +22,7 @@ snapshot = build_live_monitoring_snapshot(
     lifecycle_store=lifecycle_store,
     blocked_events=blocked_events,
     execution_samples=oanda_execution_report.execution_frame(),
+    broker_transactions=restart_sync_report.transactions_frame(),
     broker_connectivity=(broker_status,),
     alert_delivery=(alert_status,),
     mode="demo",
@@ -70,6 +71,7 @@ The hosted monitor serves `/dashboard`, `/status.json`, `/snapshot.json`, `/heal
 - journal events
 - blocked events and reasons
 - spread/slippage execution samples
+- broker transaction stream
 - broker connectivity status
 - alert delivery status
 
@@ -99,6 +101,8 @@ Recommended loop:
 8. Continue only if execution gates approve the trade.
 
 For OANDA practice validation, pass `report.execution_frame()` from `run_oanda_practice_execution_validation` into `execution_samples`.
+
+For OANDA restart/startup monitoring, pass `restart_sync_report.transactions_frame()` into `broker_transactions`. See `docs/BROKER_TRANSACTION_STREAM_PANEL.md`.
 
 For deployment order, see `docs/DEPLOYMENT_RUNBOOK.md`.
 

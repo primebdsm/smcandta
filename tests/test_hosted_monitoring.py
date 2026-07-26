@@ -36,6 +36,17 @@ def test_hosted_monitoring_requires_basic_auth_and_serves_status(tmp_path) -> No
         ),
         mode="demo",
         broker_name="paper",
+        broker_transactions=(
+            {
+                "id": "100",
+                "time": "2024-01-01T00:00:00Z",
+                "type": "ORDER_FILL",
+                "instrument": "EUR_USD",
+                "units": "1000",
+                "price": "1.1000",
+                "tradeOpened": {"tradeID": "p1", "units": "1000"},
+            },
+        ),
     )
     write_monitoring_snapshot_json(snapshot, snapshot_path)
     server = create_hosted_monitoring_server(
@@ -64,7 +75,9 @@ def test_hosted_monitoring_requires_basic_auth_and_serves_status(tmp_path) -> No
         assert "secure dashboard" in html
         assert status["ok"]
         assert status["snapshot"]["symbol"] == "EURUSD"
+        assert status["snapshot"]["broker_transactions"][0]["event_class"] == "fill"
         assert raw_snapshot["open_position_count"] == 1
+        assert raw_snapshot["broker_transactions"][0]["trade_id"] == "p1"
     finally:
         server.shutdown()
 

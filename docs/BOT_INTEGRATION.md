@@ -36,6 +36,8 @@ flowchart LR
   T --> L
   T --> R
   T --> P
+  V["Broker Transactions"] --> R
+  V --> P
 ```
 
 ## Expected Candle Shape
@@ -83,6 +85,7 @@ def on_new_closed_candle(candles):
 - OANDA credential onboarding before broker construction
 - Authenticated hosted dashboard/snapshot server for off-machine monitoring
 - Broker connectivity and alert delivery status panels
+- Broker transaction stream panel for broker-side fills, cancels, closes, financing, and account changes
 - Integrated paper/OANDA practice startup monitoring drill with saved artifact bundle
 - Risk limits: max daily loss, max open trades, max correlated exposure
 - Trade lifecycle store for signal/block/order/fill/close audit trail
@@ -110,6 +113,7 @@ def on_new_closed_candle(candles):
 - `check_oanda_credential_onboarding` for redaction-safe OANDA practice credential readiness
 - `create_hosted_monitoring_server` and `write_monitoring_snapshot_json` for authenticated dashboard hosting
 - `check_broker_connectivity` and `probe_alert_channel` for operational status panels
+- `broker_transaction_stream_frame` for normalized broker transaction stream tables
 - `run_practice_startup_monitoring` for integrated restart sync, lifecycle recovery, preflight, dashboard, and status reports before a practice startup
 - `validate_candle_quality` for missing candles, duplicate timestamps, invalid OHLC, spread spikes, weekend candles, and range spikes
 - `write_analysis_chart` for static SMC/TA chart snapshots from `analyze_forex` output

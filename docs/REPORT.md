@@ -44,6 +44,7 @@ For the complete post-roadmap audit, see `docs/FINAL_AUDIT_REPORT.md`.
 - OANDA credential onboarding package with `.env.demo.example`, placeholder detection, redacted reports, CLI, Python API, docs, and tests
 - Hosted authenticated monitoring server for dashboard, status, snapshot, health, and read-only artifact routes
 - Broker connectivity and alert delivery status probes for monitoring panels and incident evidence
+- Broker transaction stream panel with OANDA/account-change normalization, dashboard table, hosted JSON, incident bundle artifact, docs, and tests
 - Integrated paper/OANDA practice startup monitoring drill with redacted secrets, OANDA readiness, restart sync, lifecycle recovery, preflight, broker/alert probes, dashboard snapshot, summary report, docs, CLI, and tests
 - CSV and SQLite journals
 - Telegram, Discord, and email alerts
@@ -58,7 +59,7 @@ For the complete post-roadmap audit, see `docs/FINAL_AUDIT_REPORT.md`.
 .venv/bin/python -m pytest
 ```
 
-Result: 121 passed.
+Result: 122 passed.
 
 ## What Is Real
 
@@ -83,6 +84,7 @@ The implemented instruments are real in the sense that each one maps to explicit
 - The runtime logging helper is a real operations instrument: it writes rotating bot logs with plain text or JSON-line formatting.
 - The hosted monitoring server is a real operations instrument: it serves dashboard and snapshot artifacts with Basic or Bearer auth, health/status routes, safe artifact path handling, and security headers.
 - The broker connectivity probe is a real operations instrument: it calls read-only broker APIs and blocks monitoring status when account or position probes fail.
+- The broker transaction stream panel is a real monitoring instrument: it normalizes broker/OANDA transaction rows from restart sync or live loops into dashboard, hosted JSON, and incident evidence tables.
 - The alert delivery probe is a real operations instrument: it sends explicit channel probes and reports warning/blocking status for operator visibility.
 - The integrated practice startup drill is a real rehearsal instrument: it runs the same startup gates together, writes durable reports, and blocks OANDA startup when required practice credentials are missing.
 

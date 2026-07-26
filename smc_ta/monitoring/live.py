@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field
-from typing import Iterable
+from typing import Any, Iterable, Mapping
 
 import pandas as pd
 
@@ -16,6 +16,7 @@ from smc_ta.monitoring.status import (
     alert_delivery_frame,
     broker_connectivity_frame,
 )
+from smc_ta.monitoring.transactions import broker_transaction_stream_frame
 from smc_ta.preflight import PreflightReport
 from smc_ta.safety import EmergencyStopResult
 
@@ -41,6 +42,7 @@ class LiveMonitoringSnapshot:
     journal_events: pd.DataFrame = field(default_factory=pd.DataFrame)
     blocked_events: pd.DataFrame = field(default_factory=pd.DataFrame)
     execution_samples: pd.DataFrame = field(default_factory=pd.DataFrame)
+    broker_transactions: pd.DataFrame = field(default_factory=pd.DataFrame)
     broker_connectivity: tuple[BrokerConnectivityStatus, ...] = ()
     alert_delivery: tuple[AlertDeliveryStatus, ...] = ()
     equity_curve: pd.DataFrame = field(default_factory=pd.DataFrame)
@@ -115,6 +117,11 @@ class LiveMonitoringSnapshot:
     def alert_delivery_frame(self) -> pd.DataFrame:
         return alert_delivery_frame(self.alert_delivery)
 
+    def broker_transactions_frame(self, *, tail: int | None = None) -> pd.DataFrame:
+        if tail is not None and not self.broker_transactions.empty:
+            return self.broker_transactions.tail(tail)
+        return self.broker_transactions
+
 
 def build_live_monitoring_snapshot(
     *,
@@ -132,6 +139,7 @@ def build_live_monitoring_snapshot(
     lifecycle_store: TradeLifecycleStore | None = None,
     journal_events: pd.DataFrame | None = None,
     execution_samples: pd.DataFrame | None = None,
+    broker_transactions: Iterable[Mapping[str, Any]] | pd.DataFrame | None = None,
     broker_connectivity: Iterable[BrokerConnectivityStatus] | None = None,
     alert_delivery: Iterable[AlertDeliveryStatus] | None = None,
     mode: str = "paper",
@@ -146,6 +154,7 @@ def build_live_monitoring_snapshot(
     feature = _latest_row(features)
     equity = _copy_frame(equity_curve)
     trade_frame = _copy_frame(trades)
+    transaction_frame = broker_transaction_stream_frame(broker_transactions, symbol=symbol_upper)
     perf: dict[str, object] = {}
     health_messages: tuple[str, ...] = ("ok",)
     health_ok = True
@@ -175,6 +184,7 @@ def build_live_monitoring_snapshot(
         journal_events=_copy_frame(journal_events),
         blocked_events=_copy_frame(blocked_events),
         execution_samples=_copy_frame(execution_samples),
+        broker_transactions=transaction_frame,
         broker_connectivity=tuple(broker_connectivity or ()),
         alert_delivery=tuple(alert_delivery or ()),
         equity_curve=equity,

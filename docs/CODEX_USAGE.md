@@ -151,6 +151,19 @@ alert_status = probe_alert_channel(alert_channel, channel_name="telegram")
 
 Pass these into `build_live_monitoring_snapshot` as `broker_connectivity` and `alert_delivery`. See `docs/BROKER_ALERT_STATUS_MONITORING.md`.
 
+## Broker Transaction Stream
+
+```python
+from smc_ta import broker_transaction_stream_frame
+
+broker_transactions = broker_transaction_stream_frame(
+    restart_sync_report.transactions_frame(),
+    symbol="EURUSD",
+)
+```
+
+Pass the frame into `build_live_monitoring_snapshot(..., broker_transactions=broker_transactions)` to render the dashboard transaction panel and hosted JSON stream. See `docs/BROKER_TRANSACTION_STREAM_PANEL.md`.
+
 ## Practice Startup Monitoring
 
 ```python

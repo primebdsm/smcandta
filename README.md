@@ -74,6 +74,7 @@ Live-readiness components:
 - Runtime logging and external secret resolution with redacted reports
 - Hosted authenticated monitoring server for dashboard and snapshot artifacts
 - Broker connectivity and alert delivery status panels
+- Broker transaction stream panel for OANDA/account-change transaction evidence
 - Integrated paper/OANDA practice startup monitoring drill with restart sync, lifecycle recovery, preflight, dashboard, and incident-ready reports
 - CSV journal and monitoring metrics
 - SQLite journal, Telegram/Discord/email alerts, live monitoring snapshot, and upgraded local dashboard

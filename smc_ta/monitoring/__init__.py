@@ -7,6 +7,7 @@ from smc_ta.monitoring.live import (
     positions_to_frame,
 )
 from smc_ta.monitoring.metrics import HealthCheck, health_check, max_drawdown, performance_summary
+from smc_ta.monitoring.transactions import TRANSACTION_STREAM_COLUMNS, broker_transaction_stream_frame
 from smc_ta.monitoring.server import (
     HostedMonitoringConfig,
     HostedMonitoringServer,
@@ -34,10 +35,12 @@ __all__ = [
     "HostedMonitoringServer",
     "LiveMonitoringSnapshot",
     "MonitoringAuthConfig",
+    "TRANSACTION_STREAM_COLUMNS",
     "alert_delivery_frame",
     "build_hosted_monitoring_status",
     "build_live_monitoring_snapshot",
     "broker_connectivity_frame",
+    "broker_transaction_stream_frame",
     "check_broker_connectivity",
     "create_hosted_monitoring_server",
     "health_check",

@@ -28,6 +28,7 @@ It is ready for:
 - OANDA credential onboarding with placeholder detection and redacted reports
 - Hosted dashboard/status/snapshot server with Basic or Bearer authentication
 - Broker connectivity and alert delivery status panels
+- Broker transaction stream panel for broker-side transaction evidence
 - Integrated paper/OANDA practice startup monitoring drill with dashboard and artifact bundle
 
 It is not yet a turnkey live-money trading system.
@@ -209,6 +210,12 @@ Before real live trading, the selected broker must be demo-tested end to end wit
 - Live monitoring dashboard with account, positions, preflight, emergency stop, lifecycle, journal, blocks, and execution samples
 - Hosted authenticated monitoring server for dashboard, status, snapshot, health, and read-only artifact routes
 - Broker connectivity and alert delivery status probes for local dashboards, hosted JSON, and incident bundles
+- Broker transaction stream panel:
+  - normalizes OANDA/account-change transaction rows
+  - classifies fills, closes, reductions, cancels, rejects, financing, funding, margin, and account events
+  - renders in the local dashboard
+  - exports through hosted snapshot JSON
+  - writes incident-bundle CSV evidence
 - Integrated paper/OANDA practice startup monitoring drill:
   - redacted OANDA secret resolution
   - OANDA practice readiness
@@ -253,6 +260,7 @@ The project does not contain placeholder analysis claims. The implemented instru
 - Supervisor artifacts give operators reviewable systemd, launchd, and logrotate files for the target host.
 - Hosted monitoring serves dashboard and snapshot artifacts through authenticated read-only routes with security headers and safe artifact path handling.
 - Broker connectivity probes call read-only account/position APIs and surface broker failures before operators trust the bot state.
+- Broker transaction stream normalization turns broker-side fills, closes, cancels, financing, and account-change rows into auditable monitoring tables.
 - Alert delivery probes verify notification channels explicitly and surface failed delivery as warning or blocking status.
 - The integrated practice startup drill runs the real startup controls together and writes reviewable reports before a demo/live loop is allowed to start.
 
@@ -280,6 +288,7 @@ The toolkit can improve profit potential indirectly by improving process quality
 - Better deployment hygiene: supervised restarts, rotating logs, and secret redaction reduce avoidable operational failures.
 - Better credential hygiene: onboarding prevents invisible or placeholder OANDA credentials from reaching broker startup.
 - Better visibility: broker connectivity and alert delivery panels make it easier to detect blind spots before continuing a demo/live loop.
+- Better broker truth review: transaction stream evidence helps explain fills, cancellations, financing, manual platform actions, and broker-side closes after restart.
 - Better startup discipline: the integrated practice drill catches missing credentials, broker-state mismatches, lifecycle drift, preflight blocks, and monitoring gaps in one repeatable rehearsal.
 
 The main profit path is not "more indicators." The main profit path is controlled testing, selective execution, risk consistency, and fast detection of bad conditions.
@@ -335,7 +344,7 @@ cTrader, FIX, Interactive Brokers, and other venues are not implemented yet.
 
 ### Dashboard And Monitoring Expansion
 
-The repository has a static/live dashboard, hosted monitor, snapshot JSON, and health metrics. Current dashboard support includes account state, open positions, signal state, SMC/TA context, equity curve, performance metrics, preflight checks, emergency-stop state, lifecycle records, journal rows, blocked events, and execution samples.
+The repository has a static/live dashboard, hosted monitor, snapshot JSON, and health metrics. Current dashboard support includes account state, open positions, signal state, SMC/TA context, equity curve, performance metrics, preflight checks, emergency-stop state, lifecycle records, journal rows, blocked events, execution samples, broker connectivity, alert delivery, and broker transaction stream evidence.
 
 For production-style monitoring, still add:
 
@@ -343,7 +352,6 @@ For production-style monitoring, still add:
 - alert delivery probes wired to the selected production alert channels
 - broker connectivity probes wired to the selected live broker adapter
 - TLS reverse-proxy, VPN, or tunnel deployment for off-machine dashboard access
-- live broker transaction stream panel
 - installed process supervisor status
 
 ### Operations Still Needed
@@ -389,7 +397,7 @@ The repository test suite currently passes:
 Expected result:
 
 ```text
-121 passed
+122 passed
 ```
 
 ## Final Audit Conclusion

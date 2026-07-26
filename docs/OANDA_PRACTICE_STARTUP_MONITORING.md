@@ -107,6 +107,8 @@ The output directory can include:
 
 The default CLI probes only an in-memory alert channel. In a bot integration, pass real alert channels into `run_practice_startup_monitoring(..., alert_channels=(("telegram", channel),))`.
 
+OANDA transaction rows from restart sync are also normalized into the dashboard's Broker Transaction Stream panel. See `docs/BROKER_TRANSACTION_STREAM_PANEL.md`.
+
 ## Python Integration
 
 ```python

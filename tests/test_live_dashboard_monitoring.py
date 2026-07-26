@@ -5,6 +5,7 @@ import pandas as pd
 
 from smc_ta import (
     RuntimeConfig,
+    broker_transaction_stream_frame,
     build_live_monitoring_snapshot,
     check_broker_connectivity,
     probe_alert_channel,
@@ -75,6 +76,37 @@ def build_sample_snapshot():
     execution_samples = pd.DataFrame(
         [{"label": "paper_open", "side": "buy", "units": 1000, "spread_pips": 1.0, "slippage_pips": 0.1}]
     )
+    broker_transactions = pd.DataFrame(
+        [
+            {
+                "id": "1001",
+                "time": candles.index[-2].isoformat(),
+                "type": "MARKET_ORDER",
+                "instrument": "EUR_USD",
+                "units": "1000",
+                "reason": "CLIENT_ORDER",
+            },
+            {
+                "id": "1002",
+                "time": candles.index[-1].isoformat(),
+                "type": "ORDER_FILL",
+                "instrument": "EUR_USD",
+                "units": "1000",
+                "price": "1.10123",
+                "orderID": "1001",
+                "tradeOpened": {"tradeID": "trade-1", "units": "1000"},
+                "reason": "MARKET_ORDER",
+            },
+            {
+                "id": "1003",
+                "time": candles.index[-1].isoformat(),
+                "type": "ORDER_CANCEL",
+                "instrument": "EUR_USD",
+                "orderID": "1004",
+                "reason": "CLIENT_REQUEST",
+            },
+        ]
+    )
     broker_status = check_broker_connectivity(broker, broker_name="paper", symbol="EURUSD")
     alert_status = probe_alert_channel(_MemoryAlert(), channel_name="memory")
     return build_live_monitoring_snapshot(
@@ -90,6 +122,7 @@ def build_sample_snapshot():
         lifecycle_store=lifecycle_store,
         blocked_events=blocked_events,
         execution_samples=execution_samples,
+        broker_transactions=broker_transactions,
         broker_connectivity=(broker_status,),
         alert_delivery=(alert_status,),
         mode="paper",
@@ -110,7 +143,39 @@ def test_live_monitoring_snapshot_collects_operational_state() -> None:
     assert not snapshot.preflight_frame().empty
     assert not snapshot.broker_connectivity_frame().empty
     assert not snapshot.alert_delivery_frame().empty
+    assert not snapshot.broker_transactions_frame().empty
+    assert set(snapshot.broker_transactions_frame()["event_class"]) == {"order", "fill", "cancel"}
     assert "blocked_events_present" in snapshot.warning_reasons
+
+
+def test_broker_transaction_stream_normalizes_oanda_transaction_rows() -> None:
+    frame = broker_transaction_stream_frame(
+        [
+            {
+                "id": "7",
+                "time": "2024-01-01T00:00:00Z",
+                "type": "ORDER_FILL",
+                "instrument": "EUR_USD",
+                "units": "-250",
+                "price": "1.09876",
+                "orderID": "6",
+                "tradeReduced": {"tradeID": "5", "units": "-250"},
+                "pl": "1.2",
+                "financing": "-0.01",
+                "commission": "0",
+                "reason": "STOP_LOSS_ORDER",
+            }
+        ],
+        symbol="EURUSD",
+    )
+
+    assert list(frame["transaction_id"]) == ["7"]
+    assert frame.iloc[0]["event_class"] == "reduce"
+    assert frame.iloc[0]["lifecycle_hint"] == "reduce"
+    assert frame.iloc[0]["symbol"] == "EURUSD"
+    assert frame.iloc[0]["side"] == "sell"
+    assert frame.iloc[0]["units"] == 250.0
+    assert frame.iloc[0]["trade_id"] == "5"
 
 
 def test_live_dashboard_html_contains_core_sections() -> None:
@@ -124,7 +189,9 @@ def test_live_dashboard_html_contains_core_sections() -> None:
     assert "Preflight Checks" in html
     assert "Broker Connectivity" in html
     assert "Alert Delivery" in html
+    assert "Broker Transaction Stream" in html
     assert "Execution Samples" in html
+    assert "ORDER_FILL" in html
     assert 'http-equiv="refresh"' in html
     assert "paper_open" in html
     assert "<svg" in html
@@ -147,6 +214,7 @@ def test_write_live_dashboard_and_legacy_write_dashboard(tmp_path) -> None:
         lifecycle_records=snapshot.lifecycle_records,
         blocked_events=snapshot.blocked_events,
         execution_samples=snapshot.execution_samples,
+        broker_transactions=snapshot.broker_transactions,
     )
 
     assert live_path.exists()

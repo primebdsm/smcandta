@@ -68,6 +68,16 @@ def test_write_incident_report_bundle_collects_operational_artifacts(tmp_path) -
         emergency_stop=emergency_stop_result,
         lifecycle_store=lifecycle_store,
         journal_events=journal_events,
+        broker_transactions=(
+            {
+                "id": "12",
+                "time": "2024-01-01T12:00:00Z",
+                "type": "ORDER_FILL",
+                "instrument": "EUR_USD",
+                "units": "1000",
+                "tradeOpened": {"tradeID": "broker-trade-12", "units": "1000"},
+            },
+        ),
         mode="paper",
         broker_name="paper",
     )
@@ -96,5 +106,6 @@ def test_write_incident_report_bundle_collects_operational_artifacts(tmp_path) -
     assert "emergency_stop:manual_test_stop" in payload["blocking_reasons"]
     assert (bundle.output_dir / "preflight.csv").exists()
     assert (bundle.output_dir / "open_positions.csv").exists()
+    assert (bundle.output_dir / "monitoring_broker_transactions.csv").exists()
     assert (bundle.output_dir / "journal_events.csv").exists()
     assert "manual stop test" in bundle.markdown_report.read_text(encoding="utf-8")

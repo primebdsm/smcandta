@@ -31,6 +31,7 @@ This repository now contains the main components needed before connecting a real
 - Static/live dashboard: `smc_ta.dashboard.write_dashboard`, `smc_ta.dashboard.write_live_dashboard`
 - Hosted authenticated monitoring: `create_hosted_monitoring_server`, `write_monitoring_snapshot_json`
 - Broker connectivity and alert delivery status: `check_broker_connectivity`, `probe_alert_channel`
+- Broker transaction stream: `broker_transaction_stream_frame`
 - Integrated practice startup monitoring: `run_practice_startup_monitoring`
 - OANDA credential onboarding: `check_oanda_credential_onboarding`
 - Deployment runbook and incident bundle helper: `write_incident_report_bundle`
@@ -170,6 +171,8 @@ Run `python examples/live_dashboard_monitor.py --output live_dashboard.html` for
 `create_hosted_monitoring_server` serves dashboard and snapshot artifacts through Basic or Bearer authentication. Use it behind HTTPS, VPN, or an SSH tunnel before exposing it outside localhost. See `docs/HOSTED_MONITORING.md`.
 
 `check_broker_connectivity` and `probe_alert_channel` add Broker Connectivity and Alert Delivery panels to local and hosted monitoring. Broker account/position failures are blocking; alert failures are warnings by default unless configured as blocking. See `docs/BROKER_ALERT_STATUS_MONITORING.md`.
+
+`broker_transaction_stream_frame` normalizes broker/OANDA transaction rows for the dashboard, hosted snapshot JSON, and incident bundles. See `docs/BROKER_TRANSACTION_STREAM_PANEL.md`.
 
 ## Deployment And Incident Procedures
 

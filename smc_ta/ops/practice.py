@@ -338,6 +338,7 @@ def run_practice_startup_monitoring(
             preflight=preflight,
             emergency_stop=preflight.emergency_stop_result,
             lifecycle_store=lifecycle_store,
+            broker_transactions=restart_sync.transactions_frame(),
             broker_connectivity=(broker_status,),
             alert_delivery=alert_statuses,
             mode="demo" if cfg.broker == "oanda" else "paper",

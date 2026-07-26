@@ -114,6 +114,29 @@ def main() -> None:
             }
         ]
     )
+    broker_transactions = pd.DataFrame(
+        [
+            {
+                "id": "1001",
+                "time": candles.index[-2].isoformat(),
+                "type": "MARKET_ORDER",
+                "instrument": "EUR_USD",
+                "units": "1000",
+                "reason": "CLIENT_ORDER",
+            },
+            {
+                "id": "1002",
+                "time": candles.index[-1].isoformat(),
+                "type": "ORDER_FILL",
+                "instrument": "EUR_USD",
+                "units": "1000",
+                "price": f"{fill.price:.5f}",
+                "orderID": "1001",
+                "tradeOpened": {"tradeID": fill.order_id, "units": "1000"},
+                "reason": "MARKET_ORDER",
+            },
+        ]
+    )
     broker_status = check_broker_connectivity(broker, broker_name="paper", symbol=args.symbol)
     alert_status = probe_alert_channel(_MemoryAlert(), channel_name="memory", message="dashboard sample alert probe")
     snapshot = build_live_monitoring_snapshot(
@@ -129,6 +152,7 @@ def main() -> None:
         emergency_stop=preflight.emergency_stop_result,
         lifecycle_store=lifecycle_store,
         execution_samples=execution_samples,
+        broker_transactions=broker_transactions,
         broker_connectivity=(broker_status,),
         alert_delivery=(alert_status,),
         mode="paper",

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from html import escape
 from pathlib import Path
-from typing import Iterable
+from typing import Any, Iterable, Mapping
 
 import pandas as pd
 
@@ -31,6 +31,7 @@ def render_dashboard_html(
     lifecycle_records: Iterable[TradeLifecycleRecord] | None = None,
     journal_events: pd.DataFrame | None = None,
     execution_samples: pd.DataFrame | None = None,
+    broker_transactions: Iterable[Mapping[str, Any]] | pd.DataFrame | None = None,
     broker_connectivity: Iterable[BrokerConnectivityStatus] | None = None,
     alert_delivery: Iterable[AlertDeliveryStatus] | None = None,
     mode: str = "paper",
@@ -53,6 +54,7 @@ def render_dashboard_html(
         lifecycle_records=lifecycle_records,
         journal_events=journal_events,
         execution_samples=execution_samples,
+        broker_transactions=broker_transactions,
         broker_connectivity=broker_connectivity,
         alert_delivery=alert_delivery,
         mode=mode,
@@ -79,6 +81,7 @@ def render_live_dashboard_html(
     journal = snapshot.journal_events.tail(20) if not snapshot.journal_events.empty else pd.DataFrame()
     blocks = snapshot.blocked_events.tail(20) if not snapshot.blocked_events.empty else pd.DataFrame()
     executions = snapshot.execution_samples.tail(20) if not snapshot.execution_samples.empty else pd.DataFrame()
+    transactions = snapshot.broker_transactions_frame(tail=30)
     connectivity = snapshot.broker_connectivity_frame()
     alerts = snapshot.alert_delivery_frame()
     preflight = snapshot.preflight_frame()
@@ -181,7 +184,7 @@ def render_live_dashboard_html(
     </section>
     <section class="span-4">
       <h2>Safety State</h2>
-      {_dict_table({"preflight": snapshot.preflight.summary() if snapshot.preflight else None, "emergency_stop": snapshot.emergency_stop.summary() if snapshot.emergency_stop else "not_provided", "health": ";".join(snapshot.health_messages), "broker_connectivity": _status_summary(connectivity), "alert_delivery": _status_summary(alerts), "blocked_events": len(blocks), "journal_events": len(journal)})}
+      {_dict_table({"preflight": snapshot.preflight.summary() if snapshot.preflight else None, "emergency_stop": snapshot.emergency_stop.summary() if snapshot.emergency_stop else "not_provided", "health": ";".join(snapshot.health_messages), "broker_connectivity": _status_summary(connectivity), "alert_delivery": _status_summary(alerts), "broker_transactions": len(snapshot.broker_transactions_frame()), "blocked_events": len(blocks), "journal_events": len(journal)})}
     </section>
     <section class="span-8 chart">
       <h2>Equity Curve</h2>
@@ -206,6 +209,10 @@ def render_live_dashboard_html(
     <section class="span-6">
       <h2>Alert Delivery</h2>
       {_frame_table(_tail(alerts, 12))}
+    </section>
+    <section class="span-12">
+      <h2>Broker Transaction Stream</h2>
+      {_frame_table(transactions)}
     </section>
     <section class="span-6">
       <h2>Lifecycle</h2>

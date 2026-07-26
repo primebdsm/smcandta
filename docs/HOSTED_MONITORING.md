@@ -121,7 +121,7 @@ Returns server status, dashboard freshness, snapshot status, and snapshot payloa
 
 Serves the latest monitoring snapshot JSON.
 
-Snapshot JSON includes broker connectivity and alert delivery arrays when the bot supplies those status records. See `docs/BROKER_ALERT_STATUS_MONITORING.md`.
+Snapshot JSON includes broker connectivity, alert delivery, and broker transaction stream arrays when the bot supplies those records. See `docs/BROKER_ALERT_STATUS_MONITORING.md` and `docs/BROKER_TRANSACTION_STREAM_PANEL.md`.
 
 `/healthz`
 
