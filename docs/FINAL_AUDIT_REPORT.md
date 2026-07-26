@@ -17,6 +17,7 @@ It is ready for:
 - Walk-forward strategy comparison
 - Paper broker forward testing
 - Demo-forward report generation for bot-cycle evidence
+- Demo-forward scheduler for repeated report bundles and run history
 - OANDA and MT5 demo integration work
 - OANDA practice readiness checks with account instruments and live pricing probes
 - OANDA practice execution validation tooling for guarded minimum-size demo trades
@@ -112,6 +113,12 @@ Before real live trading, the selected broker must be demo-tested end to end wit
   - paper broker SL/TP and final-close event handling
   - cycle, equity, trade, fill, setup, session, daily, and blocked-reason reports
   - JSON, CSV, and local HTML report artifacts
+- Demo-forward scheduler:
+  - timestamped report bundles
+  - history CSV
+  - schedule summary JSON
+  - duplicate-candle skipping
+  - bounded or continuous process-local loop
 
 ### Broker And Execution Foundation
 
@@ -254,6 +261,7 @@ The project does not contain placeholder analysis claims. The implemented instru
 - OANDA adapter uses real OANDA v20 REST endpoints.
 - OANDA restart sync uses account changes, pending orders, and transaction checkpoint IDs from the OANDA v20 REST API.
 - Demo-forward reports exercise the real `DemoTradingBot`, risk manager, paper broker, reconciliation, lifecycle, and journal integration path.
+- Demo-forward scheduling repeats that same report path on an interval and records whether each run produced evidence, skipped unchanged candles, warned, or failed.
 - Lifecycle recovery synchronizes persisted lifecycle rows against broker-open positions before a restarted bot resumes.
 - MT5 adapter uses the real optional `MetaTrader5` Python package and terminal session.
 - Trading Economics connector maps provider events into the repository's news filter.
@@ -368,6 +376,7 @@ Before live trading:
 - demo forward testing for the chosen broker
 - minimum 2-4 weeks of stable demo logs
 - demo-forward report bundles for out-of-sample candle windows
+- demo-forward scheduler run history from a live-updated candle source
 - restart sync must be run on every process start and reviewed in demo logs
 - lifecycle recovery must be run after restart sync and before preflight
 - real spread/slippage comparison versus backtest assumptions
@@ -386,7 +395,7 @@ Before live trading:
 
 1. Run the integrated OANDA practice startup-monitoring drill with the user's practice credentials and save the full artifact bundle
 2. Run OANDA practice-account execution validation with the user's credentials and save the report artifacts
-3. Run demo-forward report bundles on recent out-of-sample candles and review setup/session/block performance
+3. Run demo-forward report bundles and scheduled demo-forward history on recent out-of-sample candles, then review setup/session/block performance
 4. Repeat broker restart sync and lifecycle recovery on the same OANDA practice account after an intentional process restart
 5. Run deployment and incident drills in OANDA practice using the runbook and incident bundle helper
 6. Install and test generated supervisor/logrotate artifacts on the chosen demo host
@@ -405,7 +414,7 @@ The repository test suite currently passes:
 Expected result:
 
 ```text
-126 passed
+130 passed
 ```
 
 ## Final Audit Conclusion

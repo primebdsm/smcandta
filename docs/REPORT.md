@@ -37,6 +37,7 @@ For the complete post-roadmap audit, see `docs/FINAL_AUDIT_REPORT.md`.
 - Walk-forward optimizer with rolling train/test windows, candidate ranking, out-of-sample reports, combined equity, and combined trade output
 - Demo forward-testing bot
 - Demo-forward report package with bot-cycle replay, paper broker SL/TP management, equity/trade/fill/setup/session/daily/block reports, JSON/CSV/HTML artifacts, docs, and CLI
+- Demo-forward scheduler with process-local interval loop, timestamped run bundles, duplicate-candle skipping, history CSV, summary JSON, CLI, docs, and tests
 - Deployment runbook, rollback checklist, incident procedures, and standardized incident evidence bundle writer
 - Process supervision artifact generator for systemd, launchd, and logrotate
 - Runtime logging helper with rotating file support and JSON-line option
@@ -60,7 +61,7 @@ For the complete post-roadmap audit, see `docs/FINAL_AUDIT_REPORT.md`.
 .venv/bin/python -m pytest
 ```
 
-Result: 126 passed.
+Result: 130 passed.
 
 ## What Is Real
 
@@ -77,6 +78,7 @@ The implemented instruments are real in the sense that each one maps to explicit
 - The preflight checker is a real startup gate: it probes configured dependencies and returns blocking/warning/info checks before a bot loop starts.
 - The restart sync layer is a real recovery instrument: it reads broker positions, OANDA transaction checkpoints, and pending orders, then either blocks startup or explicitly repairs the expected-position ledger.
 - The demo-forward report package is a real evidence instrument: it exercises `DemoTradingBot` over closed candles and writes measurable bot-cycle, fill, equity, setup, session, daily, and block artifacts.
+- The demo-forward scheduler is a real operations instrument: it repeats the same demo-forward report path on a configured interval, avoids duplicate closed-candle reports, and writes schedule history for review.
 - The lifecycle recovery layer is a real restart instrument: it compares active lifecycle records with broker-open positions and either blocks startup or explicitly repairs lifecycle state.
 - The incident bundle helper is a real operations instrument: it serializes runtime, preflight, restart sync, lifecycle recovery, emergency stop, monitoring, account, position, and journal evidence into reviewable artifacts.
 - The process supervision helper is a real deployment instrument: it generates systemd, launchd, and logrotate files from structured config for operator review.
@@ -99,6 +101,7 @@ The implemented instruments are real in the sense that each one maps to explicit
 - Provider-specific secret-manager provisioning on the selected host
 - Supervisor installation and alert-delivery status on the selected host
 - Real Telegram/Discord/SMTP validation runs with the user's production alert destinations
+- Long-running demo-forward scheduler runs against a live-updated candle feed on the selected demo host
 - TLS/reverse-proxy or VPN/tunnel deployment for off-machine hosted monitoring
 - Interactive live chart streaming and broker-synchronized screenshot automation
 - Broker-specific disaster recovery drills for each selected live venue

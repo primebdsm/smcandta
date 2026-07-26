@@ -80,6 +80,7 @@ def on_new_closed_candle(candles):
 - Backtesting engine with realistic transaction costs
 - Demo forward testing
 - Demo-forward report bundles for cycle, equity, trade, setup, session, daily, and block review
+- Demo-forward scheduler history for repeated closed-candle evidence
 - Deployment runbook, rollback procedure, and incident evidence capture
 - Runtime logging, secret resolution, process supervision, and log rotation
 - OANDA credential onboarding before broker construction
@@ -108,6 +109,7 @@ def on_new_closed_candle(candles):
 - `PortfolioRiskManager` for currency exposure, symbol concentration, same-currency, and correlation limits
 - `run_walk_forward` for train/test validation before demo/live use
 - `run_demo_forward_test` and `write_demo_forward_report_bundle` for bot-path replay evidence before broker-demo operation
+- `run_demo_forward_schedule` for repeated demo-forward report bundles and scheduler history
 - `write_incident_report_bundle` for standardized JSON, Markdown, and CSV incident evidence
 - `resolve_runtime_secrets`, `configure_runtime_logging`, and `write_supervisor_artifacts` for deployment operations
 - `check_oanda_credential_onboarding` for redaction-safe OANDA practice credential readiness

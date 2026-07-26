@@ -46,6 +46,22 @@ python examples/demo_forward_report.py EURUSD_M15.csv \
   --output-dir reports/demo_forward_eurusd_m15
 ```
 
+## Scheduler
+
+Use the scheduler when you want repeated demo-forward evidence instead of one report:
+
+```bash
+python examples/demo_forward_scheduler.py EURUSD_M15.csv \
+  --symbol EURUSD \
+  --interval-seconds 900 \
+  --runs 4 \
+  --output-dir reports/demo_forward_scheduler/eurusd_m15
+```
+
+It writes timestamped report bundles under `runs/`, plus `history.csv` and `schedule_summary.json`. Duplicate final candles are skipped by default so the same candle window is not reported repeatedly while the data source is waiting for the next closed candle.
+
+See `docs/DEMO_FORWARD_SCHEDULER.md`.
+
 ## Report Artifacts
 
 The report bundle writes:

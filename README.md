@@ -69,6 +69,7 @@ Live-readiness components:
 - Preflight readiness checks for config, data, broker, safety, news, persistence, and lifecycle state
 - Walk-forward optimization for train/test strategy validation
 - Demo-forward report package with cycle, equity, trade, setup, session, daily, and block reports
+- Demo-forward scheduler with timestamped report bundles, history CSV, duplicate-candle skipping, and schedule summary JSON
 - Deployment runbook, incident procedures, and incident evidence bundle helper
 - Process supervision artifact generator for systemd, launchd, and logrotate
 - Runtime logging and external secret resolution with redacted reports
@@ -304,9 +305,10 @@ cycle = bot.run_cycle(candles)
 
 ```bash
 python examples/demo_forward_report.py --output-dir reports/demo_forward
+python examples/demo_forward_scheduler.py --runs 1 --interval-seconds 0 --output-dir reports/demo_forward_scheduler/latest
 ```
 
-This writes `summary.json`, `report.html`, cycle/equity/trade/fill CSVs, setup and session reports, daily reports, blocked-reason counts, and paper position events. See `docs/DEMO_FORWARD_REPORTS.md`.
+This writes `summary.json`, `report.html`, cycle/equity/trade/fill CSVs, setup and session reports, daily reports, blocked-reason counts, and paper position events. The scheduler also writes timestamped run bundles, `history.csv`, and `schedule_summary.json`. See `docs/DEMO_FORWARD_REPORTS.md` and `docs/DEMO_FORWARD_SCHEDULER.md`.
 
 ## Input Format
 

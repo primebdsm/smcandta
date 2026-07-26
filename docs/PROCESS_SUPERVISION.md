@@ -121,3 +121,5 @@ Do not configure the supervisor to delete state, reset emergency stop, overwrite
 If the service enters a crash loop, logs stop updating, or the dashboard becomes stale, treat it as an incident and follow `docs/INCIDENT_PROCEDURES.md`.
 
 If hosted monitoring is running as a separate service, generate and review a separate supervisor unit for `examples/serve_monitoring.py`. Keep it bound to localhost unless HTTPS, VPN, or tunnel controls are in front of it. See `docs/HOSTED_MONITORING.md`.
+
+If demo-forward scheduling is running continuously, generate and review a separate supervisor unit for `examples/demo_forward_scheduler.py ... --loop`. Keep the candle downloader/update process and scheduler paths explicit so `history.csv` and `schedule_summary.json` are preserved across restarts. See `docs/DEMO_FORWARD_SCHEDULER.md`.

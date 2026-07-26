@@ -105,13 +105,17 @@ Use this only with an OANDA practice account. It validates minimum-size order op
 ## Demo-Forward Reports
 
 ```python
-from smc_ta import DemoForwardConfig, run_demo_forward_test, write_demo_forward_report_bundle
+from smc_ta import DemoForwardConfig, DemoForwardScheduleConfig, run_demo_forward_schedule, run_demo_forward_test, write_demo_forward_report_bundle
 
 result = run_demo_forward_test(candles, config=DemoForwardConfig(symbol="EURUSD"))
 write_demo_forward_report_bundle(result, "reports/demo_forward")
+
+schedule = run_demo_forward_schedule(
+    DemoForwardScheduleConfig(csv_path="EURUSD_M15.csv", output_dir="reports/demo_forward_scheduler", max_runs=1)
+)
 ```
 
-Use this after backtesting/walk-forward and before broker-demo live loops. It exercises the bot path and writes cycle, equity, fill, trade, setup, session, daily, and blocked-reason reports. See `docs/DEMO_FORWARD_REPORTS.md`.
+Use this after backtesting/walk-forward and before broker-demo live loops. It exercises the bot path and writes cycle, equity, fill, trade, setup, session, daily, and blocked-reason reports. The scheduler repeats that report generation and saves run history for operator review. See `docs/DEMO_FORWARD_REPORTS.md` and `docs/DEMO_FORWARD_SCHEDULER.md`.
 
 ## Live Dashboard
 
