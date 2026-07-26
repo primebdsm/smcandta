@@ -128,6 +128,18 @@ from smc_ta.reconciliation import (
     write_restart_sync_report,
 )
 from smc_ta.risk import PortfolioRiskConfig, PortfolioRiskDecision, PortfolioRiskManager, RiskConfig, RiskDecision, RiskManager
+from smc_ta.risk.stress import (
+    DEFAULT_RISK_STRESS_SCENARIOS,
+    RiskStressConfig,
+    RiskStressReportBundle,
+    RiskStressResult,
+    RiskStressScenario,
+    RiskStressScenarioResult,
+    RiskStressStatus,
+    render_risk_stress_report_html,
+    run_risk_stress_test,
+    write_risk_stress_report_bundle,
+)
 from smc_ta.safety import EmergencyStopConfig, EmergencyStopController, EmergencyStopResult
 from smc_ta.strategy import StrategyProfile, get_strategy_profile, list_strategy_profiles
 from smc_ta.visualization import ChartConfig, render_analysis_chart_html, render_analysis_chart_svg, write_analysis_chart
@@ -156,6 +168,7 @@ __all__ = [
     "ConfigValidationReport",
     "DataQualityConfig",
     "DataQualityReport",
+    "DEFAULT_RISK_STRESS_SCENARIOS",
     "DemoForwardConfig",
     "DemoForwardReportBundle",
     "DemoForwardResult",
@@ -204,6 +217,12 @@ __all__ = [
     "RestartSyncReport",
     "RiskConfig",
     "RiskDecision",
+    "RiskStressConfig",
+    "RiskStressReportBundle",
+    "RiskStressResult",
+    "RiskStressScenario",
+    "RiskStressScenarioResult",
+    "RiskStressStatus",
     "RuntimeLogConfig",
     "RiskManager",
     "RuntimeConfig",
@@ -249,6 +268,7 @@ __all__ = [
     "run_demo_forward_schedule",
     "run_demo_forward_test",
     "run_preflight",
+    "run_risk_stress_test",
     "run_walk_forward",
     "recover_lifecycle_after_restart",
     "resolve_runtime_secrets",
@@ -260,6 +280,7 @@ __all__ = [
     "render_demo_forward_html_report",
     "render_live_dashboard_html",
     "render_performance_analytics_dashboard",
+    "render_risk_stress_report_html",
     "validate_candle_quality",
     "validate_runtime_config",
     "write_analysis_chart",
@@ -274,6 +295,7 @@ __all__ = [
     "write_monitoring_snapshot_json",
     "write_performance_analytics_dashboard",
     "write_restart_sync_report",
+    "write_risk_stress_report_bundle",
     "write_secret_resolution_report",
     "write_supervisor_artifacts",
 ]

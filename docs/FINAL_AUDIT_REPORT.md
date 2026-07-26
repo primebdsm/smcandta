@@ -19,6 +19,7 @@ It is ready for:
 - Demo-forward report generation for bot-cycle evidence
 - Demo-forward scheduler for repeated report bundles and run history
 - Performance analytics dashboard for demo-forward evidence review
+- Risk stress testing for execution and volatility assumptions
 - OANDA and MT5 demo integration work
 - OANDA practice readiness checks with account instruments and live pricing probes
 - OANDA practice execution validation tooling for guarded minimum-size demo trades
@@ -125,6 +126,14 @@ Before real live trading, the selected broker must be demo-tested end to end wit
   - equity and drawdown charts
   - setup, session, daily, block, trade, and scheduler-history tables
   - support for single report bundles and scheduler roots
+- Risk stress testing:
+  - baseline scenario comparison
+  - wider spread scenario
+  - higher slippage scenario
+  - costly execution scenario
+  - volatility-range expansion scenario
+  - reduced sizing scenario
+  - scenario CSV, JSON, HTML, and per-scenario demo-forward bundles
 
 ### Broker And Execution Foundation
 
@@ -269,6 +278,7 @@ The project does not contain placeholder analysis claims. The implemented instru
 - Demo-forward reports exercise the real `DemoTradingBot`, risk manager, paper broker, reconciliation, lifecycle, and journal integration path.
 - Demo-forward scheduling repeats that same report path on an interval and records whether each run produced evidence, skipped unchanged candles, warned, or failed.
 - Performance analytics loads those saved artifacts and renders review evidence without changing strategy or broker state.
+- Risk stress testing uses saved candle data and the real demo-forward path to test whether execution-cost or volatility assumptions are fragile.
 - Lifecycle recovery synchronizes persisted lifecycle rows against broker-open positions before a restarted bot resumes.
 - MT5 adapter uses the real optional `MetaTrader5` Python package and terminal session.
 - Trading Economics connector maps provider events into the repository's news filter.
@@ -385,6 +395,7 @@ Before live trading:
 - demo-forward report bundles for out-of-sample candle windows
 - demo-forward scheduler run history from a live-updated candle source
 - performance analytics dashboard review over the collected scheduler/report artifacts
+- risk stress reports over the same recent out-of-sample candle windows
 - restart sync must be run on every process start and reviewed in demo logs
 - lifecycle recovery must be run after restart sync and before preflight
 - real spread/slippage comparison versus backtest assumptions
@@ -404,12 +415,13 @@ Before live trading:
 1. Run the integrated OANDA practice startup-monitoring drill with the user's practice credentials and save the full artifact bundle
 2. Run OANDA practice-account execution validation with the user's credentials and save the report artifacts
 3. Run demo-forward report bundles and scheduled demo-forward history on recent out-of-sample candles, then review setup/session/block performance in the analytics dashboard
-4. Repeat broker restart sync and lifecycle recovery on the same OANDA practice account after an intentional process restart
-5. Run deployment and incident drills in OANDA practice using the runbook and incident bundle helper
-6. Install and test generated supervisor/logrotate artifacts on the chosen demo host
-7. Install hosted monitoring behind HTTPS, VPN, or tunnel controls on the chosen demo host
-8. Run real Telegram/Discord/email alert delivery probes with the validator in OANDA practice and save incident-ready snapshots
-9. Optional MT5 hardening or cTrader/FIX adapter
+4. Run risk stress tests on the same recent candle windows and review scenario degradation
+5. Repeat broker restart sync and lifecycle recovery on the same OANDA practice account after an intentional process restart
+6. Run deployment and incident drills in OANDA practice using the runbook and incident bundle helper
+7. Install and test generated supervisor/logrotate artifacts on the chosen demo host
+8. Install hosted monitoring behind HTTPS, VPN, or tunnel controls on the chosen demo host
+9. Run real Telegram/Discord/email alert delivery probes with the validator in OANDA practice and save incident-ready snapshots
+10. Optional MT5 hardening or cTrader/FIX adapter
 
 ## Current Verification
 
@@ -422,7 +434,7 @@ The repository test suite currently passes:
 Expected result:
 
 ```text
-133 passed
+137 passed
 ```
 
 ## Final Audit Conclusion

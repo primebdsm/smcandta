@@ -71,6 +71,7 @@ Live-readiness components:
 - Demo-forward report package with cycle, equity, trade, setup, session, daily, and block reports
 - Demo-forward scheduler with timestamped report bundles, history CSV, duplicate-candle skipping, and schedule summary JSON
 - Performance analytics dashboard for demo-forward and scheduler artifacts
+- Risk stress testing for spread, slippage, commission, volatility-range, and sizing assumptions
 - Deployment runbook, incident procedures, and incident evidence bundle helper
 - Process supervision artifact generator for systemd, launchd, and logrotate
 - Runtime logging and external secret resolution with redacted reports
@@ -308,9 +309,10 @@ cycle = bot.run_cycle(candles)
 python examples/demo_forward_report.py --output-dir reports/demo_forward
 python examples/demo_forward_scheduler.py --runs 1 --interval-seconds 0 --output-dir reports/demo_forward_scheduler/latest
 python examples/performance_analytics_dashboard.py reports/demo_forward_scheduler/latest --output reports/performance_analytics/dashboard.html
+python examples/risk_stress_test.py --max-cycles 25 --output-dir reports/risk_stress/sample
 ```
 
-This writes `summary.json`, `report.html`, cycle/equity/trade/fill CSVs, setup and session reports, daily reports, blocked-reason counts, and paper position events. The scheduler also writes timestamped run bundles, `history.csv`, and `schedule_summary.json`. The analytics dashboard summarizes those artifacts for review. See `docs/DEMO_FORWARD_REPORTS.md`, `docs/DEMO_FORWARD_SCHEDULER.md`, and `docs/PERFORMANCE_ANALYTICS_DASHBOARD.md`.
+This writes `summary.json`, `report.html`, cycle/equity/trade/fill CSVs, setup and session reports, daily reports, blocked-reason counts, and paper position events. The scheduler also writes timestamped run bundles, `history.csv`, and `schedule_summary.json`. The analytics dashboard summarizes those artifacts for review. Risk stress testing replays the bot path under worse execution assumptions. See `docs/DEMO_FORWARD_REPORTS.md`, `docs/DEMO_FORWARD_SCHEDULER.md`, `docs/PERFORMANCE_ANALYTICS_DASHBOARD.md`, and `docs/RISK_STRESS_TESTING.md`.
 
 ## Input Format
 

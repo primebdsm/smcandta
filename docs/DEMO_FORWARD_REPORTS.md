@@ -74,6 +74,19 @@ python examples/performance_analytics_dashboard.py \
 
 The dashboard summarizes KPIs, equity, drawdown, setup/session/daily performance, blocked reasons, recent trades, scheduler history, and run metrics. See `docs/PERFORMANCE_ANALYTICS_DASHBOARD.md`.
 
+## Risk Stress Testing
+
+Use risk stress testing to replay the demo-forward path under worse spread, slippage, commission, volatility-range, and sizing assumptions:
+
+```bash
+python examples/risk_stress_test.py EURUSD_M15.csv \
+  --symbol EURUSD \
+  --max-drawdown-percent 15 \
+  --output-dir reports/risk_stress/eurusd_m15
+```
+
+See `docs/RISK_STRESS_TESTING.md`.
+
 ## Report Artifacts
 
 The report bundle writes:

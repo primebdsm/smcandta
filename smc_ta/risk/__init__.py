@@ -13,6 +13,19 @@ from smc_ta.risk.portfolio import (
     position_currency_exposure,
 )
 
+_STRESS_EXPORTS = {
+    "DEFAULT_RISK_STRESS_SCENARIOS",
+    "RiskStressConfig",
+    "RiskStressReportBundle",
+    "RiskStressResult",
+    "RiskStressScenario",
+    "RiskStressScenarioResult",
+    "RiskStressStatus",
+    "render_risk_stress_report_html",
+    "run_risk_stress_test",
+    "write_risk_stress_report_bundle",
+}
+
 __all__ = [
     "PortfolioRiskConfig",
     "PortfolioRiskDecision",
@@ -26,4 +39,12 @@ __all__ = [
     "currency_direction_counts",
     "order_currency_exposure",
     "position_currency_exposure",
-]
+] + sorted(_STRESS_EXPORTS)
+
+
+def __getattr__(name: str):
+    if name in _STRESS_EXPORTS:
+        from smc_ta.risk import stress
+
+        return getattr(stress, name)
+    raise AttributeError(f"module 'smc_ta.risk' has no attribute {name!r}")

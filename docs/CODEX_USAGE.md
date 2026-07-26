@@ -108,10 +108,13 @@ Use this only with an OANDA practice account. It validates minimum-size order op
 from smc_ta import (
     DemoForwardConfig,
     DemoForwardScheduleConfig,
+    RiskStressConfig,
     run_demo_forward_schedule,
     run_demo_forward_test,
+    run_risk_stress_test,
     write_demo_forward_report_bundle,
     write_performance_analytics_dashboard,
+    write_risk_stress_report_bundle,
 )
 
 result = run_demo_forward_test(candles, config=DemoForwardConfig(symbol="EURUSD"))
@@ -121,9 +124,12 @@ schedule = run_demo_forward_schedule(
     DemoForwardScheduleConfig(csv_path="EURUSD_M15.csv", output_dir="reports/demo_forward_scheduler", max_runs=1)
 )
 write_performance_analytics_dashboard(schedule.output_dir, "reports/performance_analytics/dashboard.html")
+
+stress = run_risk_stress_test(candles, config=RiskStressConfig(demo_forward=DemoForwardConfig(symbol="EURUSD")))
+write_risk_stress_report_bundle(stress, "reports/risk_stress")
 ```
 
-Use this after backtesting/walk-forward and before broker-demo live loops. It exercises the bot path and writes cycle, equity, fill, trade, setup, session, daily, and blocked-reason reports. The scheduler repeats report generation and the analytics dashboard summarizes performance artifacts for operator review. See `docs/DEMO_FORWARD_REPORTS.md`, `docs/DEMO_FORWARD_SCHEDULER.md`, and `docs/PERFORMANCE_ANALYTICS_DASHBOARD.md`.
+Use this after backtesting/walk-forward and before broker-demo live loops. It exercises the bot path and writes cycle, equity, fill, trade, setup, session, daily, and blocked-reason reports. The scheduler repeats report generation, the analytics dashboard summarizes performance artifacts, and stress testing checks worse spread/slippage/commission/volatility assumptions. See `docs/DEMO_FORWARD_REPORTS.md`, `docs/DEMO_FORWARD_SCHEDULER.md`, `docs/PERFORMANCE_ANALYTICS_DASHBOARD.md`, and `docs/RISK_STRESS_TESTING.md`.
 
 ## Live Dashboard
 

@@ -75,6 +75,7 @@ python examples/validate_data.py --csv EURUSD_M15.csv --symbol EURUSD
 python examples/demo_forward_report.py EURUSD_M15.csv --output-dir reports/demo_forward/latest
 python examples/demo_forward_scheduler.py EURUSD_M15.csv --symbol EURUSD --runs 1 --interval-seconds 0 --output-dir reports/demo_forward_scheduler/latest
 python examples/performance_analytics_dashboard.py reports/demo_forward_scheduler/latest --output reports/performance_analytics/latest.html
+python examples/risk_stress_test.py EURUSD_M15.csv --symbol EURUSD --max-drawdown-percent 15 --output-dir reports/risk_stress/latest
 python examples/generate_ops_artifacts.py --service-name smc-ta-demo --env-file .env.demo --log-dir logs
 ```
 
@@ -196,9 +197,10 @@ Move through these stages in order:
 2. Demo broker observation: no real orders, only connectivity and data checks.
 3. Demo minimum-size execution: OANDA practice execution validation passes.
 4. Integrated OANDA practice startup monitoring passes with saved artifacts.
-5. Demo forward loop: repeated closed-candle cycles with scheduled reports and performance analytics dashboard.
-6. Tiny live pilot: one symbol, minimum practical size, strict risk and emergency stop.
-7. Controlled expansion: add symbols only after journal and incident review.
+5. Risk stress: spread/slippage/commission/volatility scenarios do not breach agreed risk gates.
+6. Demo forward loop: repeated closed-candle cycles with scheduled reports and performance analytics dashboard.
+7. Tiny live pilot: one symbol, minimum practical size, strict risk and emergency stop.
+8. Controlled expansion: add symbols only after journal and incident review.
 
 Do not promote after a single good day. Require enough trades to compare setup, session, spread, and slippage behavior against the backtest/demo-forward assumptions.
 
