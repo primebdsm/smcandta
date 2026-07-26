@@ -1,6 +1,6 @@
 # Final Audit Report
 
-Audit date: 2026-07-24
+Audit date: 2026-07-26
 
 This report summarizes the current state of the SMC TA Forex toolkit after the 1-10 roadmap. It separates what is already implemented from what still needs broker-specific production work before live-money trading.
 
@@ -15,11 +15,13 @@ It is ready for:
 - Multi-timeframe confluence scoring
 - Historical backtesting with spread/slippage assumptions
 - Walk-forward strategy comparison
+- Strategy research packs for SMC/TA hypothesis and candidate evidence
 - Paper broker forward testing
 - Demo-forward report generation for bot-cycle evidence
 - Demo-forward scheduler for repeated report bundles and run history
 - Performance analytics dashboard for demo-forward evidence review
 - Risk stress testing for execution and volatility assumptions
+- Strategy research promotion reports before demo-forward selection
 - GitHub CI for push/PR test matrix, public API import smoke, and package build checks
 - OANDA and hardened MT5 demo integration work
 - OANDA practice readiness checks with account instruments and live pricing probes
@@ -135,6 +137,15 @@ Before real live trading, the selected broker must be demo-tested end to end wit
   - volatility-range expansion scenario
   - reduced sizing scenario
   - scenario CSV, JSON, HTML, and per-scenario demo-forward bundles
+- Strategy research pack:
+  - named SMC/TA hypotheses
+  - deterministic candidate grids around strategy profiles
+  - backtest evidence tables
+  - setup evidence
+  - session evidence
+  - optional walk-forward evidence
+  - candidate promotion grading
+  - JSON, CSV, and HTML report artifacts
 
 ### Broker And Execution Foundation
 
@@ -289,6 +300,7 @@ The project does not contain placeholder analysis claims. The implemented instru
 - TA modules calculate formulas directly from OHLCV data.
 - SMC modules apply rule-based price-action heuristics to candles.
 - Multi-timeframe analysis combines higher-timeframe context with lower-timeframe signal generation.
+- Strategy research packs turn SMC/TA hypotheses into repeatable backtest, setup, session, and optional walk-forward evidence without touching broker state.
 - Backtesting consumes the same signal outputs used by bot integration.
 - Data quality checks inspect actual candle rows before the engine uses them.
 - Broker adapters implement the shared broker protocol.
@@ -332,6 +344,7 @@ The toolkit can improve profit potential indirectly by improving process quality
 - Fewer avoidable losses: preflight, data quality, emergency stop, and reconciliation block unsafe runtime states.
 - Better learning loop: journal, lifecycle records, setup names, and reports make it possible to measure which setups and sessions work.
 - Better strategy selection: walk-forward tests help avoid choosing settings that only worked on one historical window.
+- Better research discipline: strategy research packs compare SMC/TA hypotheses, parameter variants, setup behavior, and session behavior before any demo-forward promotion.
 - Better execution review: spread, slippage, commission, and broker fills can be compared against backtest assumptions.
 - Better restart recovery: broker sync reduces duplicate entries, stale ledger exposure, and unknown pending orders after crashes or deploys.
 - Better lifecycle recovery: broker-synced lifecycle repair reduces false open/closed state, missed broker fills, and broken incident review after restart.
@@ -409,6 +422,7 @@ Before live trading:
 - demo forward testing for the chosen broker
 - minimum 2-4 weeks of stable demo logs
 - demo-forward report bundles for out-of-sample candle windows
+- strategy research packs for each pair/timeframe before choosing demo-forward candidates
 - demo-forward scheduler run history from a live-updated candle source
 - performance analytics dashboard review over the collected scheduler/report artifacts
 - risk stress reports over the same recent out-of-sample candle windows
@@ -428,16 +442,16 @@ Before live trading:
 
 ## Recommended Next Build Order
 
-1. Run the integrated OANDA practice startup-monitoring drill with the user's practice credentials and save the full artifact bundle
-2. Run OANDA practice-account execution validation with the user's credentials and save the report artifacts
-3. Run demo-forward report bundles and scheduled demo-forward history on recent out-of-sample candles, then review setup/session/block performance in the analytics dashboard
-4. Run risk stress tests on the same recent candle windows and review scenario degradation
-5. Repeat broker restart sync and lifecycle recovery on the same OANDA practice account after an intentional process restart
-6. Run deployment and incident drills in OANDA practice using the runbook and incident bundle helper
-7. Install and test generated supervisor/logrotate artifacts on the chosen demo host
-8. Install hosted monitoring behind HTTPS, VPN, or tunnel controls on the chosen demo host
-9. Run real Telegram/Discord/email alert delivery probes with the validator in OANDA practice and save incident-ready snapshots
-10. Optional cTrader/FIX adapter or deeper MT5 real-terminal recovery drills
+1. Run strategy research packs for each target pair/timeframe and select only candidates with durable setup/session and walk-forward evidence
+2. Run the integrated OANDA practice startup-monitoring drill with the user's practice credentials and save the full artifact bundle
+3. Run OANDA practice-account execution validation with the user's credentials and save the report artifacts
+4. Run demo-forward report bundles and scheduled demo-forward history on recent out-of-sample candles, then review setup/session/block performance in the analytics dashboard
+5. Run risk stress tests on the same recent candle windows and review scenario degradation
+6. Repeat broker restart sync and lifecycle recovery on the same OANDA practice account after an intentional process restart
+7. Run deployment and incident drills in OANDA practice using the runbook and incident bundle helper
+8. Install and test generated supervisor/logrotate artifacts on the chosen demo host
+9. Install hosted monitoring behind HTTPS, VPN, or tunnel controls on the chosen demo host
+10. Run real Telegram/Discord/email alert delivery probes with the validator in OANDA practice and save incident-ready snapshots
 
 ## Current Verification
 
@@ -450,7 +464,7 @@ The repository test suite currently passes:
 Expected result:
 
 ```text
-152 passed
+155 passed
 ```
 
 ## Final Audit Conclusion

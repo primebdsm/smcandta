@@ -15,6 +15,7 @@ This repository now contains the main components needed before connecting a real
 - Historical CSV source: `smc_ta.data.CsvCandleDataSource`
 - Data quality validator: `smc_ta.data.validate_candle_quality`
 - Backtester with spread/slippage: `smc_ta.backtest.run_backtest`
+- Strategy research pack: `run_strategy_research_pack`, `write_strategy_research_pack`
 - Economic news filter, JSON API source, and Trading Economics connector: `NewsFilter`, `JsonEconomicCalendarSource`, `TradingEconomicsCalendarSource`
 - Position/risk manager: `smc_ta.risk.RiskManager`
 - Portfolio/correlation risk: `smc_ta.risk.PortfolioRiskManager`
@@ -65,29 +66,30 @@ Keep broker-specific authentication, order IDs, retry logic, and reconciliation 
 ## Safe Path To Live
 
 1. Backtest with spread, slippage, and commission.
-2. Review the trade journal and monitoring metrics.
-3. Keep GitHub CI green on every change before demo/live deployment.
-4. Generate demo-forward reports through `run_demo_forward_test`, schedule repeated report runs through `run_demo_forward_schedule`, review `write_performance_analytics_dashboard`, and run `run_risk_stress_test`.
-5. Validate `RuntimeConfig` and keep live mode blocked unless explicitly armed.
-6. Add `BrokerReconciler` with a persistent expected-position ledger.
-7. Run broker restart sync before preflight whenever the process starts.
-8. Run lifecycle restart recovery before preflight whenever the process starts.
-9. Connect one broker adapter in demo mode.
-10. Reconcile positions and balances after every cycle.
-11. Add portfolio/correlation limits for multi-pair trading.
-12. Enable `EmergencyStopController` with manual stop, equity, drawdown, position, runtime-error, and reconciliation-failure limits.
-13. Enable `SQLiteTradeLifecycleStore` so every signal, block, submission, fill, failure, and close is auditable.
-14. Add a real economic calendar source such as `TradingEconomicsCalendarSource` and verify event times against your broker/server timezone.
-15. Configure runtime logging and resolve deployment secrets before broker adapters are constructed.
-16. Run OANDA credential onboarding before OANDA broker construction.
-17. Run `assert_preflight_ready` before every demo/live process start.
-18. Follow `docs/DEPLOYMENT_RUNBOOK.md` and keep `docs/INCIDENT_PROCEDURES.md` ready before any repeated bot process.
-19. Generate and review process supervisor/logrotate artifacts for the target host.
-20. Enable hosted monitoring only behind auth and HTTPS/VPN/tunnel controls when viewed off-machine.
-21. Validate at least one real alert channel and keep the report with startup artifacts.
-22. Add broker connectivity and alert delivery status records to every dashboard snapshot.
-23. Run the integrated paper/OANDA practice startup monitoring drill and save the artifacts.
-24. Only then consider small live size.
+2. Run strategy research packs and review setup/session/walk-forward evidence before selecting demo-forward candidates.
+3. Review the trade journal and monitoring metrics.
+4. Keep GitHub CI green on every change before demo/live deployment.
+5. Generate demo-forward reports through `run_demo_forward_test`, schedule repeated report runs through `run_demo_forward_schedule`, review `write_performance_analytics_dashboard`, and run `run_risk_stress_test`.
+6. Validate `RuntimeConfig` and keep live mode blocked unless explicitly armed.
+7. Add `BrokerReconciler` with a persistent expected-position ledger.
+8. Run broker restart sync before preflight whenever the process starts.
+9. Run lifecycle restart recovery before preflight whenever the process starts.
+10. Connect one broker adapter in demo mode.
+11. Reconcile positions and balances after every cycle.
+12. Add portfolio/correlation limits for multi-pair trading.
+13. Enable `EmergencyStopController` with manual stop, equity, drawdown, position, runtime-error, and reconciliation-failure limits.
+14. Enable `SQLiteTradeLifecycleStore` so every signal, block, submission, fill, failure, and close is auditable.
+15. Add a real economic calendar source such as `TradingEconomicsCalendarSource` and verify event times against your broker/server timezone.
+16. Configure runtime logging and resolve deployment secrets before broker adapters are constructed.
+17. Run OANDA credential onboarding before OANDA broker construction.
+18. Run `assert_preflight_ready` before every demo/live process start.
+19. Follow `docs/DEPLOYMENT_RUNBOOK.md` and keep `docs/INCIDENT_PROCEDURES.md` ready before any repeated bot process.
+20. Generate and review process supervisor/logrotate artifacts for the target host.
+21. Enable hosted monitoring only behind auth and HTTPS/VPN/tunnel controls when viewed off-machine.
+22. Validate at least one real alert channel and keep the report with startup artifacts.
+23. Add broker connectivity and alert delivery status records to every dashboard snapshot.
+24. Run the integrated paper/OANDA practice startup monitoring drill and save the artifacts.
+25. Only then consider small live size.
 
 ## Emergency Stop
 
@@ -115,6 +117,12 @@ Credentials are read from `TRADING_ECONOMICS_API_KEY` through `TradingEconomicsC
 `write_analysis_chart` renders a standalone HTML/SVG chart from `analyze_forex` output. It shows candles, volume, EMA/VWAP overlays, FVGs, order blocks, liquidity pools, liquidity sweeps, BOS/CHoCH, signal arrows, and latest entry/stop/target reference lines.
 
 Use charts for review, alerts, journal snapshots, and debugging. The chart renderer does not make execution decisions.
+
+## Strategy Research Pack
+
+`run_strategy_research_pack` expands named SMC/TA hypotheses into deterministic strategy candidates, runs the backtester, summarizes setup/session evidence, optionally runs walk-forward selection, and writes promotion reports.
+
+Run `python examples/strategy_research_pack.py EURUSD_M15.csv --symbol EURUSD --profile intraday_m15 --walk-forward --output-dir reports/strategy_research/latest` before choosing candidates for demo-forward testing. See `docs/STRATEGY_RESEARCH_PACK.md`.
 
 ## Trade Lifecycle
 

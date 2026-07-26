@@ -49,6 +49,17 @@ The repository runs GitHub Actions on pushes and pull requests to `main`:
 
 CI installs `.[dev]`, runs `python -m pytest` on Python 3.10, 3.11, and 3.12, performs a public API import smoke test, and builds the source/wheel package. It does not require broker secrets or live market access. See `docs/GITHUB_CI.md`.
 
+## Strategy Research Pack
+
+```python
+from smc_ta import StrategyResearchConfig, run_strategy_research_pack, write_strategy_research_pack
+
+result = run_strategy_research_pack({"EURUSD": candles}, config=StrategyResearchConfig(symbols=("EURUSD",)))
+write_strategy_research_pack(result, "reports/strategy_research/EURUSD")
+```
+
+Use this before demo-forward promotion. It expands profile-based SMC/TA hypotheses into candidate grids, backtests them, summarizes setup/session evidence, optionally runs walk-forward checks, and writes promotion reports. See `docs/STRATEGY_RESEARCH_PACK.md`.
+
 ## Preflight Check
 
 ```python

@@ -61,6 +61,8 @@ jobs:
               "TransactionReconciliationEvent",
               "Mt5Config",
               "build_mt5_config",
+              "StrategyResearchConfig",
+              "run_strategy_research_pack",
           ]
           missing = [name for name in required if not hasattr(smc_ta, name)]
           if missing:

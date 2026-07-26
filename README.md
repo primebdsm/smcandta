@@ -71,6 +71,7 @@ Live-readiness components:
 - Runtime configuration and live-mode guardrails with secret redaction
 - Preflight readiness checks for config, data, broker, safety, news, persistence, and lifecycle state
 - Walk-forward optimization for train/test strategy validation
+- Strategy research pack with SMC/TA hypotheses, candidate grids, setup/session evidence, optional walk-forward evidence, and promotion reports
 - Demo-forward report package with cycle, equity, trade, setup, session, daily, and block reports
 - Demo-forward scheduler with timestamped report bundles, history CSV, duplicate-candle skipping, and schedule summary JSON
 - Performance analytics dashboard for demo-forward and scheduler artifacts
@@ -247,6 +248,14 @@ result = run_walk_forward(
 print(result.summary)
 ```
 
+## Strategy Research Pack
+
+```bash
+python examples/strategy_research_pack.py EURUSD_M15.csv --symbol EURUSD --profile intraday_m15 --walk-forward
+```
+
+This expands SMC/TA strategy hypotheses into deterministic candidate grids, runs backtest evidence, summarizes setup/session behavior, optionally runs walk-forward checks, and writes JSON/CSV/HTML promotion reports. See `docs/STRATEGY_RESEARCH_PACK.md`.
+
 ## Chart Visualization
 
 ```python
@@ -391,6 +400,7 @@ smc_ta/
   config/         Runtime config validation and live guardrails
   preflight/      Demo/live startup readiness checks
   walkforward/    Rolling train/test optimization
+  research/       Strategy hypotheses, candidate grids, and promotion reports
   forwardtest/    Demo-forward replay and report bundles
   live/           Demo-forward bot orchestration
   journal/        CSV trade journal
@@ -407,6 +417,6 @@ tests/            Deterministic pytest coverage
 
 ## Status
 
-This is a real, usable analysis library for Forex research, backtesting, paper execution, and broker-adapter integration. It includes OANDA and optional hardened MT5 adapter foundations, but it is not a certified turnkey live deployment and does not store broker credentials. Before live use, demo-test the broker-specific path for your venue.
+This is a real, usable analysis library for Forex research, backtesting, paper execution, and broker-adapter integration. It includes strategy research tooling plus OANDA and optional hardened MT5 adapter foundations, but it is not a certified turnkey live deployment and does not store broker credentials. Before live use, demo-test the broker-specific path for your venue.
 
 For the final post-roadmap audit and recommended next build order, see `docs/FINAL_AUDIT_REPORT.md`.

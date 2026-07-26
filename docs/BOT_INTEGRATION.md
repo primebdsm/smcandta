@@ -13,7 +13,9 @@ flowchart LR
   G --> H["Broker Adapter"]
   G --> J["Trade Lifecycle Store"]
   C --> I["Chart / Journal Snapshot"]
+  C --> W["Strategy Research Pack"]
   C --> N["Demo-Forward Reports"]
+  W --> N
   K["Runtime Config"] --> G
   K --> H
   K --> L["Preflight Readiness"]
@@ -78,6 +80,7 @@ def on_new_closed_candle(candles):
 - Spread and slippage model selected for the target broker
 - Session schedule adjusted for daylight saving time when needed
 - Backtesting engine with realistic transaction costs
+- Strategy research pack for setup/session/walk-forward evidence before demo-forward promotion
 - Demo forward testing
 - Demo-forward report bundles for cycle, equity, trade, setup, session, daily, and block review
 - Demo-forward scheduler history for repeated closed-candle evidence
@@ -111,6 +114,7 @@ def on_new_closed_candle(candles):
 - `recover_lifecycle_after_restart` for synchronizing active lifecycle records with broker-open positions after restart
 - `PortfolioRiskManager` for currency exposure, symbol concentration, same-currency, and correlation limits
 - `run_walk_forward` for train/test validation before demo/live use
+- `run_strategy_research_pack` and `write_strategy_research_pack` for profile-based SMC/TA candidate evidence and promotion reports
 - `run_demo_forward_test` and `write_demo_forward_report_bundle` for bot-path replay evidence before broker-demo operation
 - `run_demo_forward_schedule` for repeated demo-forward report bundles and scheduler history
 - `write_performance_analytics_dashboard` for setup, session, daily, block, trade, and scheduler-history review

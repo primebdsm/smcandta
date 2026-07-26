@@ -23,6 +23,8 @@ It also performs a public API smoke import for the core bot-integration exports,
 - `TransactionReconciliationEvent`
 - `Mt5Config`
 - `build_mt5_config`
+- `StrategyResearchConfig`
+- `run_strategy_research_pack`
 
 The `package` job builds the source distribution and wheel:
 

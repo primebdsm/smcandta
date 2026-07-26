@@ -27,6 +27,8 @@ def test_github_ci_runs_tests_import_smoke_and_package_build() -> None:
     assert "TransactionReconciliationEvent" in text
     assert "Mt5Config" in text
     assert "build_mt5_config" in text
+    assert "StrategyResearchConfig" in text
+    assert "run_strategy_research_pack" in text
 
 
 def test_github_ci_does_not_require_live_broker_secrets() -> None:

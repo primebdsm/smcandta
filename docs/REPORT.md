@@ -25,6 +25,7 @@ For the complete post-roadmap audit, see `docs/FINAL_AUDIT_REPORT.md`.
 - Trading Economics real economic calendar connector with UTC normalization, Forex country/currency mapping, importance mapping, API error handling, docs, and example script
 - Correct asymmetric before/after news blocking windows
 - Strategy profiles
+- Strategy research pack with profile-based SMC/TA hypotheses, deterministic candidate grids, setup/session evidence, optional walk-forward evidence, promotion grading, JSON/CSV/HTML artifacts, docs, CLI, and tests
 - Risk manager for position sizing, daily loss, open-position, and confidence/RR checks
 - Portfolio/correlation risk manager for symbol concentration, gross/net currency exposure, same-currency direction counts, opposite same-symbol exposure, and return-correlation limits
 - Broker reconciliation service with in-memory and SQLite expected-position ledgers
@@ -64,7 +65,7 @@ For the complete post-roadmap audit, see `docs/FINAL_AUDIT_REPORT.md`.
 .venv/bin/python -m pytest
 ```
 
-Result: 152 passed.
+Result: 155 passed.
 
 ## What Is Real
 
@@ -74,6 +75,7 @@ The implemented instruments are real in the sense that each one maps to explicit
 - SMC instruments are deterministic price-action rules on OHLC candles.
 - Forex helpers use real pip-size conventions and spread/risk math.
 - The signal engine produces reproducible scores and reasons from candle data.
+- The strategy research pack is a real evidence instrument: it expands named SMC/TA hypotheses into deterministic candidate grids, runs the existing backtester, summarizes setup/session behavior, optionally runs walk-forward evidence, and writes promotion reports for demo review.
 - The Trading Economics connector is real provider plumbing: it calls the provider calendar API, maps response fields to this package's `EconomicEvent`, and feeds the existing `NewsFilter`.
 - The chart renderer is a real reporting instrument: it converts the package's `AnalysisResult` tables into portable HTML/SVG review charts without changing strategy decisions.
 - The lifecycle state machine is a real audit instrument: it enforces valid trade states and persists signal, block, submit, fill, close, fail, and cancel history.
@@ -111,6 +113,7 @@ The implemented instruments are real in the sense that each one maps to explicit
 - Long-running demo-forward scheduler runs against a live-updated candle feed on the selected demo host
 - Performance analytics dashboards generated from several weeks of demo-forward scheduler output
 - Risk stress reports from recent out-of-sample candles and live-updated demo-forward windows
+- Strategy research packs for each target pair/timeframe using recent in-sample and out-of-sample candle windows
 - TLS/reverse-proxy or VPN/tunnel deployment for off-machine hosted monitoring
 - Interactive live chart streaming and broker-synchronized screenshot automation
 - Broker-specific disaster recovery drills for each selected live venue
