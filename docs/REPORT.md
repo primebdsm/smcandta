@@ -40,6 +40,7 @@ For the complete post-roadmap audit, see `docs/FINAL_AUDIT_REPORT.md`.
 - Demo-forward scheduler with process-local interval loop, timestamped run bundles, duplicate-candle skipping, history CSV, summary JSON, CLI, docs, and tests
 - Performance analytics dashboard for demo-forward reports and scheduler roots with KPI, equity, drawdown, setup, session, daily, block, trade, and run-history views
 - Risk stress testing for demo-forward scenarios with widened spreads, higher slippage, extra commission, volatility range expansion, sizing changes, baseline deltas, report bundles, HTML summary, CLI, docs, and tests
+- GitHub CI workflow for push/PR test matrix, public API import smoke, package build, docs, and workflow regression tests
 - Deployment runbook, rollback checklist, incident procedures, and standardized incident evidence bundle writer
 - Process supervision artifact generator for systemd, launchd, and logrotate
 - Runtime logging helper with rotating file support and JSON-line option
@@ -63,7 +64,7 @@ For the complete post-roadmap audit, see `docs/FINAL_AUDIT_REPORT.md`.
 .venv/bin/python -m pytest
 ```
 
-Result: 141 passed.
+Result: 144 passed.
 
 ## What Is Real
 
@@ -83,6 +84,7 @@ The implemented instruments are real in the sense that each one maps to explicit
 - The demo-forward scheduler is a real operations instrument: it repeats the same demo-forward report path on a configured interval, avoids duplicate closed-candle reports, and writes schedule history for review.
 - The performance analytics dashboard is a real review instrument: it loads existing report artifacts, computes visual review surfaces, and makes setup/session/daily/block behavior easier to inspect before promotion.
 - The risk stress tester is a real robustness instrument: it reruns the demo-forward bot path under worse spread, slippage, commission, volatility-range, and sizing assumptions, then compares every scenario to baseline.
+- The GitHub CI workflow is a real repository safety gate: it installs the package, runs the full pytest suite across supported Python versions, checks public imports, and builds installable distributions before changes land on `main`.
 - The lifecycle recovery layer is a real restart instrument: it compares active lifecycle records with broker-open positions and either blocks startup or explicitly repairs lifecycle state.
 - The incident bundle helper is a real operations instrument: it serializes runtime, preflight, restart sync, lifecycle recovery, emergency stop, monitoring, account, position, and journal evidence into reviewable artifacts.
 - The process supervision helper is a real deployment instrument: it generates systemd, launchd, and logrotate files from structured config for operator review.

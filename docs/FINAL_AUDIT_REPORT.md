@@ -20,6 +20,7 @@ It is ready for:
 - Demo-forward scheduler for repeated report bundles and run history
 - Performance analytics dashboard for demo-forward evidence review
 - Risk stress testing for execution and volatility assumptions
+- GitHub CI for push/PR test matrix, public API import smoke, and package build checks
 - OANDA and MT5 demo integration work
 - OANDA practice readiness checks with account instruments and live pricing probes
 - OANDA practice execution validation tooling for guarded minimum-size demo trades
@@ -177,6 +178,12 @@ Before real live trading, the selected broker must be demo-tested end to end wit
   - OANDA direct transaction-history reconciliation events
   - pending-order report with unlinked-order blocking
   - `DemoTradingBot.sync_after_restart`
+- GitHub CI:
+  - push and pull-request workflow for `main`
+  - Python 3.10, 3.11, and 3.12 test matrix
+  - public API import smoke
+  - source and wheel package build check
+  - no broker secrets required
 - Emergency stop / kill switch:
   - manual activation
   - manual stop file
@@ -280,6 +287,7 @@ The project does not contain placeholder analysis claims. The implemented instru
 - Demo-forward scheduling repeats that same report path on an interval and records whether each run produced evidence, skipped unchanged candles, warned, or failed.
 - Performance analytics loads those saved artifacts and renders review evidence without changing strategy or broker state.
 - Risk stress testing uses saved candle data and the real demo-forward path to test whether execution-cost or volatility assumptions are fragile.
+- GitHub CI installs the package, runs the test suite on supported Python versions, checks public exports, and builds installable distributions without requiring broker credentials.
 - Lifecycle recovery synchronizes persisted lifecycle rows against broker-open positions before a restarted bot resumes.
 - MT5 adapter uses the real optional `MetaTrader5` Python package and terminal session.
 - Trading Economics connector maps provider events into the repository's news filter.
@@ -435,7 +443,7 @@ The repository test suite currently passes:
 Expected result:
 
 ```text
-141 passed
+144 passed
 ```
 
 ## Final Audit Conclusion

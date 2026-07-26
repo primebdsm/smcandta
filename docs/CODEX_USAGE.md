@@ -39,6 +39,16 @@ assert_runtime_ready(config)
 
 Use runtime config checks before constructing broker adapters or starting demo/live loops. See `docs/RUNTIME_CONFIG.md`.
 
+## GitHub CI
+
+The repository runs GitHub Actions on pushes and pull requests to `main`:
+
+```text
+.github/workflows/ci.yml
+```
+
+CI installs `.[dev]`, runs `python -m pytest` on Python 3.10, 3.11, and 3.12, performs a public API import smoke test, and builds the source/wheel package. It does not require broker secrets or live market access. See `docs/GITHUB_CI.md`.
+
 ## Preflight Check
 
 ```python

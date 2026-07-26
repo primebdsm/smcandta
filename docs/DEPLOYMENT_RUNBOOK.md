@@ -2,7 +2,7 @@
 
 This runbook describes how to deploy the Forex bot stack from this repository into paper, demo, or live operation.
 
-It is an operations document, not a trading-edge document. Deployment should only happen after backtests, walk-forward tests, demo-forward reports, broker practice validation, restart sync, lifecycle recovery, preflight, and monitoring are all working for the selected broker.
+It is an operations document, not a trading-edge document. Deployment should only happen after GitHub CI, backtests, walk-forward tests, demo-forward reports, broker practice validation, restart sync, lifecycle recovery, preflight, and monitoring are all working for the selected broker.
 
 ## Deployment Rule
 
@@ -94,19 +94,20 @@ Only continue when the output is safe and the practice account has no unexpected
 Use this order after a deploy, VPS restart, process crash, or manual restart:
 
 1. Stop the old bot loop cleanly.
-2. Verify the broker account manually in the broker platform.
-3. Back up the SQLite state files.
-4. Configure runtime logging.
-5. Resolve secrets and write a redacted secret report.
-6. Load runtime config and credentials.
-7. Build broker, ledger, checkpoint, journal, lifecycle, news, risk, and emergency-stop objects.
-8. Run broker restart sync.
-9. Run lifecycle restart recovery.
-10. Run preflight readiness.
-11. Render or refresh the live dashboard.
-12. Start the bot loop only if every startup report is OK.
-13. Watch the first cycles and broker platform together.
-14. Confirm Broker Connectivity and Alert Delivery panels are current.
+2. Confirm GitHub CI is green for the commit being deployed.
+3. Verify the broker account manually in the broker platform.
+4. Back up the SQLite state files.
+5. Configure runtime logging.
+6. Resolve secrets and write a redacted secret report.
+7. Load runtime config and credentials.
+8. Build broker, ledger, checkpoint, journal, lifecycle, news, risk, and emergency-stop objects.
+9. Run broker restart sync.
+10. Run lifecycle restart recovery.
+11. Run preflight readiness.
+12. Render or refresh the live dashboard.
+13. Start the bot loop only if every startup report is OK.
+14. Watch the first cycles and broker platform together.
+15. Confirm Broker Connectivity and Alert Delivery panels are current.
 
 Integrated command shape:
 

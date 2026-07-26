@@ -83,6 +83,7 @@ def on_new_closed_candle(candles):
 - Demo-forward scheduler history for repeated closed-candle evidence
 - Performance analytics dashboard for demo-forward and scheduler artifact review
 - Risk stress testing for spread, slippage, commission, volatility-range, and sizing assumptions
+- Green GitHub CI for the commit being deployed
 - Deployment runbook, rollback procedure, and incident evidence capture
 - Runtime logging, secret resolution, process supervision, and log rotation
 - OANDA credential onboarding before broker construction
@@ -114,6 +115,7 @@ def on_new_closed_candle(candles):
 - `run_demo_forward_schedule` for repeated demo-forward report bundles and scheduler history
 - `write_performance_analytics_dashboard` for setup, session, daily, block, trade, and scheduler-history review
 - `run_risk_stress_test` and `write_risk_stress_report_bundle` for execution-assumption stress checks
+- `.github/workflows/ci.yml` for GitHub test matrix, import smoke, and package build checks
 - `write_incident_report_bundle` for standardized JSON, Markdown, and CSV incident evidence
 - `resolve_runtime_secrets`, `configure_runtime_logging`, and `write_supervisor_artifacts` for deployment operations
 - `check_oanda_credential_onboarding` for redaction-safe OANDA practice credential readiness

@@ -1,5 +1,7 @@
 # SMC TA Forex Toolkit
 
+[![CI](https://github.com/primebdsm/smcandta/actions/workflows/ci.yml/badge.svg)](https://github.com/primebdsm/smcandta/actions/workflows/ci.yml)
+
 A Codex-ready Python repository for combining Smart Money Concept analysis and classical technical analysis in Forex bots.
 
 This project is not a broker, execution system, or profit guarantee. It produces structured analysis features that can be tested, backtested, and integrated into a Python trading or analysis bot.
@@ -72,6 +74,7 @@ Live-readiness components:
 - Demo-forward scheduler with timestamped report bundles, history CSV, duplicate-candle skipping, and schedule summary JSON
 - Performance analytics dashboard for demo-forward and scheduler artifacts
 - Risk stress testing for spread, slippage, commission, volatility-range, and sizing assumptions
+- GitHub CI for Python test matrix, public API import smoke, and package build checks
 - Deployment runbook, incident procedures, and incident evidence bundle helper
 - Process supervision artifact generator for systemd, launchd, and logrotate
 - Runtime logging and external secret resolution with redacted reports

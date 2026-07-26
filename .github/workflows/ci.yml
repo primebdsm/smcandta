@@ -1,0 +1,96 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    name: Tests Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version:
+          - "3.10"
+          - "3.11"
+          - "3.12"
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install package and test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+
+      - name: Run test suite
+        run: python -m pytest
+
+      - name: Import public API
+        run: |
+          python - <<'PY'
+          import smc_ta
+
+          required = [
+              "analyze_forex",
+              "run_backtest",
+              "run_demo_forward_test",
+              "run_risk_stress_test",
+              "sync_broker_state_after_restart",
+              "TransactionReconciliationEvent",
+          ]
+          missing = [name for name in required if not hasattr(smc_ta, name)]
+          if missing:
+              raise SystemExit(f"missing public exports: {missing}")
+          PY
+
+  package:
+    name: Package Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Build source and wheel distributions
+        run: |
+          python -m pip install --upgrade pip build
+          python -m build
+
+      - name: Smoke install wheel
+        run: |
+          python -m pip install dist/*.whl
+          python - <<'PY'
+          from smc_ta import analyze_forex, RuntimeConfig
+
+          assert analyze_forex
+          assert RuntimeConfig
+          PY
